@@ -1,74 +1,90 @@
 @import "tailwindcss";
 
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --spacing: 4px;
+  --font-size: 16px;
+  --radius: 8px;
+  --sidebar-manager-background: var(--color-primary);
+  --sidebar-reviewer-background: var(--color-white);
+  --sidebar-requester-background: var(--color-white);
+  --sidebar-manager-foreground: var(--color-background);
+  --sidebar-reviewer-foreground: var(--color-primary);
+  --sidebar-requester-foreground: var(--color-primary);
+  --sidebar-manager-active: var(--color-secondary);
+  --sidebar-reviewer-active: var(--color-primary);
+  --sidebar-requester-active: var(--color-secondary);
+  --sidebar-accent-foreground: var(--color-background);
+  --color-primary: #140e59;
+  --color-secondary: #3d2ee0;
+  --color-complement: #2fd8d8;
+  --color-black: #000000;
+  --color-white: #ffffff;
+  --color-background: #f6f6f6;
+  --color-danger: #ff121a;
+  --color-warming: #f6b819;
+  --color-success: #4caf50;
+  --color-info: #140e59;
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-poppins: var(--font-poppins);
+  --font-raleway: var(--font-raleway);
+  --font-size-h1: calc(var(--font-size) * 3px);
+  --font-size-h2: calc(var(--font-size) * 2.25px);
+  --font-size-h3: calc(var(--font-size) + 8px);
+  --font-size-h4: calc(var(--font-size) + 2px);
+  --font-size-h5: calc(var(--font-size) + 2px);
+  --font-size-md: var(--font-size);
+  --font-size-sm: calc(var(--font-size) - 4px);
+  --spacing-0: 0px;
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 24px;
+  --spacing-6: 32px;
+  --spacing-7: 48px;
+  --spacing-8: 64px;
+  --spacing-9: 96px;
+  --spacing-10: 128px;
+}
+
 h1 {
-  size: calc(var(--font-size) * 2.5);
+  font-size: calc(var(--font-size) * 2.5);
   font-family: var(--font-poppins), sans-serif;
   font-weight: 600;
 }
 h2 {
-  size: calc(var(--font-size) * 2);
+  font-size: calc(var(--font-size) * 2);
   font-family: var(--font-poppins), sans-serif;
   font-weight: 600;
 }
 h3 {
-  size: calc(var(--font-size) + 8px);
+  font-size: calc(var(--font-size) + 8px);
   font-family: var(--font-poppins), sans-serif;
   font-weight: 600;
 }
 h4 {
-  size: calc(var(--font-size) + 2px);
+  font-size: calc(var(--font-size) + 2px);
   font-family: var(--font-poppins), sans-serif;
   font-weight: 600;
 }
 h5 {
-  size: calc(var(--font-size) + 2px);
+  font-size: calc(var(--font-size) + 2px);
   font-family: var(--font-poppins), sans-serif;
 }
 p {
-  size: var(--font-size);
+  font-size: var(--font-size);
   font-family: var(--font-raleway), sans-serif;
 }
 
 @layer utilities {
   .text-balance {
     text-wrap: balance;
-  }
-}
-
-@layer base {
-  :root {
-    --spacing: 4px;
-    --font-size: 16px;
-    --radius: 8px;
-    --sidebar-manager-background: var(--color-primary);
-    --sidebar-reviewer-background: var(--color-white);
-    --sidebar-requester-background: var(--color-white);
-    --sidebar-manager-foreground: var(--color-background);
-    --sidebar-reviewer-foreground: var(--color-primary);
-    --sidebar-requester-foreground: var(--color-primary);
-    --sidebar-manager-active: var(--color-secondary);
-    --sidebar-reviewer-active: var(--color-primary);
-    --sidebar-requester-active: var(--color-secondary);
-    --sidebar-accent-foreground: var(--color-background);
-    --color-primary: #140e59;
-    --color-secondary: #3d2ee0;
-    --color-complement: #2fd8d8;
-    --color-black: #000000;
-    --color-white: #ffffff;
-    --color-background: #f6f6f6;
-    --color-danger: #ff121a;
-    --color-warming: #f6b819;
-    --color-success: #4caf50;
-    --color-info: #140e59;
-  }
-  .dark {
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 }
