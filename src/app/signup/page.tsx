@@ -317,58 +317,65 @@ export default function Sign_up() {
                       handleAdditionalDetailsSubmit,
                     )}
                   >
-                    <div className="flex-cols flex gap-2">
-                      <FormField
-                        control={additionalDetailsForm.control}
-                        name="firstName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                placeholder="First Name"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage>
-                              {
-                                additionalDetailsForm.formState.errors.firstName
-                                  ?.message
-                              }
-                            </FormMessage>
-                          </FormItem>
-                        )}
-                      />
-                      <FormField
-                        control={additionalDetailsForm.control}
-                        name="lastName"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormControl>
-                              <Input
-                                type="text"
-                                placeholder="Last Name"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage>
-                              {
-                                additionalDetailsForm.formState.errors.lastName
-                                  ?.message
-                              }
-                            </FormMessage>
-                          </FormItem>
-                        )}
-                      />
-                    </div>
+                    <FormField
+                      control={additionalDetailsForm.control}
+                      name="firstName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              type="text"
+                              placeholder="First Name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            {
+                              additionalDetailsForm.formState.errors.firstName
+                                ?.message
+                            }
+                          </FormMessage>
+                        </FormItem>
+                      )}
+                    />
+                    <FormField
+                      control={additionalDetailsForm.control}
+                      name="lastName"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormControl>
+                            <Input
+                              type="text"
+                              placeholder="Last Name"
+                              {...field}
+                            />
+                          </FormControl>
+                          <FormMessage>
+                            {
+                              additionalDetailsForm.formState.errors.lastName
+                                ?.message
+                            }
+                          </FormMessage>
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormLabel>Seleccione el tipo de identificación</FormLabel>
                     <div className="flex-cols flex gap-2">
                       <FormField
                         control={additionalDetailsForm.control}
                         name="idType"
                         render={({ field }) => (
-                          <FormItem>
+                          <FormItem className="">
                             <FormControl>
-                              <Combobox selectDefault="Tipo de ID" {...field} />
+                              <Combobox
+                                selectDefault="Tipo"
+                                options={[
+                                  { value: "cedula", label: "Cédula" },
+                                  { value: "pasaporte", label: "Pasaporte" },
+                                ]}
+                                {...field}
+                              />
                             </FormControl>
                             <FormMessage>
                               {

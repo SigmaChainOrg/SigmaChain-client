@@ -18,25 +18,16 @@ import {
   DropdownMenuTrigger,
 } from "@/components/shadcn/dropdown-menu";
 import { cn } from "@/lib/shadcn/utils";
-//import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
-//import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Next.js",
-  },
-  {
-    value: "sveltekit",
-    label: "SvelteKit",
-  },
-  {
-    value: "nuxt.js",
-    label: "Nuxt.js",
-  },
-];
-
-export function Combobox({ selectDefault }: { selectDefault: string }) {
+export function Combobox({
+  selectDefault,
+  options,
+}: {
+  selectDefault: string;
+  options: Array<{ value: string; label: string }>;
+}) {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -50,9 +41,9 @@ export function Combobox({ selectDefault }: { selectDefault: string }) {
           className="w-full justify-between"
         >
           {value
-            ? frameworks.find((framework) => framework.value === value)?.label
+            ? options.find((option) => option.value === value)?.label
             : selectDefault}
-          {/*<FontAwesomeIcon icon={faChevronDown} />*/}
+          <FontAwesomeIcon icon={faChevronDown} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
@@ -62,22 +53,22 @@ export function Combobox({ selectDefault }: { selectDefault: string }) {
         <Command>
           <CommandInput placeholder={selectDefault} />
           <CommandList>
-            <CommandEmpty>No framework found.</CommandEmpty>
+            <CommandEmpty>No options found.</CommandEmpty>
             <CommandGroup>
-              {frameworks.map((framework) => (
+              {options.map((option) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
+                  key={option.value}
+                  value={option.value}
                   onSelect={(currentValue) => {
                     setValue(currentValue === value ? "" : currentValue);
                     setOpen(false);
                   }}
                 >
-                  {framework.label}
+                  {option.label}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === framework.value ? "opacity-100" : "opacity-0",
+                      value === option.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>
