@@ -238,7 +238,7 @@ export default function Sign_up() {
                   <Button
                     variant="link"
                     className="w-auto"
-                    onClick={() => router.push(routes["singin"])}
+                    onClick={() => router.push(routes["signin"])}
                   >
                     Sign in
                   </Button>
