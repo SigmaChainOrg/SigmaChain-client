@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/shadcn/button";
+import { Calendar } from "@/components/shadcn/calendar";
 import {
   Card,
   CardContent,
@@ -8,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/shadcn/card";
+import { Combobox } from "@/components/shadcn/combobox";
 import {
   Form,
   FormControl,
@@ -17,11 +19,21 @@ import {
   FormMessage,
 } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/shadcn/popover";
+import { routes } from "@/lib/routes";
+import { cn } from "@/lib/shadcn/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
+
 const emailPasswordSchema = z
   .object({
     email: z.string().email({
@@ -59,8 +71,13 @@ const additionalDetailsSchema = z.object({
   lastName: z.string().min(1, {
     message: "Last name is required",
   }),
-  phoneNumber: z.string().min(10, {
-    message: "Phone number must be at least 10 digits",
+  idType: z.string(),
+  id: z
+    .string()
+    .length(10, { message: "Insert a 10-digits number" })
+    .regex(/^\d+$/, "ID must contain only numbers"),
+  birthdate: z.date({
+    required_error: "A date of birth is required.",
   }),
 });
 
@@ -83,6 +100,7 @@ export default function Sign_up() {
     },
   });
   const router = useRouter();
+
   const additionalDetailsForm = useForm<
     z.infer<typeof additionalDetailsSchema>
   >({
@@ -90,7 +108,9 @@ export default function Sign_up() {
     defaultValues: {
       firstName: "",
       lastName: "",
-      phoneNumber: "",
+      idType: "Cédula",
+      id: "",
+      birthdate: undefined,
     },
   });
 
@@ -105,7 +125,6 @@ export default function Sign_up() {
     data: z.infer<typeof validationCodeSchema>,
   ) {
     console.log("Validation code:", data.validationCode);
-    router.push("/dashboard");
     setStep(3); // Move to the next step
   }
 
@@ -113,12 +132,13 @@ export default function Sign_up() {
     data: z.infer<typeof additionalDetailsSchema>,
   ) {
     console.log("Additional details:", data);
-    router.push("/Dashboard");
+    router.push(routes["dashboard"]);
     // Handle final submission
   }
+  const [date, setDate] = useState<Date | undefined>(new Date());
 
   return (
-    <div className="bg-primary m-0 grid min-h-screen w-screen grid-cols-12 gap-8 bg-[url(./ucuenca.jpg)] bg-contain bg-left-top bg-no-repeat font-[family-name:var(--font-geist-sans)] sm:p-0">
+    <div className="m-0 grid h-screen w-screen grid-cols-12 gap-8 bg-primary bg-[url(./ucuenca.jpg)] bg-contain bg-left-top bg-no-repeat px-4">
       <main className="col-start-7 col-end-11 place-content-center">
         <Card>
           {step === 1 && (
@@ -218,7 +238,7 @@ export default function Sign_up() {
                   <Button
                     variant="link"
                     className="w-auto"
-                    onClick={() => router.push("/Sing_in")}
+                    onClick={() => router.push(routes["singin"])}
                   >
                     Sign in
                   </Button>
@@ -297,63 +317,128 @@ export default function Sign_up() {
                       handleAdditionalDetailsSubmit,
                     )}
                   >
+                    <div className="flex-cols flex gap-2">
+                      <FormField
+                        control={additionalDetailsForm.control}
+                        name="firstName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="First Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage>
+                              {
+                                additionalDetailsForm.formState.errors.firstName
+                                  ?.message
+                              }
+                            </FormMessage>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={additionalDetailsForm.control}
+                        name="lastName"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Last Name"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage>
+                              {
+                                additionalDetailsForm.formState.errors.lastName
+                                  ?.message
+                              }
+                            </FormMessage>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="flex-cols flex gap-2">
+                      <FormField
+                        control={additionalDetailsForm.control}
+                        name="idType"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Combobox selectDefault="Tipo de ID" {...field} />
+                            </FormControl>
+                            <FormMessage>
+                              {
+                                additionalDetailsForm.formState.errors.idType
+                                  ?.message
+                              }
+                            </FormMessage>
+                          </FormItem>
+                        )}
+                      />
+                      <FormField
+                        control={additionalDetailsForm.control}
+                        name="id"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormControl>
+                              <Input
+                                type="text"
+                                placeholder="Número de ID"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage>
+                              {
+                                additionalDetailsForm.formState.errors.id
+                                  ?.message
+                              }
+                            </FormMessage>
+                          </FormItem>
+                        )}
+                      />
+                    </div>
                     <FormField
                       control={additionalDetailsForm.control}
-                      name="firstName"
+                      name="birthdate"
                       render={({ field }) => (
                         <FormItem>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="First Name"
-                              {...field}
-                            />
-                          </FormControl>
+                          <FormLabel>Fecha de nacimiento</FormLabel>
+                          <Popover>
+                            <PopoverTrigger className="w-full" asChild>
+                              <FormControl>
+                                <Button variant="secondary" className="w-full">
+                                  {field.value
+                                    ? format(field.value, "PPP")
+                                    : "Fecha de nacimiento"}
+                                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                                </Button>
+                              </FormControl>
+                            </PopoverTrigger>
+                            <PopoverContent
+                              className="w-auto p-0"
+                              align="start"
+                            >
+                              <div>
+                                <Calendar
+                                  mode="single"
+                                  selected={field.value}
+                                  onSelect={field.onChange}
+                                  disabled={(date) =>
+                                    date > new Date() ||
+                                    date < new Date("1900-01-01")
+                                  }
+                                  initialFocus
+                                />
+                              </div>
+                            </PopoverContent>
+                          </Popover>
                           <FormMessage>
                             {
-                              additionalDetailsForm.formState.errors.firstName
-                                ?.message
-                            }
-                          </FormMessage>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={additionalDetailsForm.control}
-                      name="lastName"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="Last Name"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage>
-                            {
-                              additionalDetailsForm.formState.errors.lastName
-                                ?.message
-                            }
-                          </FormMessage>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={additionalDetailsForm.control}
-                      name="phoneNumber"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="Phone Number"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage>
-                            {
-                              additionalDetailsForm.formState.errors.phoneNumber
+                              additionalDetailsForm.formState.errors.birthdate
                                 ?.message
                             }
                           </FormMessage>
