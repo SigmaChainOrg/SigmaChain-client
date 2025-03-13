@@ -110,7 +110,7 @@ export default function Sign_up() {
       lastName: "",
       idType: "Cédula",
       id: "",
-      birthdate: undefined,
+      birthdate: new Date(),
     },
   });
 
