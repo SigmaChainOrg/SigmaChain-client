@@ -18,7 +18,7 @@ const buttonVariants = cva(
         secondary:
           "bg-background text-primary border-solid border-2 border-primary hover:border-secondary hover:text-secondary focus-visible:ring-complementary",
         ghost:
-          "[&>svg]:text-primary [&>svg]:hover:text-secondary !w-dark:hover:bg-gray-800 !px-1 hover:bg-background focus-visible:ring-complementary focus:bg-background",
+          "[&>svg]:text-primary [&>svg]:hover:text-secondary !w-dark:hover:bg-gray-800 !px-1 hover:bg-background focus-visible:ring-complementary focus:bg-background py-1",
         icon: "",
         combobox:
           "rounded-[0px] w-full text-md border-solid border-b-2 border-primary bg-transparent",
