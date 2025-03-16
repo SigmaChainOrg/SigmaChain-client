@@ -2,13 +2,14 @@
 import { Button } from "@/components/shadcn/button";
 import { routes } from "@/lib/routes";
 import { useRouter } from "next/navigation";
+//import image from "./image.png";
 
 import { DashboardHeader } from "@/components/shadcn/header";
 //import { z } from "zod";
 
 //const userDataSchema = z.object({  name: z.string(),});
 
-export default function Home() {
+export default function Solicitude() {
   const router = useRouter();
   return (
     <>
@@ -20,7 +21,7 @@ export default function Home() {
           }}
         />
       </div>
-      <h1 className="col-start-1 col-end-13 h-auto text-h1">Bienvenido Juan</h1>
+      <h3 className="col-start-1 col-end-13 h-auto">Todas las solicitudes</h3>
       <Button
         className="col-start-1 col-end-3"
         onClick={() => {
