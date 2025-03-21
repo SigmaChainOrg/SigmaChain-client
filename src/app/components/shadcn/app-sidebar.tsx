@@ -64,12 +64,7 @@ type AppSidebarProps = {
 };
 
 export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
-  const [currentPath, setCurrentPath] = useState("");
   const pathName = usePathname();
-
-  useEffect(() => {
-    setCurrentPath(pathName);
-  }, [pathName]);
 
   const renderMenuItems = (
     items: (typeof menuItems)[keyof typeof menuItems],
