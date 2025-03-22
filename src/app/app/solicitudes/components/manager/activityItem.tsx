@@ -14,7 +14,12 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function ActivityItem(activity: Activity) {
-  const { deleteActivity } = useActivityStore();
+  const {
+    deleteActivity,
+    setActivityName,
+    setActivityReviewerGroup,
+    setActivityResponsable,
+  } = useActivityStore();
 
   return (
     <div
@@ -24,18 +29,36 @@ export function ActivityItem(activity: Activity) {
       <div className="h-full cursor-grab place-content-center bg-background px-1">
         <FontAwesomeIcon icon={faEllipsisVertical} />
       </div>
-      <Input placeholder={activity.name} className="w-auto" />
+      {/* Input para el nombre de la actividad */}
+      <Input
+        placeholder="Nombre de la actividad"
+        value={activity.name}
+        onChange={(e) => setActivityName(activity.id, e.target.value)}
+        className="w-auto"
+      />
+      {/* Combobox para el grupo revisor */}
       <Combobox
         selectDefault="Seleccionar grupo"
-        options={[{ value: "ingenieria", label: "Ingeniería" }]}
+        options={[
+          { value: "ingenieria", label: "Ingeniería" },
+          { value: "marketing", label: "Marketing" },
+        ]}
+        onChange={(value) => setActivityReviewerGroup(activity.id, value)} // Actualiza el grupo revisor
       />
+      {/* Combobox para el responsable */}
       <div className="flex flex-row items-center gap-2">
-        <FontAwesomeIcon icon={faUser} className="rounded-[100px]" />
         <Combobox
           selectDefault="Seleccionar responsable"
-          options={[{ value: "anita", label: "Anita" }]}
-        />
+          options={[
+            { value: "anita", label: "Anita" },
+            { value: "juan", label: "Juan" },
+          ]}
+          onChange={(value) => setActivityResponsable(activity.id, value)} // Actualiza el responsable
+        >
+          <FontAwesomeIcon icon={faUser} className="rounded-[100px]" />
+        </Combobox>
       </div>
+      {/* Botón para eliminar la actividad */}
       <Button
         variant="ghost"
         className="hover:bg-danger [&>svg]:text-danger [&>svg]:hover:text-white"

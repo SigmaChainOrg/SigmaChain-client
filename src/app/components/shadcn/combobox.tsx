@@ -24,15 +24,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export function Combobox({
   selectDefault,
   options,
+  onChange,
+  children,
 }: {
   selectDefault: string;
   options: Array<{ value: string; label: string }>;
+  onChange?: (value: string) => any; // Llama a esta función cuando se selecciona una opción
+  children?: React.ReactNode; // Agregamos children como una propiedad opcional
 }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
+  const [selectedValue, setSelectedValue] = React.useState<string>(""); // Maneja el estado interno del valor seleccionado
 
   return (
-    <DropdownMenu>
+    <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="combobox"
@@ -40,9 +44,11 @@ export function Combobox({
           aria-expanded={open}
           className="w-full justify-between"
         >
-          {value
-            ? options.find((option) => option.value === value)?.label
+          {selectedValue
+            ? options.find((option) => option.value === selectedValue)?.label
             : selectDefault}
+          {children && <span className="ml-2">{children}</span>}{" "}
+          {/* Renderiza los children */}
           <FontAwesomeIcon icon={faChevronDown} />
         </Button>
       </DropdownMenuTrigger>
@@ -59,16 +65,19 @@ export function Combobox({
                 <CommandItem
                   key={option.value}
                   value={option.value}
-                  onSelect={(currentValue) => {
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
+                  onSelect={() => {
+                    setSelectedValue(option.value); // Actualiza el estado interno
+                    setOpen(false); // Cierra el menú
+                    onChange && onChange(option.value); // Llama a la función onChange pasada como prop
                   }}
                 >
                   {option.label}
                   <Check
                     className={cn(
                       "ml-auto",
-                      value === option.value ? "opacity-100" : "opacity-0",
+                      selectedValue === option.value
+                        ? "opacity-100"
+                        : "opacity-0",
                     )}
                   />
                 </CommandItem>
