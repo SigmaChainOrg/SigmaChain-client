@@ -5,6 +5,7 @@ import {
   SidebarFooter,
   SidebarGroup,
   SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
@@ -24,6 +25,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/shadcn/dropdown-menu";
 
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/shadcn/collapsible";
 import { routes } from "@/lib/routes";
 import {
   faEllipsisVertical,
@@ -34,25 +40,52 @@ import {
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
 
 const commonMenuItems = [
-  { title: "Dashboard", href: routes["dashboard"], icon: faHome },
-  { title: "Solicitudes", href: routes["solicitudes"], icon: faFileLines },
+  { title: "Dashboard", href: routes["dashboard"], icon: faHome, children: [] },
+  {
+    title: "Solicitudes",
+    href: routes["solicitudes"],
+    icon: faFileLines,
+    children: [],
+  },
 ];
 const menuItems = {
   manager: [
-    ...commonMenuItems,
-    { title: "Administración", href: "#", icon: faFileEdit },
-    { title: "Personal", href: "#", icon: faUserGroup },
-    { title: "Clientes", href: "#", icon: faUsers },
+    {
+      title: "Dashboard",
+      href: routes["dashboard"],
+      icon: faHome,
+      children: [],
+    },
+    {
+      title: "Solicitudes",
+      href: routes["solicitudes"],
+      icon: faFileLines,
+      children: [
+        {
+          title: "Publicadas",
+          href: routes["solicitudes-publicadas"],
+          icon: faFileLines,
+        },
+        {
+          title: "Sin publicar",
+          href: routes["solicitudes-sin-publicar"],
+          icon: faFileLines,
+        },
+      ],
+    },
+    { title: "Administración", href: "#", icon: faFileEdit, children: [] },
+    { title: "Personal", href: "#", icon: faUserGroup, children: [] },
+    { title: "Clientes", href: "#", icon: faUsers, children: [] },
   ],
   reviewer: [
     ...commonMenuItems,
-    { title: "Tus procesos", href: "#", icon: faFileEdit },
+    { title: "Tus procesos", href: "#", icon: faFileEdit, children: [] },
   ],
   requester: [...commonMenuItems],
 };
@@ -69,22 +102,76 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
   const renderMenuItems = (
     items: (typeof menuItems)[keyof typeof menuItems],
   ) => {
-    return items.map((item) => (
-      <SidebarMenuItem key={item.title}>
-        <SidebarMenuButton
-          asChild
-          variant={userProfile}
-          isActive={
-            pathName.split("/")[2] === item.href.split("/")[2] ? true : false
-          }
-        >
-          <Link href={item.href}>
-            <FontAwesomeIcon icon={item.icon} />
-            <span>{item.title}</span>
-          </Link>
-        </SidebarMenuButton>
-      </SidebarMenuItem>
-    ));
+    return items.map((item) => {
+      if (item.children && item.children.length > 0) {
+        // Renderiza un Collapsible si el elemento tiene hijos
+        return (
+          <Collapsible
+            key={item.title}
+            defaultOpen
+            className="group/collapsible"
+          >
+            <SidebarGroup>
+              <SidebarGroupLabel
+                asChild
+                className={
+                  pathName.split("/")[2] === item.href.split("/")[2]
+                    ? "text-complement"
+                    : ""
+                }
+              >
+                <CollapsibleTrigger>
+                  <FontAwesomeIcon icon={item.icon} />
+                  <span>{item.title}</span>
+                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                </CollapsibleTrigger>
+              </SidebarGroupLabel>
+              <CollapsibleContent>
+                <SidebarGroupContent>
+                  {item.children.map((child) => (
+                    <SidebarMenuItem key={child.title}>
+                      <SidebarMenuButton
+                        asChild
+                        variant={userProfile}
+                        isActive={
+                          pathName.split("/")[3] === child.href.split("/")[3]
+                        }
+                        className="pl-7"
+                      >
+                        <Link href={child.href}>
+                          <FontAwesomeIcon icon={child.icon} />
+                          <span>{child.title}</span>
+                        </Link>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarGroupContent>
+              </CollapsibleContent>
+            </SidebarGroup>
+          </Collapsible>
+        );
+      } else {
+        // Renderiza un botón normal si no tiene hijos
+        return (
+          <SidebarMenuItem key={item.title}>
+            <SidebarMenuButton
+              asChild
+              variant={userProfile}
+              isActive={
+                pathName.split("/")[2] === item.href.split("/")[2]
+                  ? true
+                  : false
+              }
+            >
+              <Link href={item.href}>
+                <FontAwesomeIcon icon={item.icon} />
+                <span>{item.title}</span>
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        );
+      }
+    });
   };
   return (
     <Sidebar collapsible="icon" variant={userProfile}>

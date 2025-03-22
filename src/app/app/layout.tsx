@@ -12,7 +12,7 @@ export default async function Layout({
   return (
     <div className="h-screen w-screen">
       <SidebarProvider defaultOpen={defaultOpen}>
-        <AppSidebar userProfile="reviewer" />
+        <AppSidebar userProfile="manager" />
         <main className="aling-content-start grid h-full w-full grid-cols-12 gap-x-2 gap-y-6 bg-background px-4 pb-6">
           {children}
         </main>
