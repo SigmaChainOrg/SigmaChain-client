@@ -31,6 +31,7 @@
   --color-warming: #f6b819;
   --color-success: #4caf50;
   --color-info: #140e59;
+  --color-gray: #b1b2b5;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);

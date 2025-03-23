@@ -69,3 +69,26 @@ export function ActivityItem(activity: Activity) {
     </div>
   );
 }
+
+export function ActivityItemView(activity: Activity) {
+  return (
+    <div
+      key={activity.id}
+      className="grid grid-cols-5 flex-row items-center gap-2 border-[1px] border-solid border-gray p-4"
+    >
+      <p className="w-auto">
+        <b>{activity.name}</b>
+      </p>
+      <p className="w-auto">{activity.reviewerGroup}</p>
+      <p className="w-auto">{activity.responsable}</p>
+      {/* Botón para añadir formulario la actividad */}
+      <Button variant="secondary" onClick={() => {}}>
+        Añadir formulario
+      </Button>
+      {/* Botón para gestionar la información a mostrar de la actividad */}
+      <Button variant="secondary" onClick={() => {}}>
+        Gestionar información
+      </Button>
+    </div>
+  );
+}

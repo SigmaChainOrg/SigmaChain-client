@@ -19,7 +19,7 @@ import { BreadcrumbHeader } from "@/components/shadcn/header";
 import { Input, Textarea } from "@/components/shadcn/input";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@radix-ui/react-separator";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -46,6 +46,7 @@ const solicitudeData = {
 };
 
 export default function Solicitudes() {
+  const router = useRouter();
   const pathName = usePathname();
   const { activities, addActivity } = useActivityStore();
   const saveButtons = {
@@ -58,6 +59,8 @@ export default function Solicitudes() {
   function onSubmit(data: z.infer<typeof SolicitudeTemplateSchema>) {
     const solicitudeData = { data: data, activities: activities };
     console.log("You submitted the following values: ", solicitudeData);
+    const solicitudeId = "1";
+    router.push(`/app/solicitudes/solicitudes-sin-publicar/${solicitudeId}`);
   }
   return (
     <>
