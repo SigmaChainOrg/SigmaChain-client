@@ -1,8 +1,8 @@
 "use client";
-import { ActivityItem } from "@/app/solicitudes/components/activityItemManager";
-import { Field } from "@/app/solicitudes/components/field";
-import { SaveGroup } from "@/app/solicitudes/components/save-group";
-import { useActivityStore } from "@/app/solicitudes/state/activityItem";
+import { ActivityItem } from "@/app/request/components/activityItemManager";
+import { Field } from "@/app/request/components/field";
+import { SaveGroup } from "@/app/request/components/save-group";
+import { useActivityStore } from "@/app/request/state/activityItem";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/components/shadcn/card";
 import { Combobox } from "@/components/shadcn/combobox";
