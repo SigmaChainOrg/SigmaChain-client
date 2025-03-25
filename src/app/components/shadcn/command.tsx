@@ -11,7 +11,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/shadcn/dialog";
-import { cn } from "@/lib/shadcn/utils";
+import { cn } from "@/features/shadcn/services/utils";
 
 function Command({
   className,

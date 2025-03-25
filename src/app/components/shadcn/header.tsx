@@ -10,8 +10,8 @@ import {
 import { Button } from "@/components/shadcn/button";
 import { Input } from "@/components/shadcn/input";
 import { SidebarTrigger } from "@/components/shadcn/sidebar";
-import { routes } from "@/lib/routes";
-import { cn } from "@/lib/shadcn/utils";
+import { cn } from "@/features/shadcn/services/utils";
+import { routes } from "@/routes";
 import {
   faBell,
   faFilter,

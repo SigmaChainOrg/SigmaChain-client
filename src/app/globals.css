@@ -5,6 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --background-image-ucuenca: url("/images/ucuenca.jpg");
   --spacing: 4px;
   --font-size: 16px;
   --radius: 8px;
@@ -92,7 +93,6 @@ p {
     text-wrap: balance;
   }
 }
-
 .dark {
   --sidebar: hsl(240 5.9% 10%);
   --sidebar-foreground: hsl(240 4.8% 95.9%);
