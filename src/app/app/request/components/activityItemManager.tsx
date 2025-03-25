@@ -1,8 +1,5 @@
 "use client";
-import {
-  Activity,
-  useActivityStore,
-} from "@/app/solicitudes/state/activityItem";
+import { Activity, useActivityStore } from "@/app/request/state/activityItem";
 import { Button } from "@/components/shadcn/button";
 import { Combobox } from "@/components/shadcn/combobox";
 import { Input } from "@/components/shadcn/input";
