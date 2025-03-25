@@ -49,7 +49,7 @@ const commonMenuItems = [
   { title: "Dashboard", href: routes["dashboard"], icon: faHome, children: [] },
   {
     title: "Solicitudes",
-    href: routes["solicitudes"],
+    href: routes["request"],
     icon: faFileLines,
     children: [],
   },
@@ -64,17 +64,17 @@ const menuItems = {
     },
     {
       title: "Solicitudes",
-      href: routes["solicitudes"],
+      href: routes["request"],
       icon: faFileLines,
       children: [
         {
           title: "Publicadas",
-          href: routes["solicitudes-publicadas"],
+          href: routes["published-request"],
           icon: faFileLines,
         },
         {
           title: "Sin publicar",
-          href: routes["solicitudes-sin-publicar"],
+          href: routes["unpublished-request"],
           icon: faFileLines,
         },
       ],
