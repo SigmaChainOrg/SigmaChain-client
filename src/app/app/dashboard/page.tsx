@@ -16,7 +16,7 @@ export default function Home() {
         <DashboardHeader
           accessButon={{
             name: "Crear nueva solicitud",
-            ref: routes["crear-modelo-solicitud"],
+            ref: routes["request-pattern"],
           }}
         />
       </div>
@@ -24,7 +24,7 @@ export default function Home() {
       <Button
         className="col-start-1 col-end-3"
         onClick={() => {
-          router.push(routes["crear-modelo-solicitud"]);
+          router.push(routes["request-pattern"]);
         }}
       >
         Crear nueva solicitud

@@ -1,8 +1,8 @@
 export const routes = {
-  "crear-modelo-solicitud": "/app/solicitudes/crear-modelo-solicitud",
-  "solicitudes-sin-publicar": "/app/solicitudes/solicitudes-sin-publicar",
-  "solicitudes-publicadas": "/app/solicitudes/solicitudes-publicadas",
-  solicitudes: "/app/solicitudes",
+  "request-pattern": "/app/request/request-pattern",
+  "unpublished-request": "/app/request/unpublished-request",
+  "published-request": "/app/request/published-request",
+  request: "/app/request",
   dashboard: "/app/dashboard",
   signin: "/signin",
   signup: "/signup",
