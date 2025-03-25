@@ -17,7 +17,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/shadcn/dropdown-menu";
-import { cn } from "@/lib/shadcn/utils";
+import { cn } from "@/features/shadcn/services/utils";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 

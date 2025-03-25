@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "@/components/shadcn/button";
-import { routes } from "@/lib/routes";
+import { routes } from "@/routes";
 import { useRouter } from "next/navigation";
 
 import { DashboardHeader } from "@/components/shadcn/header";

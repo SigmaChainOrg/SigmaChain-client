@@ -15,7 +15,7 @@ import {
   FormMessage,
 } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
-import { routes } from "@/lib/routes";
+import { routes } from "@/routes";
 import fetchUserData from "@/signin/data";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
@@ -73,7 +73,7 @@ export default function SingIn() {
 
   return (
     <div className="m-0 grid h-screen w-screen grid-cols-12 gap-x-8 bg-primary px-16 font-[family-name:var(--font-geist-sans)] sm:p-0">
-      <div className="col-start-1 col-end-7 place-content-center bg-[url(./ucuenca.jpg)] bg-[auto_120%] bg-left-bottom bg-no-repeat"></div>
+      <div className="col-start-1 col-end-7 place-content-center bg-ucuenca bg-[auto_120%] bg-left-bottom bg-no-repeat"></div>
       <main className="col-start-8 col-end-12 place-content-center">
         <Card>
           {step === 1 && (

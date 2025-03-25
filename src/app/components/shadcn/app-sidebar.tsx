@@ -30,7 +30,7 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/shadcn/collapsible";
-import { routes } from "@/lib/routes";
+import { routes } from "@/routes";
 import {
   faEllipsisVertical,
   faFileEdit,

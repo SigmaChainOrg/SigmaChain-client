@@ -11,7 +11,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/shadcn/popover";
-import { cn } from "@/lib/shadcn/utils";
+import { cn } from "@/features/shadcn/services/utils";
 
 export function DatePickerDemo() {
   const [date, setDate] = React.useState<Date>();

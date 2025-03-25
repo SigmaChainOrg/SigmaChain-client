@@ -1,7 +1,7 @@
 "use client";
-import { ActivityItemView } from "@/app/solicitudes/components/manager/activityItem";
+import { ActivityItemView } from "@/app/solicitudes/components/activityItemManager";
 import { SaveGroup } from "@/app/solicitudes/components/save-group";
-import { useActivityStore } from "@/app/solicitudes/utils/zustand/activityItem";
+import { useActivityStore } from "@/app/solicitudes/state/activityItem";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/components/shadcn/card";
 import { BreadcrumbHeader } from "@/components/shadcn/header";

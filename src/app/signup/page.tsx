@@ -24,8 +24,8 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/shadcn/popover";
-import { routes } from "@/lib/routes";
-import { cn } from "@/lib/shadcn/utils";
+import { cn } from "@/features/shadcn/services/utils";
+import { routes } from "@/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
@@ -138,7 +138,7 @@ export default function Sign_up() {
   const [date, setDate] = useState<Date | undefined>(new Date());
 
   return (
-    <div className="m-0 grid h-screen w-screen grid-cols-12 gap-8 bg-primary bg-[url(./ucuenca.jpg)] bg-contain bg-left-top bg-no-repeat px-4">
+    <div className="m-0 grid h-screen w-screen grid-cols-12 gap-8 bg-primary bg-ucuenca bg-contain bg-left-top bg-no-repeat px-4">
       <main className="col-start-7 col-end-11 place-content-center">
         <Card>
           {step === 1 && (
