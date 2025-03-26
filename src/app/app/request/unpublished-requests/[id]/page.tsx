@@ -45,14 +45,12 @@ export default function Solicitudes() {
         <CardContent>
           <h3>{solicitudeData.name}</h3>
           {Object.entries(solicitudeData.data).map(([key, fieldData]) => (
-            <>
-              <h5 className="row-start-1" key={key}>
-                {fieldData.name}
-              </h5>
+            <div key={key}>
+              <h5 className="row-start-1">{fieldData.name}</h5>
               <p className="col-start-1 col-end-3 row-start-2 font-raleway">
                 {fieldData.description}
               </p>
-            </>
+            </div>
           ))}
           <div className="mt-4 flex w-full flex-row items-center justify-between">
             <h4 className="font-poppins">

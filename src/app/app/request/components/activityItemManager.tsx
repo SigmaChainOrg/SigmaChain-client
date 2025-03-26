@@ -21,7 +21,7 @@ export function ActivityItem(activity: Activity) {
   return (
     <div
       key={activity.id}
-      className="flex w-full flex-row items-center justify-start gap-5 border-[1px] border-solid border-background py-4 pr-4"
+      className="grid w-full grid-cols-[15px_minmax(200px,_1fr)_minmax(200px,_1fr)_minmax(200px,_1fr)_32px] items-center gap-5 border-[1px] border-solid border-background py-4 pr-4"
     >
       <div className="h-full cursor-grab place-content-center bg-background px-1">
         <FontAwesomeIcon icon={faEllipsisVertical} />
@@ -35,30 +35,27 @@ export function ActivityItem(activity: Activity) {
       />
       {/* Combobox para el grupo revisor */}
       <Combobox
-        selectDefault="Seleccionar grupo"
         options={[
           { value: "ingenieria", label: "Ingeniería" },
           { value: "marketing", label: "Marketing" },
         ]}
-        onChange={(value) => setActivityReviewerGroup(activity.id, value)} // Actualiza el grupo revisor
+        onChange={(option) =>
+          setActivityReviewerGroup(activity.id, option.value)
+        } // Actualiza el grupo revisor
       />
       {/* Combobox para el responsable */}
-      <div className="flex flex-row items-center gap-2">
-        <Combobox
-          selectDefault="Seleccionar responsable"
-          options={[
-            { value: "anita", label: "Anita" },
-            { value: "juan", label: "Juan" },
-          ]}
-          onChange={(value) => setActivityResponsable(activity.id, value)} // Actualiza el responsable
-        >
-          <FontAwesomeIcon icon={faUser} className="rounded-[100px]" />
-        </Combobox>
-      </div>
+      <Combobox
+        options={[
+          { value: "anita", label: "Anita" },
+          { value: "juan", label: "Juan" },
+        ]}
+        onChange={(option) => setActivityResponsable(activity.id, option.value)} // Actualiza el responsable
+      />
+
       {/* Botón para eliminar la actividad */}
       <Button
         variant="ghost"
-        className="hover:bg-danger [&>svg]:text-danger [&>svg]:hover:text-white"
+        className="hover:bg-danger [&>svg]:text-danger hover:[&>svg]:text-white"
         onClick={() => deleteActivity(activity.id)}
       >
         <FontAwesomeIcon icon={faTrash} />
