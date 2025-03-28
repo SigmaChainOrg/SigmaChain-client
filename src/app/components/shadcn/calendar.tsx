@@ -44,14 +44,11 @@ function Calendar({
           "day-range-start aria-selected:bg-primary aria-selected:text-primary-foreground",
         day_range_end:
           "day-range-end aria-selected:bg-primary aria-selected:text-primary-foreground",
-        day_selected:
-          "opacity-100 hover:bg-background focus:border-secondary focus:border-[2px]",
+        day_selected: "opacity-100 hover:bg-background focus:border-secondary focus:border-[2px]",
         day_today: "bg-complement opacity-70 text-primary hover:text-primary",
-        day_outside:
-          "day-outside text-muted-foreground aria-selected:text-muted-foreground",
+        day_outside: "day-outside text-muted-foreground aria-selected:text-muted-foreground",
         day_disabled: "text-muted-foreground opacity-50",
-        day_range_middle:
-          "aria-selected:bg-accent aria-selected:text-accent-foreground",
+        day_range_middle: "aria-selected:bg-accent aria-selected:text-accent-foreground",
         day_hidden: "invisible",
         ...classNames,
       }}

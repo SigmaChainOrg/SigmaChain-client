@@ -3,20 +3,12 @@ import { Activity, useActivityStore } from "@/app/request/state/activityItem";
 import { Button } from "@/components/shadcn/button";
 import { Combobox } from "@/components/shadcn/combobox";
 import { Input } from "@/components/shadcn/input";
-import {
-  faEllipsisVertical,
-  faTrash,
-  faUser,
-} from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export function ActivityItem(activity: Activity) {
-  const {
-    deleteActivity,
-    setActivityName,
-    setActivityReviewerGroup,
-    setActivityResponsable,
-  } = useActivityStore();
+  const { deleteActivity, setActivityName, setActivityReviewerGroup, setActivityResponsable } =
+    useActivityStore();
 
   return (
     <div
@@ -39,9 +31,7 @@ export function ActivityItem(activity: Activity) {
           { value: "ingenieria", label: "Ingeniería" },
           { value: "marketing", label: "Marketing" },
         ]}
-        onChange={(option) =>
-          setActivityReviewerGroup(activity.id, option.value)
-        } // Actualiza el grupo revisor
+        onChange={(option) => setActivityReviewerGroup(activity.id, option.value)} // Actualiza el grupo revisor
       />
       {/* Combobox para el responsable */}
       <Combobox

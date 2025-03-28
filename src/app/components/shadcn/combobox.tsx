@@ -9,11 +9,7 @@ import {
   CommandItem,
   CommandList,
 } from "@/components/shadcn/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadcn/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
 import { cn } from "@/features/shadcn/services/utils";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -46,8 +42,7 @@ export function Combobox({
             className="truncate overflow-hidden whitespace-nowrap"
             title={
               selectedValue
-                ? options.find((option) => option.value === selectedValue)
-                    ?.label
+                ? options.find((option) => option.value === selectedValue)?.label
                 : selectDefault
             } // Muestra el texto completo al pasar el cursor
           >
@@ -79,9 +74,7 @@ export function Combobox({
                   <Check
                     className={cn(
                       "ml-auto",
-                      selectedValue === option.value
-                        ? "opacity-100"
-                        : "opacity-0",
+                      selectedValue === option.value ? "opacity-100" : "opacity-0",
                     )}
                   />
                 </CommandItem>

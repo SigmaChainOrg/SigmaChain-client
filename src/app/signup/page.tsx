@@ -19,11 +19,7 @@ import {
   FormMessage,
 } from "@/components/shadcn/form";
 import { Input } from "@/components/shadcn/input";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadcn/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
 import { cn } from "@/features/shadcn/services/utils";
 import { routes } from "@/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,10 +43,7 @@ const emailPasswordSchema = z
       .regex(/[a-z]/, "Password must contain at least one lowercase letter")
       .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
       .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[@$!%_*?&-]/,
-        "Password must contain at least one special character",
-      ),
+      .regex(/[@$!%_*?&-]/, "Password must contain at least one special character"),
     repeatPassword: z.string(),
   })
   .refine((data) => data.password === data.repeatPassword, {
@@ -101,9 +94,7 @@ export default function Sign_up() {
   });
   const router = useRouter();
 
-  const additionalDetailsForm = useForm<
-    z.infer<typeof additionalDetailsSchema>
-  >({
+  const additionalDetailsForm = useForm<z.infer<typeof additionalDetailsSchema>>({
     resolver: zodResolver(additionalDetailsSchema),
     defaultValues: {
       firstName: "",
@@ -114,23 +105,17 @@ export default function Sign_up() {
     },
   });
 
-  function handleEmailPasswordSubmit(
-    data: z.infer<typeof emailPasswordSchema>,
-  ) {
+  function handleEmailPasswordSubmit(data: z.infer<typeof emailPasswordSchema>) {
     console.log("Email and Password:", data);
     setStep(2); // Move to the next step
   }
 
-  function handleValidationCodeSubmit(
-    data: z.infer<typeof validationCodeSchema>,
-  ) {
+  function handleValidationCodeSubmit(data: z.infer<typeof validationCodeSchema>) {
     console.log("Validation code:", data.validationCode);
     setStep(3); // Move to the next step
   }
 
-  function handleAdditionalDetailsSubmit(
-    data: z.infer<typeof additionalDetailsSchema>,
-  ) {
+  function handleAdditionalDetailsSubmit(data: z.infer<typeof additionalDetailsSchema>) {
     console.log("Additional details:", data);
     router.push(routes["dashboard"]);
     // Handle final submission
@@ -145,17 +130,13 @@ export default function Sign_up() {
             <>
               <CardHeader>
                 <CardTitle>Create an account!</CardTitle>
-                <CardDescription>
-                  It&apos;s free, it&apos;s open source.
-                </CardDescription>
+                <CardDescription>It&apos;s free, it&apos;s open source.</CardDescription>
               </CardHeader>
               <CardContent>
                 <Form {...emailPasswordForm}>
                   <form
                     className="flex w-full flex-col space-y-3"
-                    onSubmit={emailPasswordForm.handleSubmit(
-                      handleEmailPasswordSubmit,
-                    )}
+                    onSubmit={emailPasswordForm.handleSubmit(handleEmailPasswordSubmit)}
                   >
                     <FormField
                       control={emailPasswordForm.control}
@@ -163,11 +144,7 @@ export default function Sign_up() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input
-                              type="email"
-                              placeholder="Email"
-                              {...field}
-                            />
+                            <Input type="email" placeholder="Email" {...field} />
                           </FormControl>
                           <FormMessage>
                             {emailPasswordForm.formState.errors.email?.message}
@@ -181,17 +158,10 @@ export default function Sign_up() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Password"
-                              {...field}
-                            />
+                            <Input type="password" placeholder="Password" {...field} />
                           </FormControl>
                           <FormMessage>
-                            {
-                              emailPasswordForm.formState.errors.password
-                                ?.message
-                            }
+                            {emailPasswordForm.formState.errors.password?.message}
                           </FormMessage>
                         </FormItem>
                       )}
@@ -202,24 +172,15 @@ export default function Sign_up() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Repeat password"
-                              {...field}
-                            />
+                            <Input type="password" placeholder="Repeat password" {...field} />
                           </FormControl>
                           <FormMessage>
-                            {
-                              emailPasswordForm.formState.errors.repeatPassword
-                                ?.message
-                            }
+                            {emailPasswordForm.formState.errors.repeatPassword?.message}
                           </FormMessage>
                         </FormItem>
                       )}
                     />
-                    <p className="text-md text-gray-500">
-                      At least 8 characters.
-                    </p>
+                    <p className="text-md text-gray-500">At least 8 characters.</p>
                     <div className="w-full">
                       <Button className="w-full px-0" type="submit">
                         Sign Up
@@ -255,30 +216,19 @@ export default function Sign_up() {
                 <Form {...validationCodeForm}>
                   <form
                     className="flex w-full flex-col space-y-3"
-                    onSubmit={validationCodeForm.handleSubmit(
-                      handleValidationCodeSubmit,
-                    )}
+                    onSubmit={validationCodeForm.handleSubmit(handleValidationCodeSubmit)}
                   >
                     <FormField
                       control={validationCodeForm.control}
                       name="validationCode"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            We sent a verification code to your email.
-                          </FormLabel>
+                          <FormLabel>We sent a verification code to your email.</FormLabel>
                           <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="Enter 8-digit code"
-                              {...field}
-                            />
+                            <Input type="text" placeholder="Enter 8-digit code" {...field} />
                           </FormControl>
                           <FormMessage>
-                            {
-                              validationCodeForm.formState.errors.validationCode
-                                ?.message
-                            }
+                            {validationCodeForm.formState.errors.validationCode?.message}
                           </FormMessage>
                         </FormItem>
                       )}
@@ -313,9 +263,7 @@ export default function Sign_up() {
                 <Form {...additionalDetailsForm}>
                   <form
                     className="flex w-full flex-col space-y-4"
-                    onSubmit={additionalDetailsForm.handleSubmit(
-                      handleAdditionalDetailsSubmit,
-                    )}
+                    onSubmit={additionalDetailsForm.handleSubmit(handleAdditionalDetailsSubmit)}
                   >
                     <FormField
                       control={additionalDetailsForm.control}
@@ -323,17 +271,10 @@ export default function Sign_up() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="First Name"
-                              {...field}
-                            />
+                            <Input type="text" placeholder="First Name" {...field} />
                           </FormControl>
                           <FormMessage>
-                            {
-                              additionalDetailsForm.formState.errors.firstName
-                                ?.message
-                            }
+                            {additionalDetailsForm.formState.errors.firstName?.message}
                           </FormMessage>
                         </FormItem>
                       )}
@@ -344,17 +285,10 @@ export default function Sign_up() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="Last Name"
-                              {...field}
-                            />
+                            <Input type="text" placeholder="Last Name" {...field} />
                           </FormControl>
                           <FormMessage>
-                            {
-                              additionalDetailsForm.formState.errors.lastName
-                                ?.message
-                            }
+                            {additionalDetailsForm.formState.errors.lastName?.message}
                           </FormMessage>
                         </FormItem>
                       )}
@@ -378,10 +312,7 @@ export default function Sign_up() {
                               />
                             </FormControl>
                             <FormMessage>
-                              {
-                                additionalDetailsForm.formState.errors.idType
-                                  ?.message
-                              }
+                              {additionalDetailsForm.formState.errors.idType?.message}
                             </FormMessage>
                           </FormItem>
                         )}
@@ -392,17 +323,10 @@ export default function Sign_up() {
                         render={({ field }) => (
                           <FormItem>
                             <FormControl>
-                              <Input
-                                type="text"
-                                placeholder="Número de ID"
-                                {...field}
-                              />
+                              <Input type="text" placeholder="Número de ID" {...field} />
                             </FormControl>
                             <FormMessage>
-                              {
-                                additionalDetailsForm.formState.errors.id
-                                  ?.message
-                              }
+                              {additionalDetailsForm.formState.errors.id?.message}
                             </FormMessage>
                           </FormItem>
                         )}
@@ -418,25 +342,19 @@ export default function Sign_up() {
                             <PopoverTrigger className="w-full" asChild>
                               <FormControl>
                                 <Button variant="secondary" className="w-full">
-                                  {field.value
-                                    ? format(field.value, "PPP")
-                                    : "Fecha de nacimiento"}
+                                  {field.value ? format(field.value, "PPP") : "Fecha de nacimiento"}
                                   <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                                 </Button>
                               </FormControl>
                             </PopoverTrigger>
-                            <PopoverContent
-                              className="w-auto p-0"
-                              align="start"
-                            >
+                            <PopoverContent className="w-auto p-0" align="start">
                               <div>
                                 <Calendar
                                   mode="single"
                                   selected={field.value}
                                   onSelect={field.onChange}
                                   disabled={(date) =>
-                                    date > new Date() ||
-                                    date < new Date("1900-01-01")
+                                    date > new Date() || date < new Date("1900-01-01")
                                   }
                                   initialFocus
                                 />
@@ -444,10 +362,7 @@ export default function Sign_up() {
                             </PopoverContent>
                           </Popover>
                           <FormMessage>
-                            {
-                              additionalDetailsForm.formState.errors.birthdate
-                                ?.message
-                            }
+                            {additionalDetailsForm.formState.errors.birthdate?.message}
                           </FormMessage>
                         </FormItem>
                       )}
