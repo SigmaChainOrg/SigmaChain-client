@@ -38,10 +38,7 @@ export default function Solicitudes() {
         <BreadcrumbHeader estado={true} path={pathName} />
       </div>
 
-      <Card
-        variant="solicitude"
-        className="col-start-3 col-end-11 md:col-start-2 md:col-end-12"
-      >
+      <Card variant="solicitude" className="col-start-3 col-end-11 md:col-start-2 md:col-end-12">
         <CardContent>
           <h3>{solicitudeData.name}</h3>
           {Object.entries(solicitudeData.data).map(([key, fieldData]) => (
@@ -53,16 +50,10 @@ export default function Solicitudes() {
             </div>
           ))}
           <div className="mt-4 flex w-full flex-row items-center justify-between">
-            <h4 className="font-poppins">
-              {" "}
-              Actividades para completar la solicitud
-            </h4>
+            <h4 className="font-poppins"> Actividades para completar la solicitud</h4>
             <Button variant="secondary"> Visualizar flujo </Button>
           </div>
-          <Separator
-            orientation="horizontal"
-            className="mt-[-12px] h-[1px] w-full bg-primary"
-          />
+          <Separator orientation="horizontal" className="mt-[-12px] h-[1px] w-full bg-primary" />
           <div className="flex w-full flex-col gap-1">
             {activities.map((activity) => (
               <ActivityItemView key={activity.id} {...activity} />
@@ -70,10 +61,7 @@ export default function Solicitudes() {
           </div>
         </CardContent>
       </Card>
-      <SaveGroup
-        className="col-start-3 col-end-12 place-self-end"
-        buttons={saveButtons}
-      />
+      <SaveGroup className="col-start-3 col-end-12 place-self-end" buttons={saveButtons} />
     </>
   );
 }

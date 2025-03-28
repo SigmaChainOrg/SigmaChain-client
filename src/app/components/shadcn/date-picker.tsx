@@ -6,11 +6,7 @@ import * as React from "react";
 
 import { Button } from "@/components/shadcn/button";
 import { Calendar } from "@/components/shadcn/calendar";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/shadcn/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
 import { cn } from "@/features/shadcn/services/utils";
 
 export function DatePickerDemo() {
@@ -31,12 +27,7 @@ export function DatePickerDemo() {
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-auto p-0">
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={setDate}
-          initialFocus
-        />
+        <Calendar mode="single" selected={date} onSelect={setDate} initialFocus />
       </PopoverContent>
     </Popover>
   );

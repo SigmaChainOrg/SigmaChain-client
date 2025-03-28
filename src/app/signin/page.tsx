@@ -1,11 +1,5 @@
 "use client";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/shadcn/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/shadcn/card";
 import {
   Form,
   FormControl,
@@ -54,18 +48,14 @@ export default function SingIn() {
     },
   });
 
-  async function handleEmailPasswordSubmit(
-    data: z.infer<typeof emailPasswordSchema>,
-  ) {
+  async function handleEmailPasswordSubmit(data: z.infer<typeof emailPasswordSchema>) {
     console.log("Email and Password:", data);
     const userData = await fetchUserData(data);
     console.log("User Data:", userData);
     setStep(2); // Move to the next step
   }
   const router = useRouter();
-  function handleValidationCodeSubmit(
-    data: z.infer<typeof validationCodeSchema>,
-  ) {
+  function handleValidationCodeSubmit(data: z.infer<typeof validationCodeSchema>) {
     console.log("Validation code:", data.validationCode);
     router.push(routes["dashboard"]);
     // Handle validation code submission
@@ -85,9 +75,7 @@ export default function SingIn() {
                 <Form {...emailPasswordForm}>
                   <form
                     className="flex w-full flex-col space-y-3"
-                    onSubmit={emailPasswordForm.handleSubmit(
-                      handleEmailPasswordSubmit,
-                    )}
+                    onSubmit={emailPasswordForm.handleSubmit(handleEmailPasswordSubmit)}
                   >
                     <FormField
                       control={emailPasswordForm.control}
@@ -95,11 +83,7 @@ export default function SingIn() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input
-                              type="email"
-                              placeholder="Enter your email"
-                              {...field}
-                            />
+                            <Input type="email" placeholder="Enter your email" {...field} />
                           </FormControl>
                           <FormMessage>
                             {emailPasswordForm.formState.errors.email?.message}
@@ -113,17 +97,10 @@ export default function SingIn() {
                       render={({ field }) => (
                         <FormItem>
                           <FormControl>
-                            <Input
-                              type="password"
-                              placeholder="Enter your password"
-                              {...field}
-                            />
+                            <Input type="password" placeholder="Enter your password" {...field} />
                           </FormControl>
                           <FormMessage>
-                            {
-                              emailPasswordForm.formState.errors.password
-                                ?.message
-                            }
+                            {emailPasswordForm.formState.errors.password?.message}
                           </FormMessage>
                         </FormItem>
                       )}
@@ -163,30 +140,19 @@ export default function SingIn() {
                 <Form {...validationCodeForm}>
                   <form
                     className="flex w-full flex-col space-y-3"
-                    onSubmit={validationCodeForm.handleSubmit(
-                      handleValidationCodeSubmit,
-                    )}
+                    onSubmit={validationCodeForm.handleSubmit(handleValidationCodeSubmit)}
                   >
                     <FormField
                       control={validationCodeForm.control}
                       name="validationCode"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>
-                            We sent a verification code to your email.
-                          </FormLabel>
+                          <FormLabel>We sent a verification code to your email.</FormLabel>
                           <FormControl>
-                            <Input
-                              type="text"
-                              placeholder="Enter 8-digit code"
-                              {...field}
-                            />
+                            <Input type="text" placeholder="Enter 8-digit code" {...field} />
                           </FormControl>
                           <FormMessage>
-                            {
-                              validationCodeForm.formState.errors.validationCode
-                                ?.message
-                            }
+                            {validationCodeForm.formState.errors.validationCode?.message}
                           </FormMessage>
                         </FormItem>
                       )}

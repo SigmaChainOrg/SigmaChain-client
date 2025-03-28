@@ -17,9 +17,7 @@ interface ActivityStore {
 }
 
 export const useActivityStore = create<ActivityStore>((set) => ({
-  activities: [
-    { id: 0, name: "Actividad inicial", reviewerGroup: "", responsable: "" },
-  ],
+  activities: [{ id: 0, name: "Actividad inicial", reviewerGroup: "", responsable: "" }],
   addActivity: (): void =>
     set((state) => ({
       activities: [

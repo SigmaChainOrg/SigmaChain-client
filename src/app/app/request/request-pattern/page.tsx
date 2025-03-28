@@ -7,13 +7,7 @@ import { Badge } from "@/components/shadcn/badge";
 import { Button } from "@/components/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/components/shadcn/card";
 import { Combobox } from "@/components/shadcn/combobox";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/shadcn/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/shadcn/form";
 import { BreadcrumbHeader } from "@/components/shadcn/header";
 import { Input } from "@/components/shadcn/input";
 import { Textarea } from "@/components/shadcn/textarea";
@@ -36,8 +30,7 @@ const solicitudeData = {
   },
   fieldTwo: {
     name: "Grupo solicitante",
-    description:
-      "Escoja el grupo de usuarios que podrán iniciar una solicitud.",
+    description: "Escoja el grupo de usuarios que podrán iniciar una solicitud.",
     tipo: "combobox",
     options: ["Grupo a", "Grupo b", "Grupo c"],
   },
@@ -52,9 +45,9 @@ export default function Solicitudes() {
   const router = useRouter();
   const pathName = usePathname();
   const { activities, addActivity } = useActivityStore();
-  const [selectedGroups, setSelectedGroups] = React.useState<
-    { value: string; label: string }[]
-  >([]); // Almacena objetos { value, label }
+  const [selectedGroups, setSelectedGroups] = React.useState<{ value: string; label: string }[]>(
+    [],
+  ); // Almacena objetos { value, label }
 
   const SolicitudeTemplateSchema = z.object({
     name: z.string().min(5, { message: "El nombre es muy corto o está vacío" }),
@@ -124,9 +117,7 @@ export default function Solicitudes() {
                         {...field}
                       />
                     </FormControl>
-                    <FormMessage>
-                      {form.formState.errors.name?.message}
-                    </FormMessage>
+                    <FormMessage>{form.formState.errors.name?.message}</FormMessage>
                   </FormItem>
                 )}
               />
@@ -136,11 +127,7 @@ export default function Solicitudes() {
                 <Field key={key} fieldData={fieldData}>
                   <FormField
                     control={form.control}
-                    name={
-                      fieldData.tipo === "combobox"
-                        ? "requesterGroup"
-                        : "description"
-                    }
+                    name={fieldData.tipo === "combobox" ? "requesterGroup" : "description"}
                     render={({ field }) => (
                       <FormItem>
                         <FormControl>
@@ -162,10 +149,7 @@ export default function Solicitudes() {
                               {/* Renderiza los badges debajo del Combobox */}
                               <div className="mt-4 flex flex-wrap gap-2">
                                 {selectedGroups.map((group) => (
-                                  <Badge
-                                    key={group.value}
-                                    className="flex items-center gap-2"
-                                  >
+                                  <Badge key={group.value} className="flex items-center gap-2">
                                     {group.label} {/* Muestra el label */}
                                     <Button
                                       variant="ghost"
@@ -182,10 +166,7 @@ export default function Solicitudes() {
                             </div>
                           ) : (
                             fieldData.tipo === "textarea" && (
-                              <Textarea
-                                placeholder="tu texto aquí"
-                                {...field}
-                              />
+                              <Textarea placeholder="tu texto aquí" {...field} />
                             )
                           )}
                         </FormControl>
@@ -199,10 +180,7 @@ export default function Solicitudes() {
                 </Field>
               ))}
               <div className="mt-4 flex w-full flex-row items-center justify-between">
-                <h4 className="font-poppins">
-                  {" "}
-                  Actividades para completar la solicitud
-                </h4>
+                <h4 className="font-poppins"> Actividades para completar la solicitud</h4>
                 <Button variant="secondary"> Visualizar flujo </Button>
               </div>
               <Separator
@@ -224,10 +202,7 @@ export default function Solicitudes() {
               </Button>
             </CardContent>
           </Card>
-          <SaveGroup
-            className="col-start-3 col-end-12 place-self-end"
-            buttons={saveButtons}
-          />
+          <SaveGroup className="col-start-3 col-end-12 place-self-end" buttons={saveButtons} />
         </form>
       </Form>
     </>

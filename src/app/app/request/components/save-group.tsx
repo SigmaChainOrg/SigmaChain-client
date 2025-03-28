@@ -13,9 +13,7 @@ export function SaveGroup({
   className?: string; // Agregamos className como una propiedad opcional
 }) {
   return (
-    <div
-      className={cn("flex flex-row justify-center gap-4 px-5 py-6", className)}
-    >
+    <div className={cn("flex flex-row justify-center gap-4 px-5 py-6", className)}>
       <Button variant="secondary" onClick={buttons.secondary.onClick}>
         {buttons.secondary.value}
       </Button>

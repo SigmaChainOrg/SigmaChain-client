@@ -12,23 +12,13 @@ import { Input } from "@/components/shadcn/input";
 import { SidebarTrigger } from "@/components/shadcn/sidebar";
 import { cn } from "@/features/shadcn/services/utils";
 import { routes } from "@/routes";
-import {
-  faBell,
-  faFilter,
-  faHome,
-  faMessage,
-  faSearch,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBell, faFilter, faHome, faMessage, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Slash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
-export function DashboardHeader({
-  accessButon,
-}: {
-  accessButon: { name: string; ref: string };
-}) {
+export function DashboardHeader({ accessButon }: { accessButon: { name: string; ref: string } }) {
   const router = useRouter();
   return (
     <div className="mx-[-16px] flex flex-row place-content-between gap-2 border-[1px] border-solid border-gray-300 bg-white px-4 py-5">
@@ -61,13 +51,7 @@ export function DashboardHeader({
   );
 }
 
-export function BreadcrumbHeader({
-  estado,
-  path,
-}: {
-  estado: boolean;
-  path: string;
-}) {
+export function BreadcrumbHeader({ estado, path }: { estado: boolean; path: string }) {
   const pathItems = path.split("/").filter(Boolean); // Split the path and remove empty strings
   const lastItem = pathItems.pop();
   return (
@@ -107,12 +91,7 @@ export function BreadcrumbHeader({
         </Breadcrumb>
       </div>
       <div className="flex flex-row items-center gap-2">
-        <p
-          className={cn(
-            "text-sm italic",
-            estado ? "text-success" : "text-danger",
-          )}
-        >
+        <p className={cn("text-sm italic", estado ? "text-success" : "text-danger")}>
           estado: {estado ? "guardado" : "sin guardar"}
         </p>
         <Button variant="ghost">

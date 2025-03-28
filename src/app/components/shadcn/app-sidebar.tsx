@@ -13,11 +13,7 @@ import {
   SidebarSeparator,
 } from "@/components/shadcn/sidebar";
 
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/components/shadcn/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -99,25 +95,17 @@ type AppSidebarProps = {
 export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
   const pathName = usePathname();
 
-  const renderMenuItems = (
-    items: (typeof menuItems)[keyof typeof menuItems],
-  ) => {
+  const renderMenuItems = (items: (typeof menuItems)[keyof typeof menuItems]) => {
     return items.map((item) => {
       if (item.children && item.children.length > 0) {
         // Renderiza un Collapsible si el elemento tiene hijos
         return (
-          <Collapsible
-            key={item.title}
-            defaultOpen
-            className="group/collapsible"
-          >
+          <Collapsible key={item.title} defaultOpen className="group/collapsible">
             <SidebarGroup>
               <SidebarGroupLabel
                 asChild
                 className={
-                  pathName.split("/")[2] === item.href.split("/")[2]
-                    ? "text-complement"
-                    : ""
+                  pathName.split("/")[2] === item.href.split("/")[2] ? "text-complement" : ""
                 }
               >
                 <CollapsibleTrigger>
@@ -133,9 +121,7 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
                       <SidebarMenuButton
                         asChild
                         variant={userProfile}
-                        isActive={
-                          pathName.split("/")[3] === child.href.split("/")[3]
-                        }
+                        isActive={pathName.split("/")[3] === child.href.split("/")[3]}
                         className="pl-7"
                       >
                         <Link href={child.href}>
@@ -157,11 +143,7 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
             <SidebarMenuButton
               asChild
               variant={userProfile}
-              isActive={
-                pathName.split("/")[2] === item.href.split("/")[2]
-                  ? true
-                  : false
-              }
+              isActive={pathName.split("/")[2] === item.href.split("/")[2] ? true : false}
             >
               <Link href={item.href}>
                 <FontAwesomeIcon icon={item.icon} />
@@ -190,8 +172,7 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
                     : "bg-sidebar-manager-foreground"
                 }
               />
-              {userProfile in menuItems &&
-                renderMenuItems(menuItems[userProfile])}
+              {userProfile in menuItems && renderMenuItems(menuItems[userProfile])}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
@@ -199,9 +180,7 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
       <SidebarFooter>
         <SidebarSeparator
           className={
-            userProfile === "requester"
-              ? "bg-sidebar-manager"
-              : "bg-sidebar-manager-foreground"
+            userProfile === "requester" ? "bg-sidebar-manager" : "bg-sidebar-manager-foreground"
           }
         />
         <SidebarMenu>
@@ -225,10 +204,7 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
                   <FontAwesomeIcon icon={faEllipsisVertical} />
                 </SidebarMenuButton>
               </DropdownMenuTrigger>
-              <DropdownMenuContent
-                side="top"
-                className="w-[--radix-popper-anchor-width]"
-              >
+              <DropdownMenuContent side="top" className="w-[--radix-popper-anchor-width]">
                 <DropdownMenuItem>
                   <span>Account</span>
                 </DropdownMenuItem>

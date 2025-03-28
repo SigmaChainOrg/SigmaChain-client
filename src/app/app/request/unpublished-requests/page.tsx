@@ -21,9 +21,7 @@ export default function Solicitude() {
           }}
         />
       </div>
-      <h3 className="col-start-1 col-end-13 h-auto">
-        Solicitudes sin publicar
-      </h3>
+      <h3 className="col-start-1 col-end-13 h-auto">Solicitudes sin publicar</h3>
       <Button
         className="col-start-1 col-end-3"
         onClick={() => {
