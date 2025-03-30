@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/shadcn/button";
+import { Button } from "@/app/components/shadcn/button";
 import {
   Command,
   CommandEmpty,
@@ -8,8 +8,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-} from "@/components/shadcn/command";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
+} from "@/app/components/shadcn/command";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/shadcn/popover";
 import { cn } from "@/features/shadcn/services/utils";
 import { faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";

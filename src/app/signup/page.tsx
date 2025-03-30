@@ -1,6 +1,6 @@
 "use client";
-import { Button } from "@/components/shadcn/button";
-import { Calendar } from "@/components/shadcn/calendar";
+import { Button } from "@/app/components/shadcn/button";
+import { Calendar } from "@/app/components/shadcn/calendar";
 import {
   Card,
   CardContent,
@@ -8,8 +8,8 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/shadcn/card";
-import { Combobox } from "@/components/shadcn/combobox";
+} from "@/app/components/shadcn/card";
+import { Combobox } from "@/app/components/shadcn/combobox";
 import {
   Form,
   FormControl,
@@ -17,11 +17,11 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/components/shadcn/form";
-import { Input } from "@/components/shadcn/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
+} from "@/app/components/shadcn/form";
+import { Input } from "@/app/components/shadcn/input";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/shadcn/popover";
+import { routes } from "@/app/routes";
 import { cn } from "@/features/shadcn/services/utils";
-import { routes } from "@/routes";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
