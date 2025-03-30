@@ -1,5 +1,5 @@
-import { AppSidebar } from "@/components/shadcn/app-sidebar";
-import { SidebarProvider } from "@/components/shadcn/sidebar";
+import { AppSidebar } from "@/app/components/shadcn/app-sidebar";
+import { SidebarProvider } from "@/app/components/shadcn/sidebar";
 import { cookies } from "next/headers";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {

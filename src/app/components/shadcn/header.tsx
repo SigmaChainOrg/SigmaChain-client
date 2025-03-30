@@ -6,12 +6,12 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/shadcn/breadcrumb";
-import { Button } from "@/components/shadcn/button";
-import { Input } from "@/components/shadcn/input";
-import { SidebarTrigger } from "@/components/shadcn/sidebar";
+} from "@/app/components/shadcn/breadcrumb";
+import { Button } from "@/app/components/shadcn/button";
+import { Input } from "@/app/components/shadcn/input";
+import { SidebarTrigger } from "@/app/components/shadcn/sidebar";
+import { routes } from "@/app/routes";
 import { cn } from "@/features/shadcn/services/utils";
-import { routes } from "@/routes";
 import { faBell, faFilter, faHome, faMessage, faSearch } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Slash } from "lucide-react";

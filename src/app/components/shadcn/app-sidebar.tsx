@@ -11,22 +11,22 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
-} from "@/components/shadcn/sidebar";
+} from "@/app/components/shadcn/sidebar";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/shadcn/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/shadcn/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/shadcn/dropdown-menu";
+} from "@/app/components/shadcn/dropdown-menu";
 
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "@/components/shadcn/collapsible";
-import { routes } from "@/routes";
+} from "@/app/components/shadcn/collapsible";
+import { routes } from "@/app/routes";
 import {
   faEllipsisVertical,
   faFileEdit,

@@ -4,9 +4,9 @@ import { format } from "date-fns";
 import { Calendar as CalendarIcon } from "lucide-react";
 import * as React from "react";
 
-import { Button } from "@/components/shadcn/button";
-import { Calendar } from "@/components/shadcn/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/shadcn/popover";
+import { Button } from "@/app/components/shadcn/button";
+import { Calendar } from "@/app/components/shadcn/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/app/components/shadcn/popover";
 import { cn } from "@/features/shadcn/services/utils";
 
 export function DatePickerDemo() {

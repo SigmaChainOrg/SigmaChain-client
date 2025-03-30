@@ -1,5 +1,5 @@
 "use client";
-import { Button } from "@/components/shadcn/button";
+import { Button } from "@/app/components/shadcn/button";
 import { cn } from "@/features/shadcn/services/utils";
 
 export function SaveGroup({

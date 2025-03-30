@@ -1,5 +1,5 @@
-import { poppins, raleway } from "@/fonts/fonts";
-import "@/globals.css";
+import { poppins, raleway } from "@/app/fonts/fonts";
+import "@/app/globals.css";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {

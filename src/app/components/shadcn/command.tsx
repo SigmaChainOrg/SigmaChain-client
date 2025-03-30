@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "@/components/shadcn/dialog";
+} from "@/app/components/shadcn/dialog";
 import { cn } from "@/features/shadcn/services/utils";
 
 function Command({ className, ...props }: React.ComponentProps<typeof CommandPrimitive>) {

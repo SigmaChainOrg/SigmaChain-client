@@ -1,9 +1,9 @@
 "use client";
-import { Button } from "@/components/shadcn/button";
-import { routes } from "@/routes";
+import { Button } from "@/app/components/shadcn/button";
+import { routes } from "@/app/routes";
 import { useRouter } from "next/navigation";
 
-import { DashboardHeader } from "@/components/shadcn/header";
+import { DashboardHeader } from "@/app/components/shadcn/header";
 //import { z } from "zod";
 
 //const userDataSchema = z.object({  name: z.string(),});
