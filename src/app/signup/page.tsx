@@ -308,7 +308,7 @@ export default function Sign_up() {
                                   { value: "cedula", label: "Cédula" },
                                   { value: "pasaporte", label: "Pasaporte" },
                                 ]}
-                                {...field}
+                                onChange={(option) => field.onChange(option.value)} // Transforma el objeto en un string
                               />
                             </FormControl>
                             <FormMessage>
