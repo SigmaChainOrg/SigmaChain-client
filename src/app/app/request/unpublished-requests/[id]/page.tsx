@@ -2,6 +2,7 @@
 import { ActivityItemView } from "@/app/app/request/components/activityItemManager";
 import { SaveGroup } from "@/app/app/request/components/save-group";
 import { useActivityStore } from "@/app/app/request/state/activityItem";
+import { useSidebarStore } from "@/app/app/request/state/sidebar-store";
 import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/app/components/shadcn/card";
 import { BreadcrumbHeader } from "@/app/components/shadcn/header";
@@ -31,13 +32,13 @@ export default function Solicitudes() {
     secondary: { value: "Editar", onClick: () => {} },
     primary: { value: "Publicar" },
   };
+  const { rightOpen, setRightOpen } = useSidebarStore();
 
   return (
     <>
       <div className="col-start-1 col-end-13">
         <BreadcrumbHeader estado={true} path={pathName} />
       </div>
-
       <Card variant="solicitude" className="col-start-3 col-end-11 md:col-start-2 md:col-end-12">
         <CardContent>
           <h3>{solicitudeData.name}</h3>
@@ -61,6 +62,7 @@ export default function Solicitudes() {
           </div>
         </CardContent>
       </Card>
+
       <SaveGroup className="col-start-3 col-end-12 place-self-end" buttons={saveButtons} />
     </>
   );

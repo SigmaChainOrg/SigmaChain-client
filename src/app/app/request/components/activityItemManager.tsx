@@ -1,8 +1,24 @@
 "use client";
 import { Activity, useActivityStore } from "@/app/app/request/state/activityItem";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/app/components/shadcn/accordion";
 import { Button } from "@/app/components/shadcn/button";
 import { Combobox } from "@/app/components/shadcn/combobox";
 import { Input } from "@/app/components/shadcn/input";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/app/components/shadcn/sheet";
 import { faEllipsisVertical, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -55,6 +71,14 @@ export function ActivityItem(activity: Activity) {
 }
 
 export function ActivityItemView(activity: Activity) {
+  const { activities } = useActivityStore();
+
+  // Encuentra las actividades que ocurren antes de la actividad actual
+  const previousActivities = activities.slice(
+    0,
+    activities.findIndex((a) => a.id === activity.id), // Filtra hasta la actividad actual
+  );
+
   return (
     <div
       key={activity.id}
@@ -70,9 +94,35 @@ export function ActivityItemView(activity: Activity) {
         Añadir formulario
       </Button>
       {/* Botón para gestionar la información a mostrar de la actividad */}
-      <Button variant="secondary" onClick={() => {}}>
-        Gestionar información
-      </Button>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button variant="secondary">Gestionar información</Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Gestionar información de la actividad</SheetTitle>
+            <SheetDescription>Realiza cambios en la información de la actividad.</SheetDescription>
+          </SheetHeader>
+          <div className="grid gap-4 px-4 py-4">
+            <h5>{activity.name}</h5>
+            <Accordion type="single" collapsible className="w-full">
+              {previousActivities.map((prevActivity) => (
+                <AccordionItem value={"item-" + prevActivity.id} key={prevActivity.id}>
+                  <AccordionTrigger>{prevActivity.name}</AccordionTrigger>
+                  <AccordionContent>
+                    Información de la actividad: {prevActivity.name}
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+          <SheetFooter>
+            <SheetClose asChild>
+              <Button>Guardar cambios</Button>
+            </SheetClose>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

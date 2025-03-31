@@ -221,8 +221,8 @@ const Sidebar = React.forwardRef<
           className={cn(
             "fixed inset-y-0 z-10 hidden h-svh w-sidebar transition-[left,right,width] duration-200 ease-linear md:flex",
             side === "left"
-              ? "left-0 group-data-[collapsible=offcanvas]:left-[--w-sidebar-left]"
-              : "right-0 group-data-[collapsible=offcanvas]:right-[--w-sidebar-left]",
+              ? "left-0 group-data-[collapsible=offcanvas]:w-0"
+              : "w-sidebar-activity inset-y-[82px] right-0 group-data-[collapsible=offcanvas]:-mx-4 group-data-[collapsible=offcanvas]:w-0",
             // Adjust the padding for floating and inset variants.
             style === "floating" || style === "inset"
               ? "p-2 group-data-[collapsible=icon]:w-sidebar-icon"
@@ -340,7 +340,7 @@ const SidebarHeader = React.forwardRef<HTMLDivElement, React.ComponentProps<"div
         ref={ref}
         data-sidebar="header"
         className={cn(
-          "flex flex-row items-center justify-center gap-2 pt-6 pb-4 group-data-[collapsible=icon]:[&>span]:hidden [&>svg]:size-5",
+          "flex flex-row items-center justify-center gap-2 px-5 pt-6 pb-4 group-data-[collapsible=icon]:[&>span]:hidden [&>svg]:size-5",
           className,
         )}
         {...props}
