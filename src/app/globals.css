@@ -10,6 +10,7 @@
   --font-size: 16px;
   --radius: 8px;
   --spacing-sidebar: 16rem;
+  --spacing-sidebar-activity: 20rem;
   --spacing-sidebar-icon: 90px;
   --spacing-sidebar-mobile: 18rem;
   --color-sidebar-manager: var(--color-primary);
