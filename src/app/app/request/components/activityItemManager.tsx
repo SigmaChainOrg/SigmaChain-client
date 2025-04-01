@@ -19,8 +19,10 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/app/components/shadcn/sheet";
+import { routes } from "@/app/routes";
 import { faEllipsisVertical, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useRouter } from "next/navigation";
 
 export function ActivityItem(activity: Activity) {
   const { deleteActivity, setActivityName, setActivityReviewerGroup, setActivityResponsable } =
@@ -70,7 +72,13 @@ export function ActivityItem(activity: Activity) {
   );
 }
 
-export function ActivityItemView(activity: Activity) {
+export function ActivityItemView({
+  activity,
+  requestId,
+}: {
+  activity: Activity;
+  requestId: string;
+}) {
   const { activities } = useActivityStore();
 
   // Encuentra las actividades que ocurren antes de la actividad actual
@@ -78,7 +86,7 @@ export function ActivityItemView(activity: Activity) {
     0,
     activities.findIndex((a) => a.id === activity.id), // Filtra hasta la actividad actual
   );
-
+  const router = useRouter();
   return (
     <div
       key={activity.id}
@@ -90,7 +98,13 @@ export function ActivityItemView(activity: Activity) {
       <p className="w-auto">{activity.reviewerGroup}</p>
       <p className="w-auto">{activity.responsable}</p>
       {/* Botón para añadir formulario la actividad */}
-      <Button variant="secondary" onClick={() => {}}>
+      <Button
+        variant="secondary"
+        onClick={() => {
+          const activityId = requestId + "-form";
+          router.push(routes["unpublished-request"] + `/${requestId}` + `/${activityId}`);
+        }}
+      >
         Añadir formulario
       </Button>
       {/* Botón para gestionar la información a mostrar de la actividad */}

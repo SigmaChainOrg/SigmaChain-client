@@ -2,7 +2,6 @@
 import { ActivityItemView } from "@/app/app/request/components/activityItemManager";
 import { SaveGroup } from "@/app/app/request/components/save-group";
 import { useActivityStore } from "@/app/app/request/state/activityItem";
-import { useSidebarStore } from "@/app/app/request/state/sidebar-store";
 import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/app/components/shadcn/card";
 import { BreadcrumbHeader } from "@/app/components/shadcn/header";
@@ -32,7 +31,6 @@ export default function Solicitudes() {
     secondary: { value: "Editar", onClick: () => {} },
     primary: { value: "Publicar" },
   };
-  const { rightOpen, setRightOpen } = useSidebarStore();
 
   return (
     <>
@@ -57,7 +55,12 @@ export default function Solicitudes() {
           <Separator orientation="horizontal" className="mt-[-12px] h-[1px] w-full bg-primary" />
           <div className="flex w-full flex-col gap-1">
             {activities.map((activity) => (
-              <ActivityItemView key={activity.id} {...activity} />
+              <ActivityItemView
+                key={activity.id}
+                requestId={"" + id}
+                activity={activity}
+                {...activity}
+              />
             ))}
           </div>
         </CardContent>
