@@ -1,18 +1,9 @@
-import { AppSidebar } from "@/app/components/shadcn/app-sidebar";
-import { SidebarProvider } from "@/app/components/shadcn/sidebar";
-import { cookies } from "next/headers";
+import { SidebarLayout } from "@/app/components/sidebar-layout";
 
 export default async function Layout({ children }: { children: React.ReactNode }) {
-  const cookieStore = await cookies();
-  const defaultOpen = cookieStore.get("sidebar_state")?.value === "true";
   return (
     <div className="h-screen w-screen">
-      <SidebarProvider defaultOpen={defaultOpen}>
-        <AppSidebar userProfile="manager" />
-        <main className="grid h-full w-full grid-cols-12 gap-x-2 gap-y-6 bg-background px-4 pb-6">
-          {children}
-        </main>
-      </SidebarProvider>
+      <SidebarLayout>{children}</SidebarLayout>
     </div>
   );
 }

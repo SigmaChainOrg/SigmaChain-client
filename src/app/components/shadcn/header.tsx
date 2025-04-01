@@ -1,4 +1,5 @@
 "use client";
+import { useSidebarStore } from "@/app/app/request/state/sidebar-store";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -18,10 +19,25 @@ import { Slash } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
 
+function HeaderLayout({ children }: { children: React.ReactNode }) {
+  const { leftOpen } = useSidebarStore();
+  return (
+    <div
+      className={cn(
+        "fixed top-0 z-10 mx-[-16px] flex flex-row place-content-between gap-2 border-[1px] border-solid border-gray-300 bg-white px-4 py-5",
+        leftOpen ? "w-[70rem]" : "w-[80rem]",
+      )}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function DashboardHeader({ accessButon }: { accessButon: { name: string; ref: string } }) {
   const router = useRouter();
+
   return (
-    <div className="mx-[-16px] flex flex-row place-content-between gap-2 border-[1px] border-solid border-gray-300 bg-white px-4 py-5">
+    <HeaderLayout>
       <div className="flex flex-row items-center gap-2">
         <SidebarTrigger />
         <Input placeholder="Buscar" />
@@ -47,7 +63,7 @@ export function DashboardHeader({ accessButon }: { accessButon: { name: string; 
           <FontAwesomeIcon icon={faBell} />
         </Button>
       </div>
-    </div>
+    </HeaderLayout>
   );
 }
 
@@ -55,7 +71,7 @@ export function BreadcrumbHeader({ estado, path }: { estado: boolean; path: stri
   const pathItems = path.split("/").filter(Boolean); // Split the path and remove empty strings
   const lastItem = pathItems.pop();
   return (
-    <div className="mx-[-16px] flex flex-row place-content-between gap-2 border-[1px] border-solid border-gray-300 bg-white px-4 py-5">
+    <HeaderLayout>
       <div className="flex flex-row items-center gap-2">
         <SidebarTrigger />
         <Breadcrumb>
@@ -101,6 +117,6 @@ export function BreadcrumbHeader({ estado, path }: { estado: boolean; path: stri
           <FontAwesomeIcon icon={faBell} />
         </Button>
       </div>
-    </div>
+    </HeaderLayout>
   );
 }

@@ -11,10 +11,12 @@ export function Field({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid w-full grid-cols-4 gap-x-7 gap-y-4">
-      <h5 className="row-start-1">{fieldData.name}</h5>
-      <p className="col-start-1 col-end-3 row-start-2 font-raleway">{fieldData.description}</p>
-      <div className="col-start-3 col-end-5 row-start-2">{children}</div>
-    </div>
+    <>
+      <h5>{fieldData.name}</h5>
+      <div className="flex flex-row gap-7">
+        <p className="w-[50%] font-raleway">{fieldData.description}</p>
+        <div className="w-[50%]">{children}</div>
+      </div>
+    </>
   );
 }

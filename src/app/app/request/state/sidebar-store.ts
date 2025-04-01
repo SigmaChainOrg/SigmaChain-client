@@ -1,4 +1,3 @@
-// stores/sidebar-store.ts
 import { create } from "zustand";
 
 type SidebarState = {
@@ -11,7 +10,7 @@ type SidebarState = {
 };
 
 export const useSidebarStore = create<SidebarState>((set) => ({
-  leftOpen: false,
+  leftOpen: true,
   rightOpen: false,
   setLeftOpen: (open) => set({ leftOpen: open }),
   setRightOpen: (open) => set({ rightOpen: open }),
