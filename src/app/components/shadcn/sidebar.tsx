@@ -1,9 +1,4 @@
 "use client";
-import { Slot } from "@radix-ui/react-slot";
-import { VariantProps, cva } from "class-variance-authority";
-import { PanelLeft } from "lucide-react";
-import * as React from "react";
-
 import { Button } from "@/app/components/shadcn/button";
 import { Input } from "@/app/components/shadcn/input";
 import { Separator } from "@/app/components/shadcn/separator";
@@ -17,6 +12,10 @@ import {
 } from "@/app/components/shadcn/tooltip";
 import { useIsMobile } from "@/features/shadcn/hooks/use-mobile";
 import { cn } from "@/features/shadcn/services/utils";
+import { Slot } from "@radix-ui/react-slot";
+import { VariantProps, cva } from "class-variance-authority";
+import { PanelLeft } from "lucide-react";
+import * as React from "react";
 
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
@@ -205,7 +204,7 @@ const Sidebar = React.forwardRef<
         data-variant={style}
         data-side={side}
       >
-        {/* This is what handles the sidebar gap on desktop */}
+        {/* Sidebar content */}
         <div
           className={cn(
             "relative h-svh w-sidebar transition-[width] duration-200 ease-linear",
@@ -222,8 +221,7 @@ const Sidebar = React.forwardRef<
             "fixed inset-y-0 z-10 hidden h-svh w-sidebar transition-[left,right,width] duration-200 ease-linear md:flex",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:w-0"
-              : "w-sidebar-activity inset-y-[82px] right-0 group-data-[collapsible=offcanvas]:-mx-4 group-data-[collapsible=offcanvas]:w-0",
-            // Adjust the padding for floating and inset variants.
+              : "inset-y-[82px] right-0 w-sidebar-activity group-data-[collapsible=offcanvas]:-mx-4 group-data-[collapsible=offcanvas]:w-0",
             style === "floating" || style === "inset"
               ? "p-2 group-data-[collapsible=icon]:w-sidebar-icon"
               : "group-data-[collapsible=icon]:w-sidebar-icon group-data-[side=left]:border-r group-data-[side=right]:border-l",
