@@ -24,6 +24,7 @@
   --color-sidebar-requester-active: var(--color-secondary);
   --color-sidebar-accent-foreground: var(--color-background);
   --color-primary: #140e59;
+  --color-primary-foreground: #ffffff;
   --color-secondary: #3d2ee0;
   --color-complement: #2fd8d8;
   --color-black: #000000;
