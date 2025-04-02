@@ -25,9 +25,9 @@ export function FormCard({ type }: { type: string }) {
               <Label>Tipo:</Label>
               <Combobox
                 options={[
-                  { label: "short-answer", value: "Respuesta corta" },
-                  { label: "option", value: "Opciones" },
-                  { label: "radio-button", value: "Radio button" },
+                  { value: "short-answer", label: "Respuesta corta" },
+                  { value: "option", label: "Opciones" },
+                  { value: "radio-button", label: "Radio button" },
                 ]}
               />
             </div>
