@@ -1,6 +1,9 @@
 import { poppins, raleway } from "@/app/fonts/fonts";
 import "@/app/globals.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { Metadata } from "next";
+
+const queryClient = new QueryClient();
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -15,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} ${raleway.variable}`}>
-        <main className="">{children}</main>
+        <QueryClientProvider client={queryClient}>
+          <main className="">{children}</main>
+        </QueryClientProvider>
       </body>
     </html>
   );
