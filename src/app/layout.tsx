@@ -1,3 +1,4 @@
+import { QueryProvider } from "@/app/components/providers/query-provider";
 import { poppins, raleway } from "@/app/fonts/fonts";
 import "@/app/globals.css";
 import type { Metadata } from "next";
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${poppins.variable} ${raleway.variable}`}>
-        <main className="">{children}</main>
+        <QueryProvider>
+          <main className="">{children}</main>
+        </QueryProvider>
       </body>
     </html>
   );
