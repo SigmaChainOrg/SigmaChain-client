@@ -10,6 +10,7 @@ import { DashboardHeader } from "@/app/components/shadcn/header";
 
 export default function Home() {
   const router = useRouter();
+
   return (
     <>
       <div className="col-start-1 col-end-13">
