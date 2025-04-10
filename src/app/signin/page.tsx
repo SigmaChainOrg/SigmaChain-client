@@ -1,64 +1,127 @@
 "use client";
+import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/app/components/shadcn/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/app/components/shadcn/form";
 import { Input } from "@/app/components/shadcn/input";
 import { routes } from "@/app/routes";
-import fetchUserData from "@/app/signin/data";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { Button } from "../components/shadcn/button";
-const emailPasswordSchema = z.object({
-  email: z.string().email({
-    message: "Email is invalid",
-  }),
-  password: z.string().min(8),
-});
-
-const validationCodeSchema = z.object({
-  validationCode: z.string().length(8, {
-    message: "Validation code must be exactly 8 characters",
-  }),
-});
+import { emailPasswordSchema, secureCodeSchema } from "@/app/signin/schemas/signin-schema";
+import { useSigninStore } from "@/app/signin/state/signin-store";
+import { usePostSecureCodeValidate } from "@/features/auth/hooks/use-post-secure-code-validate";
+import { usePostSignin } from "@/features/auth/hooks/use-post-signin";
+import { useAuthStore } from "@/features/auth/state/auth-store";
+import { SecureCodeRead } from "@/features/auth/types/secure-code";
+import { TokenRead } from "@/features/auth/types/token";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function SingIn() {
-  const [step, setStep] = useState(1);
+  const {
+    email,
+    password,
+    errors,
+    secureCode,
+    step,
+    secureCodeId,
+    setSecureCodeId,
+    setEmail,
+    setPassword,
+    setSecureCode,
+    setErrors,
+    setStep,
+  } = useSigninStore();
 
-  const emailPasswordForm = useForm<z.infer<typeof emailPasswordSchema>>({
-    resolver: zodResolver(emailPasswordSchema),
-    defaultValues: {
-      email: "",
-      password: "",
-    },
-  });
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
-  const validationCodeForm = useForm<z.infer<typeof validationCodeSchema>>({
-    resolver: zodResolver(validationCodeSchema),
-    defaultValues: {
-      validationCode: "",
-    },
-  });
+  const {
+    mutateAsync: secureCodeValidateMutate,
+    isPending: secureCodeValidatePending,
+    error: secureCodeValidateError,
+  } = usePostSecureCodeValidate();
 
-  async function handleEmailPasswordSubmit(data: z.infer<typeof emailPasswordSchema>) {
-    console.log("Email and Password:", data);
-    const userData = await fetchUserData(data);
-    console.log("User Data:", userData);
-    setStep(2); // Move to the next step
-  }
+  const {
+    mutateAsync: signinMutate,
+    isPending: signinPending,
+    error: signinError,
+  } = usePostSignin();
+
   const router = useRouter();
-  function handleValidationCodeSubmit(data: z.infer<typeof validationCodeSchema>) {
-    console.log("Validation code:", data.validationCode);
-    router.push(routes["dashboard"]);
-    // Handle validation code submission
+  const searchParams = useSearchParams();
+
+  const secureCodeIdParam = searchParams.get("secure-code-id");
+
+  useEffect(() => {
+    if (secureCodeIdParam) {
+      setSecureCodeId(secureCodeIdParam);
+      setStep(2);
+    }
+  }, [secureCodeIdParam]);
+
+  async function handleSigninSubmit() {
+    const validation = emailPasswordSchema.safeParse({
+      email,
+      password,
+    });
+
+    if (!validation.success) {
+      const fieldErrors = validation.error.flatten().fieldErrors;
+
+      setErrors({
+        ...errors,
+        email: fieldErrors.email ? fieldErrors.email[0] : undefined,
+        password: fieldErrors.password ? fieldErrors.password[0] : undefined,
+      });
+
+      return;
+    }
+
+    const result = await signinMutate({ email, password });
+
+    // ToDo: Handle error properly
+    if (signinError) {
+      console.error("Error signing in:", signinError);
+      return;
+    }
+
+    if ("accessToken" in result) {
+      const tokenRead = result as TokenRead;
+      setAccessToken(tokenRead.accessToken);
+      router.push(routes.dashboard);
+      return;
+    }
+
+    if ("secureCodeId" in result) {
+      const secureCodeRead = result as SecureCodeRead;
+      router.push(`${routes.signin}?secure-code-id=${secureCodeRead.secureCodeId}`);
+      return;
+    }
+  }
+
+  async function handleSecureCodeSubmit() {
+    const validation = secureCodeSchema.safeParse({ secureCode });
+
+    if (!validation.success) {
+      const fieldErrors = validation.error.flatten().fieldErrors;
+
+      setErrors({
+        ...errors,
+        secureCode: fieldErrors.secureCode ? fieldErrors.secureCode[0] : undefined,
+      });
+
+      return;
+    }
+
+    const tokenRead = await secureCodeValidateMutate({
+      secureCodeId: secureCodeId as string,
+      code: secureCode,
+    });
+
+    // ToDo: Handle error properly
+    if (secureCodeValidateError) {
+      console.error("Error validating secure code:", secureCodeValidateError);
+      return;
+    }
+
+    setAccessToken(tokenRead.accessToken);
+    router.push(routes.dashboard);
   }
 
   return (
@@ -72,50 +135,33 @@ export default function SingIn() {
                 <CardTitle>Welcome</CardTitle>
               </CardHeader>
               <CardContent>
-                <Form {...emailPasswordForm}>
-                  <form
-                    className="flex w-full flex-col space-y-3"
-                    onSubmit={emailPasswordForm.handleSubmit(handleEmailPasswordSubmit)}
-                  >
-                    <FormField
-                      control={emailPasswordForm.control}
-                      name="email"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input type="email" placeholder="Enter your email" {...field} />
-                          </FormControl>
-                          <FormMessage>
-                            {emailPasswordForm.formState.errors.email?.message}
-                          </FormMessage>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={emailPasswordForm.control}
-                      name="password"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormControl>
-                            <Input type="password" placeholder="Enter your password" {...field} />
-                          </FormControl>
-                          <FormMessage>
-                            {emailPasswordForm.formState.errors.password?.message}
-                          </FormMessage>
-                        </FormItem>
-                      )}
-                    />
-                    <div className="w-full">
-                      <Button className="w-full" type="submit">
-                        Sign In
-                      </Button>
-                      <p className="w-full py-2 text-center text-sm">OR</p>
-                      <Button variant="secondary" className="w-full">
-                        Sign In with Google
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
+                <div className="flex w-full flex-col space-y-3">
+                  <Input
+                    type="email"
+                    placeholder="Enter your email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  {errors.email && <p className="text-sm text-danger">{errors.email}</p>}
+
+                  <Input
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  {errors.password && <p className="text-sm text-danger">{errors.password}</p>}
+
+                  <div className="w-full">
+                    <Button className="w-full" onClick={handleSigninSubmit}>
+                      {signinPending ? "Loading..." : "Sign In"}
+                    </Button>
+                    <p className="w-full py-2 text-center text-sm">OR</p>
+                    <Button variant="secondary" className="w-full">
+                      Sign In with Google
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
               <CardFooter>
                 <p>
@@ -137,33 +183,22 @@ export default function SingIn() {
                 <CardTitle>Authentication</CardTitle>
               </CardHeader>
               <CardContent>
-                <Form {...validationCodeForm}>
-                  <form
-                    className="flex w-full flex-col space-y-3"
-                    onSubmit={validationCodeForm.handleSubmit(handleValidationCodeSubmit)}
-                  >
-                    <FormField
-                      control={validationCodeForm.control}
-                      name="validationCode"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>We sent a verification code to your email.</FormLabel>
-                          <FormControl>
-                            <Input type="text" placeholder="Enter 8-digit code" {...field} />
-                          </FormControl>
-                          <FormMessage>
-                            {validationCodeForm.formState.errors.validationCode?.message}
-                          </FormMessage>
-                        </FormItem>
-                      )}
-                    />
-                    <div className="w-full">
-                      <Button className="w-full" type="submit">
-                        Validate Code
-                      </Button>
-                    </div>
-                  </form>
-                </Form>
+                <div className="flex w-full flex-col space-y-3">
+                  <Input
+                    type="text"
+                    placeholder="Enter 6-digit code"
+                    value={secureCode}
+                    onChange={(e) => {
+                      setSecureCode(e.target.value);
+                    }}
+                  />
+                  {errors.secureCode && <p className="text-sm text-danger">{errors.secureCode}</p>}
+                  <div className="w-full">
+                    <Button className="w-full" onClick={handleSecureCodeSubmit}>
+                      {secureCodeValidatePending ? "Loading..." : "Validate Code"}
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
               <CardFooter>
                 <p>
