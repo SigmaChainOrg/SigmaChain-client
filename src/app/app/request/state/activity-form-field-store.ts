@@ -1,9 +1,11 @@
 import { create } from "zustand";
 
-interface ActivityFormFieldStore {
+//short answer
+export interface ActivityFormFieldStore {
   name: string;
   description?: string;
   isRequired: boolean;
+  options?: string[];
   errors: { name?: string };
   setName: (name: string) => void;
   setDescription: (description: string) => void;
@@ -11,16 +13,13 @@ interface ActivityFormFieldStore {
   setErrors: (errors: ActivityFormFieldStore["errors"]) => void;
 }
 
-export interface ActivityFormShortAnswerStore extends ActivityFormFieldStore {}
-
+//single and multiple choice
 export interface ActivityFormChoiceStore extends ActivityFormFieldStore {
   options: string[];
   errors: { name?: string; options?: string[] };
   setOptions: (options: string[]) => void;
   setErrors: (errors: ActivityFormFieldStore["errors"]) => void;
 }
-
-export interface ActivityFormMultipleChoiceStore extends ActivityFormChoiceStore {}
 
 export interface ActivityFormUploadFilesStore extends ActivityFormFieldStore {
   acceptedFiles: string[];
@@ -30,7 +29,7 @@ export interface ActivityFormUploadFilesStore extends ActivityFormFieldStore {
   setMaxSize: (maxSize: number) => void;
 }
 
-export const useActivityFormFieldShortAnswerStore = create<ActivityFormShortAnswerStore>((set) => ({
+export const useActivityFormFieldShortAnswerStore = create<ActivityFormFieldStore>((set) => ({
   name: "",
   description: "",
   isRequired: false,
@@ -54,8 +53,6 @@ export const useActivityFormFieldChoiceStore = create<ActivityFormChoiceStore>((
     set((state) => ({ options, errors: { ...state.errors, options: undefined } })),
   setErrors: (errors) => set({ errors }),
 }));
-
-export const useActivityFormFieldMultipleChoiceStore = useActivityFormFieldChoiceStore;
 
 export const useActivityFormUploadFilesStore = create<ActivityFormUploadFilesStore>((set) => ({
   name: "",

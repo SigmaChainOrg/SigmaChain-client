@@ -1,5 +1,5 @@
 import { z } from "zod";
-
+// short answer
 export const activityFormFieldSchema = z.object({
   name: z
     .string({ message: "El nombre es requerido" })
@@ -8,16 +8,13 @@ export const activityFormFieldSchema = z.object({
   isRequired: z.boolean().default(false),
 });
 
-export const activityFormShortAnswerSchema = z.object({ ...activityFormFieldSchema.shape });
-
+//single choice y multiple choice
 export const activityFormChoiceSchema = z.object({
   ...activityFormFieldSchema.shape,
   options: z
     .array(z.string().min(5, { message: "El nombre es muy corto" }))
     .min(1, { message: "Debe agregar al menos una opción" }),
 });
-
-export const activityFormMultipleChoiceSchema = z.object({ ...activityFormChoiceSchema.shape });
 
 export const activityFormUploadFilesSchema = z.object({
   ...activityFormFieldSchema.shape,
