@@ -2,155 +2,163 @@
 import { ActivityItem } from "@/app/app/request/components/activityItemManager";
 import { Field } from "@/app/app/request/components/field";
 import { SaveGroup } from "@/app/app/request/components/save-group";
-import { useActivityStore } from "@/app/app/request/state/activityItem";
-import { Badge } from "@/app/components/shadcn/badge";
+import {
+  ActivityFieldSchema,
+  RequestPatternFieldDescriptionSchema,
+  RequestPatternSchema,
+} from "@/app/app/request/schemas/request-pattern-schema";
+import { useRequestPatternStore } from "@/app/app/request/state/activityItem";
 import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/app/components/shadcn/card";
 import { Combobox } from "@/app/components/shadcn/combobox";
-import { Form, FormControl, FormField, FormItem, FormMessage } from "@/app/components/shadcn/form";
 import { BreadcrumbHeader } from "@/app/components/shadcn/header";
 import { Input } from "@/app/components/shadcn/input";
 import { Textarea } from "@/app/components/shadcn/textarea";
 import { routes } from "@/app/routes";
-import { faX } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@radix-ui/react-separator";
 import { usePathname, useRouter } from "next/navigation";
-import React from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-
-const solicitudeData = {
-  fieldOne: {
-    name: "Descripción",
-    description:
-      "Coloque una descripción de la solicitud. Esta descripción será vista por los revisores y los solicitantes de la solicitud.",
-    tipo: "textarea",
-  },
-  fieldTwo: {
-    name: "Grupo solicitante",
-    description: "Escoja el grupo de usuarios que podrán iniciar una solicitud.",
-    tipo: "combobox",
-    options: ["Grupo a", "Grupo b", "Grupo c"],
-  },
-};
-
-const saveButtons = {
-  secondary: { value: "Cancelar", onClick: () => {} },
-  primary: { value: "Guardar" },
-};
 
 export default function Solicitudes() {
   const router = useRouter();
   const pathName = usePathname();
-  const { activities, addActivity } = useActivityStore();
-  const [selectedGroups, setSelectedGroups] = React.useState<{ value: string; label: string }[]>(
-    [],
-  ); // Almacena objetos { value, label }
 
-  const SolicitudeTemplateSchema = z.object({
-    name: z.string().min(5, { message: "El nombre es muy corto o está vacío" }),
-    description: z.string().min(5, { message: "Una descripción es requerida" }),
-    requesterGroup: z
-      .array(z.string(), {
-        message: "Al menos un grupo solicitante es requerido",
-      })
-      .min(0, { message: "Seleccione al menos un grupo solicitante" }),
-  });
+  const requestName = useRequestPatternStore((state) => state.name);
+  const setRequestName = useRequestPatternStore((state) => state.setName);
+  const requestFields = useRequestPatternStore((state) => state.fields);
+  const activities = useRequestPatternStore((state) => state.activities);
+  const addActivity = useRequestPatternStore((state) => state.addActivity);
+  const error = useRequestPatternStore((state) => state.error);
+  const name = useRequestPatternStore((state) => state.name);
+  const setNameError = useRequestPatternStore((state) => state.setNameError);
+  const solicitudeId = useRequestPatternStore((state) => state.id);
+  const setActivityError = useRequestPatternStore((state) => state.setActivityError);
+  const setFieldError = useRequestPatternStore((state) => state.setFieldError);
+  const setFieldValue = useRequestPatternStore((state) => state.setFieldValue);
 
-  const form = useForm<z.infer<typeof SolicitudeTemplateSchema>>({
-    resolver: zodResolver(SolicitudeTemplateSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      requesterGroup: [], // Inicializa como un array vacío
+  const saveButtons = {
+    secondary: { value: "Cancelar", onClick: () => {} },
+    primary: {
+      value: "Guardar",
+      onClick: () => {
+        handleRequestPatternSubmit();
+      },
     },
-  });
+  };
 
-  function onSubmit(data: z.infer<typeof SolicitudeTemplateSchema>) {
-    const solicitudeData = { data: data, activities: activities };
-    console.log("You submitted the following values: ", solicitudeData);
-    const solicitudeId = "1";
-    router.push(routes["unpublished-request"] + `/${solicitudeId}`);
+  const requesterGroups = requestFields[1].value;
+
+  function addRequesterGroup(requesterGroup: string) {
+    const group = requesterGroups.find((group) => group === requesterGroup);
+    if (!group) {
+      return [...requesterGroups, requesterGroup];
+    }
+    return;
   }
 
-  const handleAddGroup = (group: { value: string; label: string }) => {
-    if (!selectedGroups.some((g) => g.value === group.value)) {
-      setSelectedGroups((prev) => [...prev, group]); // Agrega el objeto completo { value, label }
-      form.setValue(
-        "requesterGroup",
-        [...selectedGroups.map((g) => g.value), group.value], // Actualiza solo los valores en el formulario
-      );
-    }
-  };
+  function handleRequestPatternSubmit() {
+    const requestPatternValidation = RequestPatternSchema.safeParse({
+      name,
+    });
 
-  const handleRemoveGroup = (groupValue: string) => {
-    setSelectedGroups((prev) => prev.filter((g) => g.value !== groupValue)); // Elimina el grupo del estado
-    form.setValue(
-      "requesterGroup",
-      selectedGroups.filter((g) => g.value !== groupValue).map((g) => g.value), // Actualiza solo los valores en el formulario
-    );
-  };
+    if (!requestPatternValidation.success) {
+      const fieldErrors = requestPatternValidation.error.flatten().fieldErrors;
+      setNameError(fieldErrors.name ? fieldErrors.name[0] : undefined);
+
+      return;
+    }
+
+    const descriptionValidation = RequestPatternFieldDescriptionSchema.safeParse({
+      description: requestFields[0].value[0],
+    });
+    if (!descriptionValidation.success) {
+      const descriptionError = descriptionValidation.error.flatten().fieldErrors;
+      setFieldError(
+        requestFields[0].order,
+        descriptionError.description ? descriptionError.description[0] : undefined,
+      );
+      return;
+    }
+
+    let hasActivityErrors = false;
+
+    for (const activity of activities) {
+      const activityValidation = ActivityFieldSchema.safeParse({
+        name: activity.name,
+        reviewerGroup: activity.reviewerGroup,
+        responsable: activity.responsable,
+      });
+      if (!activityValidation.success) {
+        hasActivityErrors = true;
+        const activityError = activityValidation.error.flatten().fieldErrors;
+        setActivityError(
+          activity.id,
+          "name",
+          activityError.name ? activityError.name[0] : undefined,
+        );
+        setActivityError(
+          activity.id,
+          "reviewerGroup",
+          activityError.reviewerGroup ? activityError.reviewerGroup[0] : undefined,
+        );
+        setActivityError(
+          activity.id,
+          "responsable",
+          activityError.responsable ? activityError.responsable[0] : undefined,
+        );
+      }
+    }
+
+    if (hasActivityErrors) {
+      return;
+    }
+
+    router.push(routes["unpublished-request"] + `/${solicitudeId}`);
+  }
 
   return (
     <>
       <div className="col-start-1 col-end-13">
         <BreadcrumbHeader estado={true} path={pathName} />
       </div>
-      <Form {...form}>
-        <form
-          className="col-start-3 col-end-11 md:col-start-2 md:col-end-12"
-          onSubmit={form.handleSubmit(onSubmit)}
-        >
-          <Card variant="solicitude">
-            <CardHeader>
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormControl>
-                      <Input
-                        placeholder="Nombre de la solicitud"
-                        className="!text-h3 placeholder:!text-h3 focus:!text-h3"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage>{form.formState.errors.name?.message}</FormMessage>
-                  </FormItem>
-                )}
-              />
-            </CardHeader>
-            <CardContent>
-              {Object.entries(solicitudeData).map(([key, fieldData]) => (
-                <Field key={key} fieldData={fieldData}>
-                  <FormField
-                    control={form.control}
-                    name={fieldData.tipo === "combobox" ? "requesterGroup" : "description"}
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormControl>
-                          {fieldData.tipo === "text" ? (
-                            <Input placeholder="tu texto aquí" {...field} />
-                          ) : fieldData.tipo === "combobox" ? (
-                            <div>
-                              <Combobox
-                                selectDefault="Agregar grupo"
-                                options={[
-                                  { value: "ingenieria", label: "Ingeniería" },
-                                  { value: "derecho", label: "Derecho" },
-                                  { value: "filosofia", label: "Filosofía" },
-                                ]}
-                                onChange={(option) => {
-                                  handleAddGroup(option); // Agrega el grupo seleccionado
-                                }}
-                              />
-                              {/* Renderiza los badges debajo del Combobox */}
+
+      <Card variant="solicitude" className="col-start-2 col-end-12">
+        <CardHeader>
+          <Input
+            placeholder="Nombre de la solicitud"
+            className="!text-h3 placeholder:!text-h3 focus:!text-h3"
+            value={requestName}
+            onChange={(e) => setRequestName(e.target.value)}
+          />
+          {error.name && <p className="text-sm text-danger">{error.name}</p>}
+        </CardHeader>
+        <CardContent>
+          {Object.entries(requestFields).map(([fieldId, field]) => (
+            <Field key={fieldId} fieldData={{ name: field.name, description: field.description }}>
+              <div key={fieldId}>
+                {field.type === "text" ? (
+                  <Input
+                    placeholder="tu texto aquí"
+                    onChange={(e) => setFieldValue(field.order, [e.target.value])}
+                  />
+                ) : field.type === "combobox" ? (
+                  <div>
+                    <Combobox
+                      selectDefault="Agregar grupo"
+                      options={[
+                        { value: "engineering", label: "Ingeniería" },
+                        { value: "law", label: "Derecho" },
+                        { value: "philosophy", label: "Filosofía" },
+                      ]}
+                      onChange={(e) => {
+                        const value = addRequesterGroup(e.value);
+                        setFieldValue(field.order, value ? value : requestFields[1].value);
+                      }}
+                    />
+                    {/* Renderiza los badges debajo del Combobox 
                               <div className="mt-4 flex flex-wrap gap-2">
                                 {selectedGroups.map((group) => (
                                   <Badge key={group.value} className="flex items-center gap-2">
-                                    {group.label} {/* Muestra el label */}
+                                    {group.label} 
                                     <Button
                                       variant="ghost"
                                       onClick={() => {
@@ -162,49 +170,41 @@ export default function Solicitudes() {
                                     </Button>
                                   </Badge>
                                 ))}
-                              </div>
-                            </div>
-                          ) : (
-                            fieldData.tipo === "textarea" && (
-                              <Textarea placeholder="tu texto aquí" {...field} />
-                            )
-                          )}
-                        </FormControl>
-                        <FormMessage>
-                          {fieldData.tipo === "combobox" &&
-                            form.formState.errors.requesterGroup?.message}
-                        </FormMessage>
-                      </FormItem>
-                    )}
-                  />
-                </Field>
-              ))}
-              <div className="mt-4 flex w-full flex-row items-center justify-between">
-                <h4 className="font-poppins"> Actividades para completar la solicitud</h4>
-                <Button variant="secondary"> Visualizar flujo </Button>
+                              </div>*/}
+                  </div>
+                ) : (
+                  field.type === "textarea" && (
+                    <Textarea
+                      placeholder="tu texto aquí"
+                      onChange={(e) => setFieldValue(field.order, [e.target.value])}
+                    />
+                  )
+                )}
+                {field.error.value && <p className="text-sm text-danger">{field.error.value}</p>}
               </div>
-              <Separator
-                orientation="horizontal"
-                className="mt-[-12px] h-[1px] w-full bg-primary"
-              />
-              <div className="flex w-full flex-col gap-1">
-                {activities.map((activity) => (
-                  <ActivityItem key={activity.id} {...activity} />
-                ))}
-              </div>
-              <Button
-                variant="secondary"
-                className="place-self-end"
-                onClick={addActivity}
-                type="button"
-              >
-                Añadir actividad
-              </Button>
-            </CardContent>
-          </Card>
-          <SaveGroup className="col-start-3 col-end-12 place-self-end" buttons={saveButtons} />
-        </form>
-      </Form>
+            </Field>
+          ))}
+          <div className="mt-4 flex w-full flex-row items-center justify-between">
+            <h4 className="font-poppins"> Actividades para completar la solicitud</h4>
+            <Button variant="secondary"> Visualizar flujo </Button>
+          </div>
+          <Separator orientation="horizontal" className="mt-[-12px] h-[1px] w-full bg-primary" />
+          <div className="flex w-full flex-col gap-1">
+            {activities.map((activity) => (
+              <ActivityItem key={activity.id} activity={activity} />
+            ))}
+          </div>
+          <Button
+            variant="secondary"
+            className="place-self-end"
+            type="button"
+            onClick={addActivity}
+          >
+            Añadir actividad
+          </Button>
+        </CardContent>
+      </Card>
+      <SaveGroup className="col-start-3 col-end-12 place-self-end" buttons={saveButtons} />
     </>
   );
 }
