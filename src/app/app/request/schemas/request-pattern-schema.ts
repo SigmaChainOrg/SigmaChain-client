@@ -15,7 +15,7 @@ export const RequestPatternFieldRequesterGroupSchema = z.object({
     .array(z.string(), {
       message: "Al menos un grupo solicitante es requerido",
     })
-    .min(0, { message: "Seleccione al menos un grupo solicitante" }),
+    .min(1, { message: "Seleccione al menos un grupo solicitante" }),
 });
 
 export const ActivityFieldSchema = z.object({
