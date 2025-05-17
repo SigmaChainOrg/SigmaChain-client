@@ -1,3 +1,4 @@
+import { Section, useActivityFormStore } from "@/app/app/request/state/activity-form-field-store";
 import { LabeledCheckbox } from "@/app/components/labeled-checkbox";
 import { LabeledSwitch } from "@/app/components/labeled-switch";
 import { Button } from "@/app/components/shadcn/button";
@@ -160,24 +161,37 @@ export function FormCard({
   );
 }
 
-export function SectionCard({
-  addClick,
-  addSectionClick,
-  deleteClick,
-}: {
-  addClick?: () => void;
-  addSectionClick?: () => void;
-  deleteClick?: () => void;
-}) {
+export function SectionCard({ section }: { section: Section }) {
+  const setSectionFieldValue = useActivityFormStore((state) => state.setSectionFieldValue);
+  const addField = useActivityFormStore((state) => state.addField);
+  const addSection = useActivityFormStore((state) => state.addSection);
+  const deleteSection = useActivityFormStore((state) => state.deleteSection);
+
   return (
     <div>
-      <div className="w-fit bg-primary py-4 pr-8 pl-4 text-primary-foreground">Nueva sección</div>
-      <CardBase type="section" addClick={addClick} addSectionClick={addSectionClick}>
-        <Input placeholder="Nombre de la sección" className="w-full" />
-        <Input placeholder="Descripción" className="w-full" />
+      <div className="w-fit bg-primary py-4 pr-8 pl-4 text-primary-foreground">
+        Sección {section.order + 1}
+      </div>
+      <CardBase
+        type="section"
+        addClick={() => addField(section.order, section.fields.length)}
+        addSectionClick={() => addSection(section.order)}
+      >
+        <Input
+          placeholder="Nombre de la sección"
+          className="w-full"
+          value={section.name}
+          onChange={(e) => setSectionFieldValue(section.order, "name", e.target.value)}
+        />
+        <Input
+          placeholder="Descripción"
+          className="w-full"
+          value={section.description}
+          onChange={(e) => setSectionFieldValue(section.order, "description", e.target.value)}
+        />
         <FontAwesomeIcon
           icon={faTrash}
-          onClick={deleteClick}
+          onClick={() => deleteSection(section.order)}
           className="mt-4 self-end text-[24px] text-danger"
         />
       </CardBase>
