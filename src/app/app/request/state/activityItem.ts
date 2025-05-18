@@ -19,6 +19,9 @@ export interface RequestPatternField {
   description: string;
   type: string;
   options?: string[];
+  isRequired: boolean;
+  uploadFileSize?: number;
+  valueType: string;
   value: string[];
   error: { value?: string };
 }
@@ -35,29 +38,33 @@ export interface RequestPatternState {
   deleteActivity: (id: string) => void;
   setActivityField: (id: string, field: ActivityField, value: string) => void;
   setNameError: (error: string | undefined) => void;
-  setFieldError: (order: number, error: string | undefined) => void;
-  setActivityError: (id: string, field: ActivityField, error: string | undefined) => void;
+  setFieldError: (order: number, error: RequestPatternField["error"]) => void;
+  setActivityError: (order: number, error: Activity["error"]) => void;
 }
 
 const fieldsData = [
   {
     id: "f-1",
-    order: 1,
+    order: 0,
     name: "Descripción",
     description:
       "Coloque una descripción de la solicitud. Esta descripción será vista por los revisores y los solicitantes de la solicitud.",
     type: "textarea",
+    isRequired: true,
     options: [],
+    valueType: "text",
     value: [],
     error: {},
   },
   {
     id: "f-2",
-    order: 2,
+    order: 1,
     name: "Grupo Solicitante",
     description: "Escoja el grupo de usuarios que podrán iniciar una solicitud.",
     type: "combobox",
     options: ["Estudiantes", "Docentes Ingeniería", "Estudiantes postgrado"],
+    isRequired: true,
+    valueType: "multiple-choice",
     value: [],
     error: {},
   },
@@ -108,7 +115,7 @@ export const useRequestPatternStore = create(
       set((state) => {
         const field = state.fields.find((f) => f.order === order);
         if (field) {
-          field.error.value = error;
+          field.error = error;
         }
       }),
 
@@ -142,11 +149,11 @@ export const useRequestPatternStore = create(
         }
       }),
 
-    setActivityError: (id, field, error) =>
+    setActivityError: (order, error) =>
       set((state) => {
-        const activity = state.activities.find((a) => a.id === id);
+        const activity = state.activities.find((a) => a.order === order);
         if (activity) {
-          activity.error[field] = error;
+          activity.error = error;
         }
       }),
   })),

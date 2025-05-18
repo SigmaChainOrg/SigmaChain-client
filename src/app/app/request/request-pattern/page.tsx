@@ -4,10 +4,12 @@ import { Field } from "@/app/app/request/components/field";
 import { SaveGroup } from "@/app/app/request/components/save-group";
 import {
   ActivityFieldSchema,
-  RequestPatternFieldDescriptionSchema,
+  MultipleChoiceFieldSchema,
   RequestPatternSchema,
+  TextFieldSchema,
 } from "@/app/app/request/schemas/request-pattern-schema";
 import { useRequestPatternStore } from "@/app/app/request/state/activityItem";
+import { Badge } from "@/app/components/shadcn/badge";
 import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/app/components/shadcn/card";
 import { Combobox } from "@/app/components/shadcn/combobox";
@@ -15,6 +17,8 @@ import { BreadcrumbHeader } from "@/app/components/shadcn/header";
 import { Input } from "@/app/components/shadcn/input";
 import { Textarea } from "@/app/components/shadcn/textarea";
 import { routes } from "@/app/routes";
+import { faX } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Separator } from "@radix-ui/react-separator";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -45,17 +49,8 @@ export default function Solicitudes() {
     },
   };
 
-  const requesterGroups = requestFields[1].value;
-
-  function addRequesterGroup(requesterGroup: string) {
-    const group = requesterGroups.find((group) => group === requesterGroup);
-    if (!group) {
-      return [...requesterGroups, requesterGroup];
-    }
-    return;
-  }
-
   function handleRequestPatternSubmit() {
+    //Que approach es mejor? El de validar todo o por bloques? Este es por bloques, el de activityForm es todo
     const requestPatternValidation = RequestPatternSchema.safeParse({
       name,
     });
@@ -67,15 +62,30 @@ export default function Solicitudes() {
       return;
     }
 
-    const descriptionValidation = RequestPatternFieldDescriptionSchema.safeParse({
-      description: requestFields[0].value[0],
+    console.log(requestFields[0].value[0]);
+
+    const descriptionValidation = TextFieldSchema.safeParse({
+      text: requestFields[0].value[0],
     });
+
     if (!descriptionValidation.success) {
       const descriptionError = descriptionValidation.error.flatten().fieldErrors;
-      setFieldError(
-        requestFields[0].order,
-        descriptionError.description ? descriptionError.description[0] : undefined,
-      );
+      const error = {
+        value: descriptionError.text ? descriptionError.text[0] : undefined,
+      };
+      setFieldError(requestFields[0].order, error);
+      return;
+    }
+
+    const requestGroupValidation = MultipleChoiceFieldSchema.safeParse({
+      options: requestFields[1].value,
+    });
+    if (!requestGroupValidation.success) {
+      const requestGroupError = requestGroupValidation.error.flatten().fieldErrors;
+      const error = {
+        value: requestGroupError.options ? requestGroupError.options[0] : undefined,
+      };
+      setFieldError(requestFields[1].order, error);
       return;
     }
 
@@ -90,21 +100,12 @@ export default function Solicitudes() {
       if (!activityValidation.success) {
         hasActivityErrors = true;
         const activityError = activityValidation.error.flatten().fieldErrors;
-        setActivityError(
-          activity.id,
-          "name",
-          activityError.name ? activityError.name[0] : undefined,
-        );
-        setActivityError(
-          activity.id,
-          "reviewerGroup",
-          activityError.reviewerGroup ? activityError.reviewerGroup[0] : undefined,
-        );
-        setActivityError(
-          activity.id,
-          "responsable",
-          activityError.responsable ? activityError.responsable[0] : undefined,
-        );
+        const error = {
+          name: activityError.name ? activityError.name[0] : undefined,
+          reviewerGroup: activityError.reviewerGroup ? activityError.reviewerGroup[0] : undefined,
+          responsable: activityError.responsable ? activityError.responsable[0] : undefined,
+        };
+        setActivityError(activity.order, error);
       }
     }
 
@@ -138,6 +139,7 @@ export default function Solicitudes() {
                 {field.type === "text" ? (
                   <Input
                     placeholder="tu texto aquí"
+                    value={field.value[0]}
                     onChange={(e) => setFieldValue(field.order, [e.target.value])}
                   />
                 ) : field.type === "combobox" ? (
@@ -150,27 +152,29 @@ export default function Solicitudes() {
                         { value: "philosophy", label: "Filosofía" },
                       ]}
                       onChange={(e) => {
-                        const value = addRequesterGroup(e.value);
-                        setFieldValue(field.order, value ? value : requestFields[1].value);
+                        const value = Array.isArray(field.value) ? field.value : [];
+                        const newValue = value.includes(e.value) ? value : [...value, e.value];
+                        setFieldValue(field.order, newValue);
                       }}
                     />
-                    {/* Renderiza los badges debajo del Combobox 
-                              <div className="mt-4 flex flex-wrap gap-2">
-                                {selectedGroups.map((group) => (
-                                  <Badge key={group.value} className="flex items-center gap-2">
-                                    {group.label} 
-                                    <Button
-                                      variant="ghost"
-                                      onClick={() => {
-                                        handleRemoveGroup(group.value); // Elimina el grupo
-                                      }}
-                                      className="h-5 w-5 rounded-[100%] hover:bg-gray hover:text-red-500"
-                                    >
-                                      <FontAwesomeIcon icon={faX} />
-                                    </Button>
-                                  </Badge>
-                                ))}
-                              </div>*/}
+                    {/* Renderiza los badges debajo del Combobox */}
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      {field.value.map((group, index) => (
+                        <Badge key={index} className="flex items-center gap-2 text-black">
+                          {group}
+                          <Button
+                            variant="ghost"
+                            onClick={() => {
+                              const newValue = field.value.filter((g: string) => g !== group);
+                              setFieldValue(field.order, newValue);
+                            }}
+                            className="h-5 w-5 rounded-[100%] hover:bg-gray"
+                          >
+                            <FontAwesomeIcon icon={faX} className="hover:text-red-500" />
+                          </Button>
+                        </Badge>
+                      ))}
+                    </div>
                   </div>
                 ) : (
                   field.type === "textarea" && (
