@@ -8,7 +8,7 @@ export function SaveGroup({
 }: {
   buttons: {
     secondary: { value: string; onClick: (...args: any[]) => any }; // Generalizamos el tipo de función
-    primary: { value: string };
+    primary: { value: string; onClick: (...args: any[]) => any };
   };
   className?: string; // Agregamos className como una propiedad opcional
 }) {
@@ -17,7 +17,9 @@ export function SaveGroup({
       <Button variant="secondary" onClick={buttons.secondary.onClick}>
         {buttons.secondary.value}
       </Button>
-      <Button type="submit">{buttons.primary.value}</Button>
+      <Button type="submit" onClick={buttons.primary.onClick}>
+        {buttons.primary.value}
+      </Button>
     </div>
   );
 }

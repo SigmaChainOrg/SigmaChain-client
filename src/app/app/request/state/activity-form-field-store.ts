@@ -9,12 +9,11 @@ export interface Field {
   type: string;
   description?: string;
   isRequired: boolean;
-  options?: string[];
+  options: string[];
   uploadFileSize?: number;
   error: {
     name?: string;
     description?: string;
-    type?: string;
     options?: string;
     uploadFileSize?: string;
   };
@@ -35,32 +34,22 @@ export interface ActivityFormState {
 
   addSection: (prevOrder: number) => void;
   deleteSection: (sectionOrder: number) => void;
-  setSectionFieldError: (
-    sectionOrder: number,
-    field: "name" | "description",
-    error: string,
-  ) => void;
-
-  addField: (sectionOrder: number, fieldPrevOrder: number) => void;
-  deleteField: (sectionOrder: number, fieldOrder: number) => void;
-  setFieldError: (
-    sectionOrder: number,
-    fieldOrder: number,
-    field: keyof Field["error"],
-    error: string,
-  ) => void;
-
+  setSectionError: (sectionOrder: number, errors: Section["error"]) => void;
   setSectionFieldValue: (
     sectionOrder: number,
     field: keyof Section["error"],
     value: string,
   ) => void;
 
+  addField: (sectionOrder: number, fieldPrevOrder: number) => void;
+  deleteField: (sectionOrder: number, fieldOrder: number) => void;
+  setFieldError: (sectionOrder: number, fieldOrder: number, error: Field["error"]) => void;
+  clearField: (sectionOrder: number, fieldOrder: number) => void;
   setFieldValue: (
     sectionOrder: number,
     fieldOrder: number,
-    key: keyof Field["error"],
-    value: string,
+    key: "name" | "description" | "type" | "isRequired" | "options" | "uploadFileSize",
+    value: number | string | string[],
   ) => void;
 }
 
@@ -79,7 +68,7 @@ export const useActivityFormStore = create(
             order: 0,
             prevOrder: NaN,
             name: "",
-            type: "",
+            type: "short-answer",
             isRequired: false,
             options: [],
             uploadFileSize: 0,
@@ -104,7 +93,7 @@ export const useActivityFormStore = create(
               order: 0,
               prevOrder: undefined,
               name: "",
-              type: "",
+              type: "short-answer",
               isRequired: false,
               options: [],
               uploadFileSize: 0,
@@ -129,30 +118,30 @@ export const useActivityFormStore = create(
         });
       }),
 
-    setSectionFieldError: (sectionOrder, field, error) =>
+    setSectionError: (sectionOrder, errors) =>
       set((state) => {
         const section = state.sections.find((s) => s.order === sectionOrder);
         if (section) {
-          section.error[field] = error;
+          section.error = errors;
         }
       }),
 
-    addField: (sectionOrder, fieldOrder) =>
+    addField: (sectionOrder, fieldPrevOrder) =>
       set((state) => {
         const section = state.sections.find((s) => s.order === sectionOrder);
         if (section) {
           const field = {
             id: `f-${Date.now()}`,
-            order: fieldOrder,
-            prevOrder: fieldOrder - 1,
+            order: fieldPrevOrder + 1,
+            prevOrder: fieldPrevOrder,
             name: "",
-            type: "",
+            type: "short-answer",
             isRequired: false,
             options: [],
             uploadFileSize: 0,
             error: {},
           };
-          section.fields.splice(fieldOrder, 0, field);
+          section.fields.splice(field.order, 0, field);
           section.fields.forEach((field, idx) => {
             field.order = idx;
             field.prevOrder = idx > 0 ? idx - 1 : undefined;
@@ -171,12 +160,25 @@ export const useActivityFormStore = create(
         }
       }),
 
-    setFieldError: (sectionOrder, fieldOrder, field, error) =>
+    clearField: (sectionOrder: number, fieldOrder: number) =>
       set((state) => {
         const section = state.sections.find((s) => s.order === sectionOrder);
         if (section) {
           const f = section.fields.find((f) => f.order === fieldOrder);
-          if (f) f.error[field] = error;
+          if (f) {
+            f.options = [];
+            f.uploadFileSize = 0;
+            f.error = {};
+          }
+        }
+      }),
+
+    setFieldError: (sectionOrder, fieldOrder, errors) =>
+      set((state) => {
+        const section = state.sections.find((s) => s.order === sectionOrder);
+        if (section) {
+          const f = section.fields.find((f) => f.order === fieldOrder);
+          if (f) f.error = errors;
         }
       }),
 
@@ -195,7 +197,7 @@ export const useActivityFormStore = create(
         const field = section?.fields.find((f) => f.order === fieldOrder);
         if (field) {
           (field as any)[key] = value;
-          field.error[key] = undefined;
+          if (key !== "isRequired" && key !== "type") field.error[key] = undefined;
         }
       }),
   })),

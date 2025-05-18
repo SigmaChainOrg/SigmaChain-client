@@ -38,7 +38,7 @@ const solicitudeData = {
 
 const saveButtons = {
   secondary: { value: "Cancelar", onClick: () => {} },
-  primary: { value: "Guardar" },
+  primary: { value: "Guardar", onClick: () => {} },
 };
 
 export default function Solicitudes() {
@@ -136,11 +136,11 @@ export default function Solicitudes() {
                           ) : fieldData.tipo === "combobox" ? (
                             <div>
                               <Combobox
-                                selectDefault="Agregar grupo"
+                                selectDefault={{ value: "add group", label: "Agregar grupo" }}
                                 options={[
-                                  { value: "ingenieria", label: "Ingeniería" },
-                                  { value: "derecho", label: "Derecho" },
-                                  { value: "filosofia", label: "Filosofía" },
+                                  { value: "engineering", label: "Ingeniería" },
+                                  { value: "law", label: "Derecho" },
+                                  { value: "philosophy", label: "Filosofía" },
                                 ]}
                                 onChange={(option) => {
                                   handleAddGroup(option); // Agrega el grupo seleccionado

@@ -1,4 +1,8 @@
-import { Section, useActivityFormStore } from "@/app/app/request/state/activity-form-field-store";
+import {
+  Field,
+  Section,
+  useActivityFormStore,
+} from "@/app/app/request/state/activity-form-field-store";
 import { LabeledCheckbox } from "@/app/components/labeled-checkbox";
 import { LabeledSwitch } from "@/app/components/labeled-switch";
 import { Button } from "@/app/components/shadcn/button";
@@ -16,70 +20,106 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Label } from "@radix-ui/react-dropdown-menu";
-import { useState } from "react";
 
-function RenderFormType(
-  type: string,
-  options: string[],
-  setOptions: React.Dispatch<React.SetStateAction<string[]>>,
-) {
-  switch (type) {
+function RenderFormType(section: Section, field: Field) {
+  const setFieldValue = useActivityFormStore((state) => state.setFieldValue);
+  switch (field.type) {
     case "multiple-choice":
-    case "choice":
+    case "choice": {
+      //always show at least one input for options
+      const options =
+        Array.isArray(field.options) && field.options.length > 0 ? field.options : [""];
+
       return (
         <>
           <Label>Opciones:</Label>
           {options.map((option, index) => (
-            <div key={index} className="flex flex-row items-center gap-2">
-              <Input
-                placeholder="opción"
-                className="w-fit"
-                value={option}
-                onChange={(e) => {
-                  const newOptions = [...options];
-                  newOptions[index] = e.target.value;
-                  setOptions(newOptions);
-                }}
-              />
-              <Button
-                variant="ghost"
-                className="text-danger"
-                onClick={() => {
-                  if (options.length > 1) {
-                    // Solo permite eliminar si hay más de una opción
-                    const newOptions = options.filter((_, i) => i !== index);
-                    setOptions(newOptions);
-                  }
-                }}
-              >
-                <FontAwesomeIcon icon={faX} />
-              </Button>
-              <Button
-                variant="ghost"
-                onClick={() => setOptions([...options, ""])} // Agrega una nueva opción vacía
-              >
-                <FontAwesomeIcon icon={faPlus} />
-              </Button>
+            <div key={index}>
+              <div className="flex flex-row items-center gap-2">
+                <Input
+                  placeholder="opción"
+                  className="w-fit"
+                  value={option}
+                  onChange={(e) => {
+                    const newOptions = Array.isArray(field.options) ? [...field.options] : [""];
+                    newOptions[index] = e.target.value;
+                    setFieldValue(section.order, field.order, "options", newOptions);
+                  }}
+                />
+                <Button
+                  variant="ghost"
+                  className="text-danger"
+                  onClick={() => {
+                    if (options.length > 1) {
+                      const newOptions = Array.isArray(field.options) ? [...field.options] : [""];
+                      newOptions.splice(index, 1);
+                      setFieldValue(section.order, field.order, "options", newOptions);
+                    }
+                  }}
+                >
+                  <FontAwesomeIcon icon={faX} />
+                </Button>
+                <Button
+                  variant="ghost"
+                  onClick={() => {
+                    const newOptions = Array.isArray(field.options) ? [...field.options] : [];
+                    newOptions.push("");
+                    setFieldValue(section.order, field.order, "options", newOptions);
+                  }}
+                >
+                  <FontAwesomeIcon icon={faPlus} />
+                </Button>
+              </div>
+              {field.error.options && <p className="text-sm text-danger">{field.error.options}</p>}
             </div>
           ))}
         </>
       );
+    }
     case "file":
+      const fileOptions = ["Documentos", "Media", "Audio"];
       return (
         <>
           <Label>Tipos de archivos aceptados:</Label>
-          <LabeledCheckbox label="Documentos" side="right" />
-          <LabeledCheckbox label="Media" side="right" />
-          <LabeledCheckbox label="Audio" side="right" />
+          {fileOptions.map((option) => (
+            <LabeledCheckbox
+              key={option}
+              label={option}
+              side="right"
+              checked={field.options?.includes(option)}
+              onChange={(checked) => {
+                let newOptions = Array.isArray(field.options) ? [...field.options] : [];
+                if (checked) {
+                  if (!newOptions.includes(option)) {
+                    newOptions.push(option);
+                  }
+                } else {
+                  newOptions = newOptions.filter((opt) => opt !== option);
+                }
+                setFieldValue(section.order, field.order, "options", newOptions);
+              }}
+            />
+          ))}
+          {field.error.options && <p className="text-sm text-danger">{field.error.options}</p>}
           <div className="flex flex-row items-end gap-2">
             <Label>Tamaño máximo:</Label>
-            <Input placeholder="20" className="w-[50px]" type="number" />
+            <Input
+              placeholder="20"
+              className="w-[50px]"
+              type="number"
+              onChange={(e) =>
+                setFieldValue(section.order, field.order, "uploadFileSize", Number(e.target.value))
+              }
+            />
             <Label className="text-gray">MB</Label>
+            {field.error.uploadFileSize && (
+              <p className="text-sm text-danger">{field.error.uploadFileSize}</p>
+            )}
           </div>
         </>
       );
     default:
-      return null; // No renderiza nada para "short-answer"
+      return null; // Render nothing for short-answer type
   }
 }
 
@@ -114,48 +154,67 @@ function CardBase({
   );
 }
 
-export function FormCard({
-  addClick,
-  addSectionClick,
-  deleteClick,
-}: {
-  addClick?: () => void;
-  addSectionClick?: () => void;
-  deleteClick?: () => void;
-}) {
-  const [selectedType, setSelectedType] = useState<string>("");
-  const [options, setOptions] = useState<string[]>([]); // Estado para manejar las opciones
+export function FormCard({ section, field }: { section: Section; field: Field }) {
+  const setFieldValue = useActivityFormStore((state) => state.setFieldValue);
+  const addField = useActivityFormStore((state) => state.addField);
+  const deleteField = useActivityFormStore((state) => state.deleteField);
+  const addSection = useActivityFormStore((state) => state.addSection);
+  const clearField = useActivityFormStore((state) => state.clearField);
+  const typeOptions = [
+    { value: "short-answer", label: "Respuesta corta" },
+    { value: "multiple-choice", label: "Opciones" },
+    { value: "choice", label: "Radio button" },
+    { value: "file", label: "Subida de archivos" },
+  ];
 
   return (
-    <CardBase type="field" addClick={addClick} addSectionClick={addSectionClick}>
+    <CardBase
+      type="field"
+      addClick={() => addField(section.order, field.order)}
+      addSectionClick={() => addSection(section.order)}
+    >
       <div className="flex flex-row items-end gap-4">
-        <Input placeholder="Nombre del campo" className="w-full" />
+        <div className="w-full">
+          <Input
+            placeholder="Nombre del campo"
+            value={field.name}
+            onChange={(e) => setFieldValue(section.order, field.order, "name", e.target.value)}
+          />
+          {field.error.name && <p className="text-sm text-danger">{field.error.name}</p>}
+        </div>
         <Label>Tipo:</Label>
         <Combobox
-          options={[
-            { value: "short-answer", label: "Respuesta corta" },
-            { value: "multiple-choice", label: "Opciones" },
-            { value: "choice", label: "Radio button" },
-            { value: "file", label: "Subida de archivos" },
-          ]}
-          onChange={(option) => {
-            setSelectedType(option.value);
-            if (option.value === "multiple-choice" || option.value === "choice") {
-              setOptions([""]); // Inicializa con una opción vacía
-            } else {
-              setOptions([]); // Limpia las opciones para otros tipos
-            }
+          options={typeOptions}
+          selectDefault={typeOptions.find((opt) => opt.value === field.type)}
+          onChange={(option: { value: string; label: string }) => {
+            setFieldValue(section.order, field.order, "type", option.value);
+            clearField(section.order, field.order);
           }}
         />
       </div>
-      <Input placeholder="Descripción" className="w-full" />
-      {/* Renderiza contenido dinámico basado en el tipo seleccionado */}
-      {RenderFormType(selectedType, options, setOptions)}
+      <Input
+        placeholder="Descripción"
+        className="w-full"
+        value={field.description}
+        onChange={(e) => setFieldValue(section.order, field.order, "description", e.target.value)}
+      />
+      {field.error.description && <p className="text-sm text-danger">{field.error.description}</p>}
+      {/* Render the components following the selected file type */}
+      {RenderFormType(section, field)}
 
       <div className="mt-4 flex flex-row justify-end gap-2">
-        <LabeledSwitch label="Campo obligatorio" side="left" />
+        <LabeledSwitch
+          label="Campo obligatorio"
+          side="left"
+          checked={field.isRequired}
+          onChange={(e) => setFieldValue(section.order, field.order, "isRequired", e.toString())}
+        />
         <FontAwesomeIcon icon={faWindowMinimize} className="ml-4 rotate-90 text-[24px] text-gray" />
-        <FontAwesomeIcon icon={faTrash} onClick={deleteClick} className="text-[24px] text-danger" />
+        <FontAwesomeIcon
+          icon={faTrash}
+          onClick={() => deleteField(section.order, field.order)}
+          className="text-[24px] text-danger"
+        />
       </div>
     </CardBase>
   );
@@ -183,12 +242,16 @@ export function SectionCard({ section }: { section: Section }) {
           value={section.name}
           onChange={(e) => setSectionFieldValue(section.order, "name", e.target.value)}
         />
+        {section.error.name && <p className="text-sm text-danger">{section.error.name}</p>}
         <Input
           placeholder="Descripción"
           className="w-full"
           value={section.description}
           onChange={(e) => setSectionFieldValue(section.order, "description", e.target.value)}
         />
+        {section.error.description && (
+          <p className="text-sm text-danger">{section.error.description}</p>
+        )}
         <FontAwesomeIcon
           icon={faTrash}
           onClick={() => deleteSection(section.order)}
