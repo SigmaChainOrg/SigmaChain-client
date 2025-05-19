@@ -1,5 +1,5 @@
 "use client";
-import { Activity, useActivityStore } from "@/app/app/request/state/activityItem";
+import { Activity, useRequestPatternStore } from "@/app/app/request/state/activityItem";
 import {
   Accordion,
   AccordionContent,
@@ -20,13 +20,13 @@ import {
   SheetTrigger,
 } from "@/app/components/shadcn/sheet";
 import { routes } from "@/app/routes";
-import { faEllipsisVertical, faTrash, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsisVertical, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
 
-export function ActivityItem(activity: Activity) {
-  const { deleteActivity, setActivityName, setActivityReviewerGroup, setActivityResponsable } =
-    useActivityStore();
+export function ActivityItem({ activity }: { activity: Activity }) {
+  const setActivityField = useRequestPatternStore((state) => state.setActivityField);
+  const deleteActivity = useRequestPatternStore((state) => state.deleteActivity);
 
   return (
     <div
@@ -36,31 +36,39 @@ export function ActivityItem(activity: Activity) {
       <div className="h-full cursor-grab place-content-center bg-background px-1">
         <FontAwesomeIcon icon={faEllipsisVertical} />
       </div>
-      {/* Input para el nombre de la actividad */}
-      <Input
-        placeholder="Nombre de la actividad"
-        value={activity.name}
-        onChange={(e) => setActivityName(activity.id, e.target.value)}
-        className="w-auto"
-      />
-      {/* Combobox para el grupo revisor */}
-      <Combobox
-        options={[
-          { value: "ingenieria", label: "Ingeniería" },
-          { value: "marketing", label: "Marketing" },
-        ]}
-        onChange={(option) => setActivityReviewerGroup(activity.id, option.value)} // Actualiza el grupo revisor
-      />
-      {/* Combobox para el responsable */}
-      <Combobox
-        options={[
-          { value: "anita", label: "Anita" },
-          { value: "juan", label: "Juan" },
-        ]}
-        onChange={(option) => setActivityResponsable(activity.id, option.value)} // Actualiza el responsable
-      />
-
-      {/* Botón para eliminar la actividad */}
+      <div>
+        <Input
+          placeholder="Nombre de la actividad"
+          value={activity.name}
+          onChange={(e) => setActivityField(activity.id, "name", e.target.value)}
+          className="w-auto"
+        />
+        {activity.error.name && <p className="text-sm text-danger">{activity.error.name}</p>}
+      </div>
+      <div>
+        <Combobox
+          options={[
+            { value: "engineering", label: "Ingeniería" },
+            { value: "marketing", label: "Marketing" },
+          ]}
+          onChange={(option) => setActivityField(activity.id, "reviewerGroup", option.value)}
+        />
+        {activity.error.reviewerGroup && (
+          <p className="text-sm text-danger">{activity.error.reviewerGroup}</p>
+        )}
+      </div>
+      <div>
+        <Combobox
+          options={[
+            { value: "anita", label: "Anita" },
+            { value: "juan", label: "Juan" },
+          ]}
+          onChange={(option) => setActivityField(activity.id, "responsable", option.value)}
+        />
+        {activity.error.responsable && (
+          <p className="text-sm text-danger">{activity.error.responsable}</p>
+        )}
+      </div>
       <Button
         variant="ghost"
         className="hover:bg-danger [&>svg]:text-danger hover:[&>svg]:text-white"
@@ -79,13 +87,8 @@ export function ActivityItemView({
   activity: Activity;
   requestId: string;
 }) {
-  const { activities } = useActivityStore();
+  const activities = useRequestPatternStore((state) => state.activities);
 
-  // Encuentra las actividades que ocurren antes de la actividad actual
-  const previousActivities = activities.slice(
-    0,
-    activities.findIndex((a) => a.id === activity.id), // Filtra hasta la actividad actual
-  );
   const router = useRouter();
   return (
     <div
@@ -120,12 +123,10 @@ export function ActivityItemView({
           <div className="grid gap-4 px-4 py-4">
             <h5>{activity.name}</h5>
             <Accordion type="single" collapsible className="w-full">
-              {previousActivities.map((prevActivity) => (
-                <AccordionItem value={"item-" + prevActivity.id} key={prevActivity.id}>
-                  <AccordionTrigger>{prevActivity.name}</AccordionTrigger>
-                  <AccordionContent>
-                    Información de la actividad: {prevActivity.name}
-                  </AccordionContent>
+              {activities.map((activity) => (
+                <AccordionItem value={"item-" + activity.id} key={activity.id}>
+                  <AccordionTrigger>{activity.name}</AccordionTrigger>
+                  <AccordionContent>Información de la actividad: {activity.name}</AccordionContent>
                 </AccordionItem>
               ))}
             </Accordion>
