@@ -13,7 +13,7 @@ export interface ActivityField {
   error: { value?: string };
 }
 
-export interface ActivitySchema {
+export interface Activity {
   id: string;
   order: number;
   name: string;
@@ -22,7 +22,7 @@ export interface ActivitySchema {
 }
 
 export interface RequestProcessState {
-  activities: ActivitySchema[];
+  activities: Activity[];
   setIsCompleteActivity: (activityOrder: number, value: boolean) => void;
   setActivityFieldValue: (activityOrder: number, fieldOrder: number, value: string[]) => void;
   setActivityFieldError: (activityOrder: number, fieldOrder: number, error: string) => void;
