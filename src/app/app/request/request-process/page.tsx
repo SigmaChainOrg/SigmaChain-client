@@ -183,7 +183,7 @@ export default function RequestProcess() {
                               />
                             ) : field.type === "combobox" ? (
                               <Combobox
-                                selectDefault="Agregar grupo"
+                                selectDefault={{ value: "add group", label: "Agregar grupo" }}
                                 options={
                                   field.options
                                     ? field.options.map((opt) => ({ value: opt, label: opt }))
