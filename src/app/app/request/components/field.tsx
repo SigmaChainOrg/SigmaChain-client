@@ -20,3 +20,12 @@ export function Field({
     </>
   );
 }
+
+export function InformationField({ fieldData }: { fieldData: fieldDataInterface }) {
+  return (
+    <div className="py-4">
+      <h5>{fieldData.name}</h5>
+      <p className="w-full font-raleway">{fieldData.description}</p>
+    </div>
+  );
+}
