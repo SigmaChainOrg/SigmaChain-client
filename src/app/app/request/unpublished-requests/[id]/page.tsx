@@ -1,9 +1,9 @@
 "use client";
 import { ActivityItemView } from "@/app/app/request/components/activityItemManager";
 import { SaveGroup } from "@/app/app/request/components/save-group";
-import { useActivityStore } from "@/app/app/request/state/activityItem";
+import { useRequestPatternStore } from "@/app/app/request/state/activityItem";
 import { Button } from "@/app/components/shadcn/button";
-import { Card, CardContent, CardHeader } from "@/app/components/shadcn/card";
+import { Card, CardContent } from "@/app/components/shadcn/card";
 import { BreadcrumbHeader } from "@/app/components/shadcn/header";
 import { Separator } from "@radix-ui/react-separator";
 import { useParams, usePathname } from "next/navigation";
@@ -26,10 +26,10 @@ const solicitudeData = {
 export default function Solicitudes() {
   const { id } = useParams();
   const pathName = usePathname();
-  const { activities } = useActivityStore();
+  const activities = useRequestPatternStore((state) => state.activities);
   const saveButtons = {
     secondary: { value: "Editar", onClick: () => {} },
-    primary: { value: "Publicar" },
+    primary: { value: "Publicar", onClick: () => {} },
   };
 
   return (

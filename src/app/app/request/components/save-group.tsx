@@ -7,10 +7,10 @@ export function SaveGroup({
   className,
 }: {
   buttons: {
-    secondary: { value: string; onClick: (...args: any[]) => any }; // Generalizamos el tipo de función
+    secondary: { value: string; onClick: (...args: any[]) => any };
     primary: { value: string; onClick: (...args: any[]) => any };
   };
-  className?: string; // Agregamos className como una propiedad opcional
+  className?: string;
 }) {
   return (
     <div className={cn("flex flex-row justify-center gap-4 px-5 py-6", className)}>

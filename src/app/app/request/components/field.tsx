@@ -13,9 +13,9 @@ export function Field({
   return (
     <>
       <h5>{fieldData.name}</h5>
-      <div className="flex flex-row gap-7">
-        <p className="w-[50%] font-raleway">{fieldData.description}</p>
-        <div className="w-[50%]">{children}</div>
+      <div className="grid grid-cols-2 gap-7">
+        <p className="col-start-1 col-end-2 font-raleway">{fieldData.description}</p>
+        <div className="col-start-2 col-end-3">{children}</div>
       </div>
     </>
   );
