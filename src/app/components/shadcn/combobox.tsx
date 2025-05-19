@@ -17,12 +17,12 @@ import { Check } from "lucide-react";
 import * as React from "react";
 
 export function Combobox({
-  selectDefault = "Seleccionar",
+  selectDefault = { value: "selection", label: "Seleccionar" },
   options,
   onChange,
   children,
 }: {
-  selectDefault?: string;
+  selectDefault?: { value: string; label: string };
   options: Array<{ value: string; label: string }>;
   onChange?: (option: { value: string; label: string }) => any; // Llama a esta función cuando se selecciona una opción
   children?: React.ReactNode; // Agregamos children como una propiedad opcional
@@ -43,12 +43,12 @@ export function Combobox({
             title={
               selectedValue
                 ? options.find((option) => option.value === selectedValue)?.label
-                : selectDefault
+                : selectDefault.label
             } // Muestra el texto completo al pasar el cursor
           >
             {selectedValue
               ? options.find((option) => option.value === selectedValue)?.label
-              : selectDefault}
+              : selectDefault.label}
           </span>
           {/* Renderiza los children */}
           <FontAwesomeIcon icon={faChevronDown} />
@@ -56,7 +56,7 @@ export function Combobox({
       </PopoverTrigger>
       <PopoverContent className="w-[200px] p-0">
         <Command>
-          <CommandInput placeholder={selectDefault} />
+          <CommandInput placeholder={selectDefault.label} />
           <CommandList>
             <CommandEmpty>Ningún resultado</CommandEmpty>
             <CommandGroup>

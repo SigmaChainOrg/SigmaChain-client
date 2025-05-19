@@ -1,51 +1,134 @@
 "use client";
 import { FormCard, SectionCard } from "@/app/app/request/components/form-card";
+import { SaveGroup } from "@/app/app/request/components/save-group";
+import {
+  activityFormChoiceFieldSchema,
+  activityFormSectionSchema,
+  activityFormTextFieldSchema,
+  activityFormUploadFilesSchema,
+} from "@/app/app/request/schemas/activity-form-field-schema";
+import { useActivityFormStore } from "@/app/app/request/state/activity-form-field-store";
 import { BreadcrumbHeader } from "@/app/components/shadcn/header";
-import { useParams, usePathname } from "next/navigation";
-import { useState } from "react";
+import { routes } from "@/app/routes";
+import { usePathname, useRouter } from "next/navigation";
 
-// Define el tipo correctamente
-type ComponentType = { id: number; type: "form" | "section" };
-
-export default function Home() {
-  const { activityId } = useParams();
+export default function ActivityFormPattern() {
+  const router = useRouter();
   const pathName = usePathname();
 
-  // Estado único para manejar FormCards y SectionCards
-  const [components, setComponents] = useState<ComponentType[]>([
-    { id: 0, type: "form" }, // Inicializa con un FormCard
-  ]);
+  const sections = useActivityFormStore((state) => state.sections);
+  const setSectionError = useActivityFormStore((state) => state.setSectionError);
+  const setFieldError = useActivityFormStore((state) => state.setFieldError);
 
-  // Función para añadir un nuevo FormCard
-  const addFormCard = (index: number) => {
-    setComponents((prev) => {
-      const newComponent: ComponentType = { id: prev.length, type: "form" };
-      const updatedComponents = [...prev];
-      updatedComponents.splice(index + 1, 0, newComponent); // Inserta el nuevo FormCard debajo del índice actual
-      return updatedComponents;
-    });
-  };
+  function handleSaveForm() {
+    let hasSectionErrors = false;
+    let hasFieldErrors = false;
 
-  // Función para añadir un nuevo SectionCard
-  const addSectionCard = (index: number) => {
-    setComponents((prev) => {
-      const newComponent: ComponentType = { id: prev.length, type: "section" };
-      const updatedComponents = [...prev];
-      updatedComponents.splice(index + 1, 0, newComponent); // Inserta el nuevo SectionCard debajo del índice actual
-      return updatedComponents;
-    });
-  };
+    for (const section of sections) {
+      const sectionValidation = activityFormSectionSchema.safeParse({
+        name: section.name,
+        description: section.description,
+      });
 
-  // Función para eliminar un componente (FormCard o SectionCard)
-  const deleteComponent = (id: number) => {
-    setComponents((prev) => {
-      // Si solo queda un componente de tipo "form", no se permite eliminar
-      const remainingForms = prev.filter((comp) => comp.type === "form");
-      if (remainingForms.length === 1 && remainingForms[0].id === id) {
-        return prev;
+      if (!sectionValidation.success) {
+        hasSectionErrors = true;
+        const validationResponse = sectionValidation.error.flatten().fieldErrors;
+        const errors = {
+          name: validationResponse.name ? validationResponse.name[0] : undefined,
+          description: validationResponse.description
+            ? validationResponse.description[0]
+            : undefined,
+        };
+        setSectionError(section.order, errors);
       }
-      return prev.filter((comp) => comp.id !== id);
-    });
+
+      for (const field of section.fields) {
+        switch (field.type) {
+          case "short-answer":
+            const shortAnswerValidation = activityFormTextFieldSchema.safeParse({
+              name: field.name,
+              description: field.description,
+            });
+
+            if (!shortAnswerValidation.success) {
+              hasFieldErrors = true;
+              const validationResponse = shortAnswerValidation.error.flatten().fieldErrors;
+              const errors = {
+                name: validationResponse.name ? validationResponse.name[0] : undefined,
+                description: validationResponse.description
+                  ? validationResponse.description[0]
+                  : undefined,
+              };
+              setFieldError(section.order, field.order, errors);
+              break;
+            }
+            break;
+          case "multiple-choice":
+          case "choice":
+            const choiceValidation = activityFormChoiceFieldSchema.safeParse({
+              name: field.name,
+              description: field.description,
+              options: field.options,
+            });
+
+            if (!choiceValidation.success) {
+              hasFieldErrors = true;
+              const validationResponse = choiceValidation.error.flatten().fieldErrors;
+              const errors = {
+                name: validationResponse.name ? validationResponse.name[0] : undefined,
+                description: validationResponse.description
+                  ? validationResponse.description[0]
+                  : undefined,
+                options: validationResponse.options ? validationResponse.options[0] : undefined,
+              };
+              setFieldError(section.order, field.order, errors);
+              break;
+            }
+            break;
+          case "file":
+            const fieldFileValidation = activityFormUploadFilesSchema.safeParse({
+              name: field.name,
+              description: field.description,
+              options: field.options,
+              uploadFileSize: field.uploadFileSize,
+            });
+
+            if (!fieldFileValidation.success) {
+              hasFieldErrors = true;
+              const validationResponse = fieldFileValidation.error.flatten().fieldErrors;
+              const errors = {
+                name: validationResponse.name ? validationResponse.name[0] : undefined,
+                description: validationResponse.description
+                  ? validationResponse.description[0]
+                  : undefined,
+                options: validationResponse.options ? validationResponse.options[0] : undefined,
+                uploadFileSize: validationResponse.uploadFileSize
+                  ? validationResponse.uploadFileSize[0]
+                  : undefined,
+              };
+              setFieldError(section.order, field.order, errors);
+              break;
+            }
+            break;
+        }
+      }
+    }
+
+    if (hasSectionErrors || hasFieldErrors) {
+      return;
+    }
+
+    router.push(routes["unpublished-request"] + `/${pathName.toString().split("/")[4]}`);
+  }
+
+  const saveButtons = {
+    secondary: { value: "Cancelar", onClick: () => {} },
+    primary: {
+      value: "Guardar",
+      onClick: () => {
+        handleSaveForm();
+      },
+    },
   };
 
   return (
@@ -54,25 +137,20 @@ export default function Home() {
         <BreadcrumbHeader estado={true} path={pathName} />
       </div>
       <div className="col-start-3 col-end-11 flex flex-col gap-6">
-        {/* Renderiza los componentes en el orden en que se añaden */}
-        {components.map((component, index) =>
-          component.type === "form" ? (
-            <FormCard
-              key={`form-${component.id}`}
-              addClick={() => addFormCard(index)} // Pasa el índice actual para agregar debajo
-              addSectionClick={() => addSectionCard(index)} // Pasa el índice actual para agregar debajo
-              deleteClick={() => deleteComponent(component.id)} // Pasa la función para eliminar
-            />
-          ) : (
-            <SectionCard
-              key={`section-${component.id}`}
-              addClick={() => addFormCard(index)} // Pasa el índice actual para agregar debajo
-              addSectionClick={() => addSectionCard(index)} // Pasa el índice actual para agregar debajo
-              deleteClick={() => deleteComponent(component.id)} // Pasa la función para eliminar
-            />
-          ),
-        )}
+        {sections.map((section, index) => (
+          <div key={index}>
+            <SectionCard section={section} />
+
+            {section.fields.map((field, index) => (
+              <FormCard key={index} section={section} field={field} />
+            ))}
+          </div>
+        ))}
       </div>
+      <SaveGroup
+        className="col-start-3 col-end-11 place-self-end"
+        buttons={saveButtons}
+      ></SaveGroup>
     </>
   );
 }

@@ -1,75 +1,204 @@
 import { create } from "zustand";
+import { immer } from "zustand/middleware/immer";
 
-interface ActivityFormFieldStore {
+export interface Field {
+  id: string;
+  order: number;
+  prevOrder: number | undefined;
   name: string;
+  type: string;
   description?: string;
   isRequired: boolean;
-  errors: { name?: string };
-  setName: (name: string) => void;
-  setDescription: (description: string) => void;
-  setIsRequired: (isRequired: boolean) => void;
-  setErrors: (errors: ActivityFormFieldStore["errors"]) => void;
-}
-
-export interface ActivityFormShortAnswerStore extends ActivityFormFieldStore {}
-
-export interface ActivityFormChoiceStore extends ActivityFormFieldStore {
   options: string[];
-  errors: { name?: string; options?: string[] };
-  setOptions: (options: string[]) => void;
-  setErrors: (errors: ActivityFormFieldStore["errors"]) => void;
+  uploadFileSize?: number;
+  error: {
+    name?: string;
+    description?: string;
+    options?: string;
+    uploadFileSize?: string;
+  };
 }
 
-export interface ActivityFormMultipleChoiceStore extends ActivityFormChoiceStore {}
-
-export interface ActivityFormUploadFilesStore extends ActivityFormFieldStore {
-  acceptedFiles: string[];
-  maxSize: number;
-  errors: { name?: string; acceptedFiles?: string[]; maxSize?: number };
-  setAcceptedFiles: (acceptedFiles: string[]) => void;
-  setMaxSize: (maxSize: number) => void;
+export interface Section {
+  id: string;
+  order: number;
+  prevOrder: number | undefined;
+  name: string;
+  description?: string;
+  fields: Field[];
+  error: { name?: string; description?: string };
 }
 
-export const useActivityFormFieldShortAnswerStore = create<ActivityFormShortAnswerStore>((set) => ({
-  name: "",
-  description: "",
-  isRequired: false,
-  errors: {},
-  setName: (name) => set({ name }),
-  setDescription: (description) => set({ description }),
-  setIsRequired: (isRequired) => set({ isRequired }),
-  setErrors: (errors) => set({ errors }),
-}));
+export interface ActivityFormState {
+  sections: Section[];
 
-export const useActivityFormFieldChoiceStore = create<ActivityFormChoiceStore>((set) => ({
-  name: "",
-  description: "",
-  isRequired: false,
-  options: [],
-  errors: {},
-  setName: (name) => set((state) => ({ name, errors: { ...state.errors, name: undefined } })),
-  setDescription: (description) => set({ description }),
-  setIsRequired: (isRequired) => set({ isRequired }),
-  setOptions: (options) =>
-    set((state) => ({ options, errors: { ...state.errors, options: undefined } })),
-  setErrors: (errors) => set({ errors }),
-}));
+  addSection: (prevOrder: number) => void;
+  deleteSection: (sectionOrder: number) => void;
+  setSectionError: (sectionOrder: number, errors: Section["error"]) => void;
+  setSectionFieldValue: (
+    sectionOrder: number,
+    field: keyof Section["error"],
+    value: string,
+  ) => void;
 
-export const useActivityFormFieldMultipleChoiceStore = useActivityFormFieldChoiceStore;
+  addField: (sectionOrder: number, fieldPrevOrder: number) => void;
+  deleteField: (sectionOrder: number, fieldOrder: number) => void;
+  setFieldError: (sectionOrder: number, fieldOrder: number, error: Field["error"]) => void;
+  clearField: (sectionOrder: number, fieldOrder: number) => void;
+  setFieldValue: (
+    sectionOrder: number,
+    fieldOrder: number,
+    key: "name" | "description" | "type" | "isRequired" | "options" | "uploadFileSize",
+    value: number | string | string[],
+  ) => void;
+}
 
-export const useActivityFormUploadFilesStore = create<ActivityFormUploadFilesStore>((set) => ({
-  name: "",
-  description: "",
-  isRequired: false,
-  acceptedFiles: [],
-  maxSize: 0,
-  errors: {},
-  setName: (name) => set({ name }),
-  setDescription: (description) => set({ description }),
-  setIsRequired: (isRequired) => set({ isRequired }),
-  setAcceptedFiles: (acceptedFiles) =>
-    set((state) => ({ acceptedFiles, errors: { ...state.errors, acceptedFiles: undefined } })),
-  setMaxSize: (maxSize) =>
-    set((state) => ({ maxSize, errors: { ...state.errors, maxSize: undefined } })),
-  setErrors: (errors) => set({ errors }),
-}));
+export const useActivityFormStore = create(
+  immer<ActivityFormState>((set) => ({
+    sections: [
+      {
+        id: "s1",
+        order: 0,
+        prevOrder: undefined,
+        name: "",
+        description: "",
+        fields: [
+          {
+            id: `f-${Date.now()}`,
+            order: 0,
+            prevOrder: NaN,
+            name: "",
+            type: "short-answer",
+            isRequired: false,
+            options: [],
+            uploadFileSize: 0,
+            error: {},
+          },
+        ],
+        error: {},
+      },
+    ],
+
+    addSection: (prevOrder) =>
+      set((state) => {
+        const newSection = {
+          id: "s1",
+          order: prevOrder + 1,
+          prevOrder: prevOrder,
+          name: "",
+          description: "",
+          fields: [
+            {
+              id: `f-${Date.now()}`,
+              order: 0,
+              prevOrder: undefined,
+              name: "",
+              type: "short-answer",
+              isRequired: false,
+              options: [],
+              uploadFileSize: 0,
+              error: {},
+            },
+          ],
+          error: {},
+        };
+        state.sections.splice(newSection.order, 0, newSection);
+        state.sections.forEach((section, idx) => {
+          section.order = idx;
+          section.prevOrder = idx > 0 ? idx - 1 : undefined;
+        });
+      }),
+
+    deleteSection: (order) =>
+      set((state) => {
+        if (state.sections.length <= 1) return;
+        state.sections = state.sections.filter((section) => section.order !== order);
+        state.sections.forEach((section, index) => {
+          section.order = index;
+        });
+      }),
+
+    setSectionError: (sectionOrder, errors) =>
+      set((state) => {
+        const section = state.sections.find((s) => s.order === sectionOrder);
+        if (section) {
+          section.error = errors;
+        }
+      }),
+
+    addField: (sectionOrder, fieldPrevOrder) =>
+      set((state) => {
+        const section = state.sections.find((s) => s.order === sectionOrder);
+        if (section) {
+          const field = {
+            id: `f-${Date.now()}`,
+            order: fieldPrevOrder + 1,
+            prevOrder: fieldPrevOrder,
+            name: "",
+            type: "short-answer",
+            isRequired: false,
+            options: [],
+            uploadFileSize: 0,
+            error: {},
+          };
+          section.fields.splice(field.order, 0, field);
+          section.fields.forEach((field, idx) => {
+            field.order = idx;
+            field.prevOrder = idx > 0 ? idx - 1 : undefined;
+          });
+        }
+      }),
+
+    deleteField: (sectionOrder, fieldOrder) =>
+      set((state) => {
+        const section = state.sections.find((s) => s.order === sectionOrder);
+        if (section && section.fields.length > 1) {
+          section.fields = section.fields.filter((f) => f.order !== fieldOrder);
+          section.fields.forEach((f, i) => {
+            f.order = i;
+          });
+        }
+      }),
+
+    clearField: (sectionOrder: number, fieldOrder: number) =>
+      set((state) => {
+        const section = state.sections.find((s) => s.order === sectionOrder);
+        if (section) {
+          const f = section.fields.find((f) => f.order === fieldOrder);
+          if (f) {
+            f.options = [];
+            f.uploadFileSize = 0;
+            f.error = {};
+          }
+        }
+      }),
+
+    setFieldError: (sectionOrder, fieldOrder, errors) =>
+      set((state) => {
+        const section = state.sections.find((s) => s.order === sectionOrder);
+        if (section) {
+          const f = section.fields.find((f) => f.order === fieldOrder);
+          if (f) f.error = errors;
+        }
+      }),
+
+    setSectionFieldValue: (sectionOrder, field, value) =>
+      set((state) => {
+        const section = state.sections.find((s) => s.order === sectionOrder);
+        if (section) {
+          (section as any)[field] = value;
+          section.error[field] = undefined;
+        }
+      }),
+
+    setFieldValue: (sectionOrder, fieldOrder, key, value) =>
+      set((state) => {
+        const section = state.sections.find((s) => s.order === sectionOrder);
+        const field = section?.fields.find((f) => f.order === fieldOrder);
+        if (field) {
+          (field as any)[key] = value;
+          if (key !== "isRequired" && key !== "type") field.error[key] = undefined;
+        }
+      }),
+  })),
+);

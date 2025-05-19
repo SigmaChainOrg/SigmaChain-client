@@ -145,7 +145,7 @@ export default function Solicitudes() {
                 ) : field.type === "combobox" ? (
                   <div>
                     <Combobox
-                      selectDefault="Agregar grupo"
+                      selectDefault={{ value: "add group", label: "Agregar grupo" }}
                       options={[
                         { value: "engineering", label: "Ingeniería" },
                         { value: "law", label: "Derecho" },
