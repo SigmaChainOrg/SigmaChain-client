@@ -14,9 +14,9 @@ export const emailPasswordSchema = z
       .regex(/[A-Z]/, "la contraseña debe tener al menos una letra mayúscula")
       .regex(/[0-9]/, "la contraseña debe tener al menos un número")
       .regex(/[@$!%_*?&-]/, "la contraseña debe tener al menos un símbolo especial"),
-    repeatPassword: z.string(),
+    confirmPassword: z.string(),
   })
-  .refine((data) => data.password === data.repeatPassword, {
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
     path: ["repeatPassword"],
   });
@@ -44,7 +44,7 @@ export const additionalDetailsSchema = z.object({
     .string()
     .length(10, { message: "La identificación debe tener 10 dígitos" })
     .regex(/^\d+$/, "La identificación debe contener solo números"),
-  birthdate: z.date({
+  birthDate: z.date({
     required_error: "La fecha de nacimiento es obligatoria",
   }),
   /*.max(new Date("1960-01-01"), {

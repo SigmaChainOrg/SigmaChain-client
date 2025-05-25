@@ -1,4 +1,3 @@
-"use server";
 import { useAuthStore } from "@/features/auth/state/auth-store";
 import axios from "axios";
 

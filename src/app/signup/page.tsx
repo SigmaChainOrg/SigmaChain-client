@@ -20,9 +20,16 @@ import {
   secureCodeSchema,
 } from "@/app/signup/schemas/sign-up-schema";
 import { useSignupStore } from "@/app/signup/state/signup-store";
+import { usePatchUserInfo } from "@/features/auth/hooks/use-patch-me-user-info";
+import { usePostSecureCodeValidate } from "@/features/auth/hooks/use-post-secure-code-validate";
+import { usePostSignup } from "@/features/auth/hooks/use-post-signup";
+import { useAuthStore } from "@/features/auth/state/auth-store";
+import { SecureCodeRead } from "@/features/auth/types/secure-code";
+import { UserInfoRead } from "@/features/auth/types/user";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 export default function SignUpPage() {
   const step = useSignupStore((state) => state.step);
@@ -31,8 +38,8 @@ export default function SignUpPage() {
   const setEmail = useSignupStore((state) => state.setEmail);
   const password = useSignupStore((state) => state.password);
   const setPassword = useSignupStore((state) => state.setPassword);
-  const repeatPassword = useSignupStore((state) => state.repeatPassword);
-  const setRepeatPassword = useSignupStore((state) => state.setRepeatPassword);
+  const confirmPassword = useSignupStore((state) => state.confirmPassword);
+  const setConfirmPassword = useSignupStore((state) => state.setConfirmPassword);
   const secureCode = useSignupStore((state) => state.secureCode);
   const setSecureCode = useSignupStore((state) => state.setSecureCode);
   const firstName = useSignupStore((state) => state.firstName);
@@ -43,17 +50,66 @@ export default function SignUpPage() {
   const setIdType = useSignupStore((state) => state.setIdType);
   const idNumber = useSignupStore((state) => state.idNumber);
   const setIdNumber = useSignupStore((state) => state.setIdNumber);
-  const birthdate = useSignupStore((state) => state.birthdate);
-  const setBirthdate = useSignupStore((state) => state.setBirthdate);
+  const birthDate = useSignupStore((state) => state.birthDate);
+  const setBirthDate = useSignupStore((state) => state.setBirthDate);
   const error = useSignupStore((state) => state.error);
   const setError = useSignupStore((state) => state.setError);
+  const secureCodeId = useSignupStore((state) => state.secureCodeId);
+  const setSecureCodeId = useSignupStore((state) => state.setSecureCodeId);
 
   const router = useRouter();
-  function handleEmailPasswordSubmit() {
+
+  const setAccessToken = useAuthStore((state) => state.setAccessToken);
+
+  const {
+    mutateAsync: secureCodeValidateMutate,
+    isPending: secureCodeValidatePending,
+    error: secureCodeValidateError,
+  } = usePostSecureCodeValidate();
+
+  const {
+    mutateAsync: signupMutate,
+    isPending: signupPending,
+    error: signupError,
+  } = usePostSignup();
+
+  const {
+    mutateAsync: userInfoUpdateMutate,
+    isPending: userInfoUpdatePending,
+    error: userInfoUpdateError,
+  } = usePatchUserInfo();
+
+  const searchParams = useSearchParams();
+
+  const secureCodeIdParam = searchParams.get("secure-code-id");
+
+  const setUserInfo = useAuthStore((state) => state.setUserInfo);
+
+  useEffect(() => {
+    if (secureCodeIdParam) {
+      setSecureCodeId(secureCodeIdParam);
+      setStep(2);
+    }
+  }, [secureCodeIdParam]);
+
+  const accessToken = useAuthStore((state) => state.accessToken);
+  useEffect(() => {
+    if (accessToken) {
+      setStep(3);
+    }
+  }, [accessToken]);
+  const userInfo = useAuthStore((state) => state.userInfo);
+  useEffect(() => {
+    if (userInfo) {
+      router.push(routes.dashboard);
+    }
+  }, [accessToken]);
+
+  async function handleEmailPasswordSubmit() {
     const validation = emailPasswordSchema.safeParse({
       email,
       password,
-      repeatPassword,
+      confirmPassword,
     });
 
     if (!validation.success) {
@@ -61,14 +117,23 @@ export default function SignUpPage() {
       setError({
         email: errorMessages.email ? errorMessages.email[0] : "",
         password: errorMessages.password ? errorMessages.password[0] : "",
-        repeatPassword: errorMessages.repeatPassword ? errorMessages.repeatPassword[0] : "",
+        confirmPassword: errorMessages.confirmPassword ? errorMessages.confirmPassword[0] : "",
       });
       return;
     }
-    setStep(2);
+
+    const result = await signupMutate({ email, password, confirmPassword });
+
+    if (signupError) {
+      console.error("Error signing in:", signupError);
+      return;
+    }
+    const secureCodeRead = result as SecureCodeRead;
+    router.push(`${routes.signup}?secure-code-id=${secureCodeRead.secureCodeId}`);
+    return;
   }
 
-  function handleValidationCodeSubmit() {
+  async function handleValidationCodeSubmit() {
     const validation = secureCodeSchema.safeParse({
       secureCode,
     });
@@ -81,16 +146,28 @@ export default function SignUpPage() {
       return;
     }
 
-    setStep(3);
+    const tokenRead = await secureCodeValidateMutate({
+      secureCodeId: secureCodeId as string,
+      code: secureCode,
+    });
+
+    if (secureCodeValidateError) {
+      console.error("Error validating secure code:", secureCodeValidateError);
+      return;
+    }
+
+    setAccessToken(tokenRead.accessToken);
+    router.push(routes["signin"]);
+    return;
   }
 
-  function handleAdditionalDetailsSubmit() {
+  async function handleAdditionalDetailsSubmit() {
     const validation = additionalDetailsSchema.safeParse({
       firstName,
       lastName,
       idType,
       idNumber,
-      birthdate,
+      birthDate,
     });
 
     if (!validation.success) {
@@ -100,11 +177,30 @@ export default function SignUpPage() {
         lastName: errorMessages.lastName ? errorMessages.lastName[0] : "",
         idType: errorMessages.idType ? errorMessages.idType[0] : "",
         idNumber: errorMessages.idNumber ? errorMessages.idNumber[0] : "",
-        birthdate: errorMessages.birthdate ? errorMessages.birthdate[0] : "",
+        birthDate: errorMessages.birthDate ? errorMessages.birthDate[0] : "",
       });
       return;
     }
-    router.push(routes["dashboard"]);
+
+    const result = await userInfoUpdateMutate({
+      firstName,
+      lastName,
+      idType,
+      idNumber,
+      birthDate: birthDate?.toISOString().slice(0, 10),
+    });
+
+    if (userInfoUpdateError) {
+      console.log("Error user info update:", userInfoUpdateError);
+      return;
+    }
+
+    if ("userInfo" in result) {
+      const userInfoRead = result as UserInfoRead;
+      setUserInfo(userInfoRead);
+      router.push(routes.dashboard);
+      return;
+    }
   }
 
   return (
@@ -135,11 +231,11 @@ export default function SignUpPage() {
                 <Input
                   type="password"
                   placeholder="Repeat password"
-                  value={repeatPassword}
-                  onChange={(e) => setRepeatPassword(e.target.value)}
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
                 />
-                {error.repeatPassword && (
-                  <p className="text-sm text-danger">{error.repeatPassword}</p>
+                {error.confirmPassword && (
+                  <p className="text-sm text-danger">{error.confirmPassword}</p>
                 )}
                 <div className="w-full">
                   <Button className="w-full px-0" onClick={() => handleEmailPasswordSubmit()}>
@@ -224,7 +320,7 @@ export default function SignUpPage() {
                   <Combobox
                     selectDefault={{ label: "select", value: "Seleccione" }}
                     options={[
-                      { value: "id", label: "Cédula" },
+                      { value: "id_card", label: "Cédula" },
                       { value: "passport", label: "Pasaporte" },
                     ]}
                     onChange={(option) => setIdType(option.value)}
@@ -241,7 +337,7 @@ export default function SignUpPage() {
                 <Popover>
                   <PopoverTrigger className="w-full" asChild>
                     <Button variant="secondary" className="w-full">
-                      {birthdate ? format(birthdate, "PPP") : "Fecha de nacimiento"}
+                      {birthDate ? format(birthDate, "PPP") : "Fecha de nacimiento"}
                       <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                     </Button>
                   </PopoverTrigger>
@@ -249,15 +345,15 @@ export default function SignUpPage() {
                     <div>
                       <Calendar
                         mode="single"
-                        selected={birthdate}
-                        onSelect={(e) => (e ? setBirthdate(e) : setBirthdate(new Date()))}
+                        selected={birthDate}
+                        onSelect={(e) => (e ? setBirthDate(e) : setBirthDate(new Date()))}
                         disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
                         initialFocus
                       />
                     </div>
                   </PopoverContent>
                 </Popover>
-                {error.birthdate && <p className="text-sm text-danger">{error.birthdate}</p>}
+                {error.birthDate && <p className="text-sm text-danger">{error.birthDate}</p>}
                 <div className="w-full pt-3 pb-5">
                   <Button className="w-full" onClick={() => handleAdditionalDetailsSubmit()}>
                     Create Account

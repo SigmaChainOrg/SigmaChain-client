@@ -5,34 +5,36 @@ export interface SignupState {
   step: number;
   email: string;
   password: string;
-  repeatPassword: string;
+  confirmPassword: string;
   secureCode: string;
+  secureCodeId?: string | null;
   firstName: string;
   lastName: string;
   idType: string;
   idNumber: string;
-  birthdate: Date;
+  birthDate: Date;
   error: {
     email?: string;
     password?: string;
-    repeatPassword?: string;
+    confirmPassword?: string;
     secureCode?: string;
     firstName?: string;
     lastName?: string;
     idType?: string;
     idNumber?: string;
-    birthdate?: string;
+    birthDate?: string;
   };
   setStep: (step: number) => void;
   setEmail: (email: string) => void;
   setPassword: (password: string) => void;
-  setRepeatPassword: (repeatPassword: string) => void;
+  setConfirmPassword: (confirmPassword: string) => void;
   setSecureCode: (secureCode: string) => void;
+  setSecureCodeId: (secureCodeId: string) => void;
   setFirstName: (firstName: string) => void;
   setLastName: (lastName: string) => void;
   setIdType: (idType: string) => void;
   setIdNumber: (idNumber: string) => void;
-  setBirthdate: (birthdate: Date) => void;
+  setBirthDate: (birthDate: Date) => void;
   setError: (error: SignupState["error"]) => void;
 }
 
@@ -41,13 +43,13 @@ export const useSignupStore = create(
     step: 1,
     email: "",
     password: "",
-    repeatPassword: "",
+    confirmPassword: "",
     secureCode: "",
     firstName: "",
     lastName: "",
     idType: "",
     idNumber: "",
-    birthdate: new Date(),
+    birthDate: new Date(),
     error: {},
 
     setStep: (step) =>
@@ -64,15 +66,19 @@ export const useSignupStore = create(
         state.password = password;
         state.error = { password: undefined };
       }),
-    setRepeatPassword: (repeatPassword) =>
+    setConfirmPassword: (confirmPassword) =>
       set((state) => {
-        state.repeatPassword = repeatPassword;
-        state.error = { repeatPassword: undefined };
+        state.confirmPassword = confirmPassword;
+        state.error = { confirmPassword: undefined };
       }),
     setSecureCode: (secureCode) =>
       set((state) => {
         state.secureCode = secureCode;
         state.error = { secureCode: undefined };
+      }),
+    setSecureCodeId: (secureCodeId) =>
+      set((state) => {
+        state.secureCodeId = secureCodeId;
       }),
     setFirstName: (firstName) =>
       set((state) => {
@@ -94,10 +100,10 @@ export const useSignupStore = create(
         state.idNumber = idNumber;
         state.error = { idNumber: undefined };
       }),
-    setBirthdate: (birthdate) =>
+    setBirthDate: (birthDate) =>
       set((state) => {
-        state.birthdate = birthdate;
-        state.error = { birthdate: undefined };
+        state.birthDate = birthDate;
+        state.error = { birthDate: undefined };
       }),
     setError: (error) =>
       set((state) => {
