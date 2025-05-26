@@ -8,7 +8,7 @@ import {
   RequestPatternSchema,
   TextFieldSchema,
 } from "@/app/app/request/schemas/request-pattern-schema";
-import { useRequestPatternStore } from "@/app/app/request/state/activityItem";
+import { Activity, useRequestPatternStore } from "@/app/app/request/state/activityItem";
 import { Badge } from "@/app/components/shadcn/badge";
 import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent, CardHeader } from "@/app/components/shadcn/card";
@@ -17,6 +17,9 @@ import { BreadcrumbHeader } from "@/app/components/shadcn/header";
 import { Input } from "@/app/components/shadcn/input";
 import { Textarea } from "@/app/components/shadcn/textarea";
 import { routes } from "@/app/routes";
+import { useAuthStore } from "@/features/auth/state/auth-store";
+import { usePostRequestPattern } from "@/features/request-pattern/hooks/use-post-request-pattern";
+import { ActivityAssigneeInput, ActivityInput } from "@/features/request-pattern/types/activity";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Separator } from "@radix-ui/react-separator";
@@ -25,6 +28,9 @@ import { usePathname, useRouter } from "next/navigation";
 export default function Solicitudes() {
   const router = useRouter();
   const pathName = usePathname();
+
+  const data = useAuthStore();
+  console.log("User Data:", data);
 
   const requestName = useRequestPatternStore((state) => state.name);
   const setRequestName = useRequestPatternStore((state) => state.setName);
@@ -49,8 +55,37 @@ export default function Solicitudes() {
     },
   };
 
-  function handleRequestPatternSubmit() {
-    //Que approach es mejor? El de validar todo o por bloques? Este es por bloques, el de activityForm es todo
+  const {
+    mutateAsync: requestPatternMutate,
+    isPending: requestPatternPending,
+    error: requestPatternError,
+  } = usePostRequestPattern();
+
+  const mapActivityToInput = (activity: Activity): ActivityInput => {
+    const assignee: ActivityAssigneeInput =
+      activity.order === 0
+        ? {
+            assigneeType: "requester",
+            userId: null,
+            groupId: null,
+          }
+        : {
+            assigneeType: "user",
+            userId: "3b7d7cc0-649b-4a59-b9a2-28da925d731c",
+            groupId: null,
+          };
+
+    return {
+      activityOrder: activity.order + 1,
+      label: activity.name,
+      description: "",
+      assignee,
+      estimatedTime: "P1M",
+    };
+  };
+
+  async function handleRequestPatternSubmit() {
+    //Es mejor todo una sola
     const requestPatternValidation = RequestPatternSchema.safeParse({
       name,
     });
@@ -110,6 +145,21 @@ export default function Solicitudes() {
     }
 
     if (hasActivityErrors) {
+      return;
+    }
+
+    const activityInputs: ActivityInput[] = activities.map(mapActivityToInput);
+
+    const result = await requestPatternMutate({
+      label: name,
+      description: requestFields[0].value[0],
+      supervisorId: null,
+      groups: [],
+      activities: activityInputs,
+    });
+
+    if (requestPatternError) {
+      console.error("Error signing in:", requestPatternError);
       return;
     }
 

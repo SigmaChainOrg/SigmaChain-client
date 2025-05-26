@@ -98,6 +98,7 @@ export default function SignUpPage() {
       setStep(3);
     }
   }, [accessToken]);
+
   const userInfo = useAuthStore((state) => state.userInfo);
   useEffect(() => {
     if (userInfo) {
@@ -157,7 +158,7 @@ export default function SignUpPage() {
     }
 
     setAccessToken(tokenRead.accessToken);
-    router.push(routes["signin"]);
+    setStep(3);
     return;
   }
 

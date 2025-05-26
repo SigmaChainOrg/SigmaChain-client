@@ -4,11 +4,15 @@ import { routes } from "@/app/routes";
 import { useRouter } from "next/navigation";
 
 import { DashboardHeader } from "@/app/components/shadcn/header";
+import { useAuthStore } from "@/features/auth/state/auth-store";
 //import { z } from "zod";
 
 //const userDataSchema = z.object({  name: z.string(),});
 
 export default function Home() {
+  const data = useAuthStore();
+  console.log("User Data:", data);
+
   const router = useRouter();
 
   return (
