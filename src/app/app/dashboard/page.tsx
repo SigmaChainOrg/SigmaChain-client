@@ -4,28 +4,29 @@ import { routes } from "@/app/routes";
 import { useRouter } from "next/navigation";
 
 import { DashboardHeader } from "@/app/components/shadcn/header";
-import { useAuthStore } from "@/features/auth/state/auth-store";
-//import { z } from "zod";
-
-//const userDataSchema = z.object({  name: z.string(),});
+import { useGetMe } from "@/features/auth/hooks/use-get-me";
 
 export default function Home() {
-  const data = useAuthStore();
-  console.log("User Data:", data);
-
   const router = useRouter();
+  const { data: userData } = useGetMe({
+    includeUserInfo: true,
+    includeGroups: true,
+    includeRoles: true,
+  });
 
   return (
     <>
       <div className="col-start-1 col-end-13">
         <DashboardHeader
-          accessButon={{
+          accessButton={{
             name: "Crear nueva solicitud",
             ref: routes["request-pattern"],
           }}
         />
       </div>
-      <h1 className="col-start-1 col-end-13 h-auto text-h1">Bienvenido Juan</h1>
+      <h1 className="col-start-1 col-end-13 h-auto text-h1">
+        Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
+      </h1>
       <Button
         className="col-start-1 col-end-3"
         onClick={() => {

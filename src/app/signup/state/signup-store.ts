@@ -1,3 +1,4 @@
+import { IdType } from "@/features/auth/types/user";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -10,7 +11,7 @@ export interface SignupState {
   secureCodeId?: string | null;
   firstName: string;
   lastName: string;
-  idType: string;
+  idType?: IdType;
   idNumber: string;
   birthDate: Date;
   error: {
@@ -32,7 +33,7 @@ export interface SignupState {
   setSecureCodeId: (secureCodeId: string) => void;
   setFirstName: (firstName: string) => void;
   setLastName: (lastName: string) => void;
-  setIdType: (idType: string) => void;
+  setIdType: (idType: IdType) => void;
   setIdNumber: (idNumber: string) => void;
   setBirthDate: (birthDate: Date) => void;
   setError: (error: SignupState["error"]) => void;
@@ -47,7 +48,7 @@ export const useSignupStore = create(
     secureCode: "",
     firstName: "",
     lastName: "",
-    idType: "",
+    idType: undefined,
     idNumber: "",
     birthDate: new Date(),
     error: {},

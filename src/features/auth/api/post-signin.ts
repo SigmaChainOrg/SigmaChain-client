@@ -1,6 +1,7 @@
-"use server";
+"use client";
+
 import { SigninInput } from "@/features/auth/types/sign";
-import axios from "@/features/axios";
+import axios from "@/features/axios-client";
 import { camelCaseParser } from "@/utils/camel-case-parser";
 import { snakeCaseParser } from "@/utils/snake-case-parser";
 import { SecureCodeRead } from "../types/secure-code";
@@ -8,13 +9,11 @@ import { TokenRead } from "../types/token";
 
 export const postSignin = async (input: SigninInput): Promise<TokenRead | SecureCodeRead> => {
   const response = await axios.post("/auth/signin", snakeCaseParser(input));
-  const general = response.data;
+  const { ok, details, data } = response.data;
 
-  if (general.ok !== true) {
-    throw new Error(general.details);
+  if (ok !== true) {
+    throw new Error(details);
   }
-
-  const data = general.data;
 
   if (data.created_at) {
     data.created_at = new Date(data.created_at);

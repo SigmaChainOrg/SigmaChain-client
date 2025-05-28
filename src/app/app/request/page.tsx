@@ -15,7 +15,7 @@ export default function Solicitude() {
     <>
       <div className="col-start-1 col-end-13">
         <DashboardHeader
-          accessButon={{
+          accessButton={{
             name: "Crear nueva solicitud",
             ref: routes["request-pattern"],
           }}

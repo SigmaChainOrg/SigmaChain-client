@@ -25,37 +25,39 @@ import { usePostSecureCodeValidate } from "@/features/auth/hooks/use-post-secure
 import { usePostSignup } from "@/features/auth/hooks/use-post-signup";
 import { useAuthStore } from "@/features/auth/state/auth-store";
 import { SecureCodeRead } from "@/features/auth/types/secure-code";
-import { UserInfoRead } from "@/features/auth/types/user";
+import { IdType } from "@/features/auth/types/user";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 export default function SignUpPage() {
-  const step = useSignupStore((state) => state.step);
-  const setStep = useSignupStore((state) => state.setStep);
-  const email = useSignupStore((state) => state.email);
-  const setEmail = useSignupStore((state) => state.setEmail);
-  const password = useSignupStore((state) => state.password);
-  const setPassword = useSignupStore((state) => state.setPassword);
-  const confirmPassword = useSignupStore((state) => state.confirmPassword);
-  const setConfirmPassword = useSignupStore((state) => state.setConfirmPassword);
-  const secureCode = useSignupStore((state) => state.secureCode);
-  const setSecureCode = useSignupStore((state) => state.setSecureCode);
-  const firstName = useSignupStore((state) => state.firstName);
-  const setFirstName = useSignupStore((state) => state.setFirstName);
-  const lastName = useSignupStore((state) => state.lastName);
-  const setLastName = useSignupStore((state) => state.setLastName);
-  const idType = useSignupStore((state) => state.idType);
-  const setIdType = useSignupStore((state) => state.setIdType);
-  const idNumber = useSignupStore((state) => state.idNumber);
-  const setIdNumber = useSignupStore((state) => state.setIdNumber);
-  const birthDate = useSignupStore((state) => state.birthDate);
-  const setBirthDate = useSignupStore((state) => state.setBirthDate);
-  const error = useSignupStore((state) => state.error);
-  const setError = useSignupStore((state) => state.setError);
-  const secureCodeId = useSignupStore((state) => state.secureCodeId);
-  const setSecureCodeId = useSignupStore((state) => state.setSecureCodeId);
+  const {
+    step,
+    setStep,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    confirmPassword,
+    setConfirmPassword,
+    secureCode,
+    setSecureCode,
+    firstName,
+    setFirstName,
+    lastName,
+    setLastName,
+    idType,
+    setIdType,
+    idNumber,
+    setIdNumber,
+    birthDate,
+    setBirthDate,
+    error,
+    setError,
+    secureCodeId,
+    setSecureCodeId,
+  } = useSignupStore();
 
   const router = useRouter();
 
@@ -83,8 +85,6 @@ export default function SignUpPage() {
 
   const secureCodeIdParam = searchParams.get("secure-code-id");
 
-  const setUserInfo = useAuthStore((state) => state.setUserInfo);
-
   useEffect(() => {
     if (secureCodeIdParam) {
       setSecureCodeId(secureCodeIdParam);
@@ -96,13 +96,6 @@ export default function SignUpPage() {
   useEffect(() => {
     if (accessToken) {
       setStep(3);
-    }
-  }, [accessToken]);
-
-  const userInfo = useAuthStore((state) => state.userInfo);
-  useEffect(() => {
-    if (userInfo) {
-      router.push(routes.dashboard);
     }
   }, [accessToken]);
 
@@ -196,12 +189,7 @@ export default function SignUpPage() {
       return;
     }
 
-    if ("userInfo" in result) {
-      const userInfoRead = result as UserInfoRead;
-      setUserInfo(userInfoRead);
-      router.push(routes.dashboard);
-      return;
-    }
+    router.push(routes.dashboard);
   }
 
   return (
@@ -321,10 +309,10 @@ export default function SignUpPage() {
                   <Combobox
                     selectDefault={{ label: "select", value: "Seleccione" }}
                     options={[
-                      { value: "id_card", label: "Cédula" },
-                      { value: "passport", label: "Pasaporte" },
+                      { value: IdType.ID_CARD, label: "Cédula" },
+                      { value: IdType.PASSPORT, label: "Pasaporte" },
                     ]}
-                    onChange={(option) => setIdType(option.value)}
+                    onChange={(option) => setIdType(option.value as IdType)}
                   />
 
                   <Input
