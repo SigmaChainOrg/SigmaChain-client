@@ -6,4 +6,5 @@ export const routes = {
   dashboard: "/app/dashboard",
   signin: "/signin",
   signup: "/signup",
+  "request-process": "/app/request/request-process",
 };

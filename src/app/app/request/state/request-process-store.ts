@@ -22,6 +22,11 @@ export interface Activity {
 }
 
 export interface RequestProcessState {
+  id: string;
+  name: string;
+  description: string;
+  isPublished: boolean;
+  startDate: Date | undefined;
   activities: Activity[];
   setIsCompleteActivity: (activityOrder: number, value: boolean) => void;
   setActivityFieldValue: (activityOrder: number, fieldOrder: number, value: string[]) => void;
@@ -30,6 +35,11 @@ export interface RequestProcessState {
 
 export const useRequestProcessStore = create(
   immer<RequestProcessState>((set) => ({
+    id: "req-1",
+    name: "Matrícula estudiantes",
+    description: "",
+    startDate: undefined,
+    isPublished: false,
     activities: [
       {
         id: "a1",
