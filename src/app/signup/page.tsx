@@ -63,23 +63,11 @@ export default function SignUpPage() {
 
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
-  const {
-    mutateAsync: secureCodeValidateMutate,
-    isPending: secureCodeValidatePending,
-    error: secureCodeValidateError,
-  } = usePostSecureCodeValidate();
+  const { mutateAsync: secureCodeValidateMutate } = usePostSecureCodeValidate();
 
-  const {
-    mutateAsync: signupMutate,
-    isPending: signupPending,
-    error: signupError,
-  } = usePostSignup();
+  const { mutateAsync: signupMutate } = usePostSignup();
 
-  const {
-    mutateAsync: userInfoUpdateMutate,
-    isPending: userInfoUpdatePending,
-    error: userInfoUpdateError,
-  } = usePatchUserInfo();
+  const { mutateAsync: userInfoUpdateMutate } = usePatchUserInfo();
 
   const searchParams = useSearchParams();
 
@@ -93,6 +81,7 @@ export default function SignUpPage() {
   }, [secureCodeIdParam]);
 
   const accessToken = useAuthStore((state) => state.accessToken);
+
   useEffect(() => {
     if (accessToken) {
       setStep(3);
@@ -118,10 +107,8 @@ export default function SignUpPage() {
 
     const result = await signupMutate({ email, password, confirmPassword });
 
-    if (signupError) {
-      console.error("Error signing in:", signupError);
-      return;
-    }
+    // ToDo: Handle error properly
+
     const secureCodeRead = result as SecureCodeRead;
     router.push(`${routes.signup}?secure-code-id=${secureCodeRead.secureCodeId}`);
     return;
@@ -145,10 +132,7 @@ export default function SignUpPage() {
       code: secureCode,
     });
 
-    if (secureCodeValidateError) {
-      console.error("Error validating secure code:", secureCodeValidateError);
-      return;
-    }
+    // ToDo: Handle error properly
 
     setAccessToken(tokenRead.accessToken);
     setStep(3);
@@ -176,7 +160,7 @@ export default function SignUpPage() {
       return;
     }
 
-    const result = await userInfoUpdateMutate({
+    await userInfoUpdateMutate({
       firstName,
       lastName,
       idType,
@@ -184,10 +168,7 @@ export default function SignUpPage() {
       birthDate: birthDate?.toISOString().slice(0, 10),
     });
 
-    if (userInfoUpdateError) {
-      console.log("Error user info update:", userInfoUpdateError);
-      return;
-    }
+    // ToDo: Handle error properly
 
     router.push(routes.dashboard);
   }

@@ -31,17 +31,10 @@ export default function SingIn() {
 
   const setAccessToken = useAuthStore((state) => state.setAccessToken);
 
-  const {
-    mutateAsync: secureCodeValidateMutate,
-    isPending: secureCodeValidatePending,
-    error: secureCodeValidateError,
-  } = usePostSecureCodeValidate();
+  const { mutateAsync: secureCodeValidateMutate, isPending: secureCodeValidatePending } =
+    usePostSecureCodeValidate();
 
-  const {
-    mutateAsync: signinMutate,
-    isPending: signinPending,
-    error: signinError,
-  } = usePostSignin();
+  const { mutateAsync: signinMutate, isPending: signinPending } = usePostSignin();
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -76,10 +69,6 @@ export default function SingIn() {
     const result = await signinMutate({ email, password });
 
     // ToDo: Handle error properly
-    if (signinError) {
-      console.error("Error signing in:", signinError);
-      return;
-    }
 
     if ("accessToken" in result) {
       const tokenRead = result as TokenRead;
@@ -115,10 +104,6 @@ export default function SingIn() {
     });
 
     // ToDo: Handle error properly
-    if (secureCodeValidateError) {
-      console.error("Error validating secure code:", secureCodeValidateError);
-      return;
-    }
 
     setAccessToken(tokenRead.accessToken);
     router.push(routes.dashboard);
