@@ -47,7 +47,9 @@ export default function Home() {
           }}
         />
       </div>
-      <h1 className="col-start-1 col-end-7 h-auto text-h1">Bienvenido Juan</h1>
+      <h1 className="col-start-1 col-end-13 h-auto text-h1">
+        Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
+      </h1>
       {/*<Button
         className="col-start-7 col-end-9"
         onClick={() => {
