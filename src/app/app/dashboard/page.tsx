@@ -4,13 +4,15 @@ import { useRouter } from "next/navigation";
 
 import { RequestCardList } from "@/app/app/dashboard/components/request-card-list";
 import { DashboardHeader } from "@/app/components/shadcn/header";
-import { useAuthStore } from "@/features/auth/state/auth-store";
+import { useGetMe } from "@/features/auth/hooks/use-get-me";
 
 export default function Home() {
-  const data = useAuthStore();
-  console.log("User Data:", data);
-
   const router = useRouter();
+  const { data: userData } = useGetMe({
+    includeUserInfo: true,
+    includeGroups: true,
+    includeRoles: true,
+  });
   const requests = [
     {
       id: "req-1",
@@ -39,7 +41,7 @@ export default function Home() {
     <>
       <div className="col-start-1 col-end-13">
         <DashboardHeader
-          accessButon={{
+          accessButton={{
             name: "Crear nueva solicitud",
             ref: routes["request-pattern"],
           }}

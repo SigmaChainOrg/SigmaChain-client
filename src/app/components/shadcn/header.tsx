@@ -33,7 +33,7 @@ function HeaderLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function DashboardHeader({ accessButon }: { accessButon: { name: string; ref: string } }) {
+export function DashboardHeader({ accessButton }: { accessButton: { name: string; ref: string } }) {
   const router = useRouter();
 
   return (
@@ -51,10 +51,10 @@ export function DashboardHeader({ accessButon }: { accessButon: { name: string; 
       <div className="flex flex-row items-center gap-2">
         <Button
           onClick={() => {
-            router.push(accessButon.ref);
+            router.push(accessButton.ref);
           }}
         >
-          {accessButon.name}
+          {accessButton.name}
         </Button>
         <Button variant="ghost">
           <FontAwesomeIcon icon={faMessage} />
