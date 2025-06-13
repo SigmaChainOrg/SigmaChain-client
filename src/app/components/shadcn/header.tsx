@@ -24,8 +24,8 @@ function HeaderLayout({ children }: { children: React.ReactNode }) {
   return (
     <div
       className={cn(
-        "fixed top-0 z-10 mx-[-16px] flex flex-row place-content-between gap-2 border-[1px] border-solid border-gray-300 bg-white px-4 py-5",
-        leftOpen ? "w-[70rem]" : "w-[80rem]",
+        "fixed top-0 z-10 flex flex-row place-content-between border-[1px] border-solid border-gray-300 bg-white px-4! py-5 transition-all transition-discrete duration-300 ease-in-out",
+        leftOpen ? "left-sidebar w-header-sidebar" : "left-sidebar-icon w-header-sidebar-icon",
       )}
     >
       {children}
