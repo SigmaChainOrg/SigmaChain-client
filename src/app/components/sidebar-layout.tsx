@@ -3,13 +3,7 @@ import { useSidebarStore } from "@/app/app/request/state/sidebar-store";
 import { AppSidebar } from "@/app/components/shadcn/app-sidebar";
 import { SidebarProvider } from "@/app/components/shadcn/sidebar";
 
-export function SidebarLayout({
-  children,
-  defaultOpen = false,
-}: {
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
+export function SidebarLayout({ children }: { children: React.ReactNode }) {
   const { leftOpen, setLeftOpen } = useSidebarStore();
 
   return (
