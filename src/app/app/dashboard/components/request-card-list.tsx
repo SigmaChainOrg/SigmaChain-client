@@ -15,7 +15,7 @@ export function RequestCardList({
   variant: "published" | "unpublished" | "default";
 }) {
   return (
-    <Card className={cn("w-full py-0", className)} variant="solicitude">
+    <Card className={cn("mx-0 w-full py-0", className)} variant="solicitude">
       <CardHeader className="pt-5! text-h3 font-bold">{cardTitle}</CardHeader>
       <CardContent className="flex w-full flex-col gap-0 pt-0">
         <div className="grid w-full grid-cols-4 items-center justify-between gap-2 pl-4 font-medium text-gray">

@@ -124,7 +124,8 @@ const SidebarProvider = React.forwardRef<
         <TooltipProvider delayDuration={0}>
           <div
             className={cn(
-              "group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar flex min-h-svh w-full",
+              "group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar flex min-h-svh",
+              open ? "ml-sidebar w-header-sidebar" : "ml-sidebar-icon w-header-sidebar-icon",
               className,
             )}
             ref={ref}

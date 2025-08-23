@@ -18,7 +18,7 @@ export const emailPasswordSchema = z
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Las contraseñas no coinciden",
-    path: ["repeatPassword"],
+    path: ["confirmPassword"],
   });
 
 export const secureCodeSchema = z.object({
