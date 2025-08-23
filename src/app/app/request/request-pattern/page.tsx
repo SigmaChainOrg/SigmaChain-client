@@ -17,33 +17,38 @@ import { BreadcrumbHeader } from "@/app/components/shadcn/header";
 import { Input } from "@/app/components/shadcn/input";
 import { Textarea } from "@/app/components/shadcn/textarea";
 import { routes } from "@/app/routes";
-import { useAuthStore } from "@/features/auth/state/auth-store";
+import { getFlattenGroups } from "@/features/group/functions/get-flatten-groups";
+import { useGetGroups } from "@/features/group/hooks/use-get-groups";
 import { usePostRequestPattern } from "@/features/request-pattern/hooks/use-post-request-pattern";
-import { ActivityAssigneeInput, ActivityInput } from "@/features/request-pattern/types/activity";
+import { ActivityInput } from "@/features/request-pattern/types/activity";
+import { ActivityAssigneeInput } from "@/features/request-pattern/types/activity-assignee";
+import { AssigneeType } from "@/features/request-pattern/types/enums";
 import { faX } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Separator } from "@radix-ui/react-separator";
 import { usePathname, useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 export default function Solicitudes() {
   const router = useRouter();
   const pathName = usePathname();
 
-  const data = useAuthStore();
-  console.log("User Data:", data);
+  const { data: groupsData } = useGetGroups({ includeUsers: true });
+  const groupsList = useMemo(() => getFlattenGroups(groupsData ?? []), [groupsData]);
 
-  const requestName = useRequestPatternStore((state) => state.name);
-  const setRequestName = useRequestPatternStore((state) => state.setName);
-  const requestFields = useRequestPatternStore((state) => state.fields);
-  const activities = useRequestPatternStore((state) => state.activities);
-  const addActivity = useRequestPatternStore((state) => state.addActivity);
-  const error = useRequestPatternStore((state) => state.error);
-  const name = useRequestPatternStore((state) => state.name);
-  const setNameError = useRequestPatternStore((state) => state.setNameError);
-  const solicitudeId = useRequestPatternStore((state) => state.id);
-  const setActivityError = useRequestPatternStore((state) => state.setActivityError);
-  const setFieldError = useRequestPatternStore((state) => state.setFieldError);
-  const setFieldValue = useRequestPatternStore((state) => state.setFieldValue);
+  const {
+    name: requestName,
+    setName: setRequestName,
+    fields: requestFields,
+    activities,
+    addActivity,
+    error,
+    setNameError,
+    id: solicitudeId,
+    setActivityError,
+    setFieldError,
+    setFieldValue,
+  } = useRequestPatternStore();
 
   const saveButtons = {
     secondary: { value: "Cancelar", onClick: () => {} },
@@ -65,14 +70,11 @@ export default function Solicitudes() {
     const assignee: ActivityAssigneeInput =
       activity.order === 0
         ? {
-            assigneeType: "requester",
-            userId: null,
-            groupId: null,
+            assigneeType: AssigneeType.REQUESTER,
           }
         : {
-            assigneeType: "user",
+            assigneeType: AssigneeType.USER,
             userId: "3b7d7cc0-649b-4a59-b9a2-28da925d731c",
-            groupId: null,
           };
 
     return {
@@ -151,7 +153,7 @@ export default function Solicitudes() {
     const activityInputs: ActivityInput[] = activities.map(mapActivityToInput);
 
     const result = await requestPatternMutate({
-      label: name,
+      label: requestName,
       description: requestFields[0].value[0],
       supervisorId: null,
       groups: [],
@@ -196,11 +198,10 @@ export default function Solicitudes() {
                   <div>
                     <Combobox
                       selectDefault={{ value: "add group", label: "Agregar grupo" }}
-                      options={[
-                        { value: "engineering", label: "Ingeniería" },
-                        { value: "law", label: "Derecho" },
-                        { value: "philosophy", label: "Filosofía" },
-                      ]}
+                      options={groupsList.map((group) => ({
+                        value: group.groupId,
+                        label: group.route,
+                      }))}
                       onChange={(e) => {
                         const value = Array.isArray(field.value) ? field.value : [];
                         const newValue = value.includes(e.value) ? value : [...value, e.value];
