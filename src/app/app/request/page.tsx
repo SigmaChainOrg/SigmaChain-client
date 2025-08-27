@@ -4,7 +4,7 @@ import { routes } from "@/app/routes";
 import { useRouter } from "next/navigation";
 //import image from "./image.png";
 
-import { DashboardHeader } from "@/app/components/shadcn/header";
+import { DashboardHeader } from "@/app/components/header";
 //import { z } from "zod";
 
 //const userDataSchema = z.object({  name: z.string(),});

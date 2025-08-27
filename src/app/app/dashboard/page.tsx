@@ -1,7 +1,7 @@
 "use client";
 import { RequestCardList } from "@/app/app/dashboard/components/request-card-list";
+import { DashboardHeader } from "@/app/components/header";
 import { Button } from "@/app/components/shadcn/button";
-import { DashboardHeader } from "@/app/components/shadcn/header";
 import { routes } from "@/app/routes";
 import { useGetMe } from "@/features/auth/hooks/use-get-me";
 import { useGetRequestPatterns } from "@/features/request-pattern/hooks/use-get-request-patterns";
@@ -29,7 +29,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="col-start-1 col-end-13">
+      <div className="w-full">
         <DashboardHeader
           accessButton={{
             name: "Crear nueva solicitud",
@@ -37,33 +37,35 @@ export default function Home() {
           }}
         />
       </div>
-      <h1 className="col-start-1 col-end-13 h-auto text-h1">
-        Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
-      </h1>
+      <div className="grid max-h-full grid-cols-12 gap-x-2 gap-y-6 overflow-y-scroll px-4 py-6">
+        <h1 className="col-start-1 col-end-13 h-auto text-h1">
+          Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
+        </h1>
 
-      {(unpublishedRequests?.length ?? 0) === 0 && (
-        <Button
-          className="col-start-7 col-end-9"
-          onClick={() => {
-            router.push(routes["request-pattern"]);
-          }}
-        >
-          Crear nueva solicitud
-        </Button>
-      )}
+        {(unpublishedRequests?.length ?? 0) === 0 && (
+          <Button
+            className="col-start-7 col-end-9"
+            onClick={() => {
+              router.push(routes["request-pattern"]);
+            }}
+          >
+            Crear nueva solicitud
+          </Button>
+        )}
 
-      <RequestCardList
-        variant="unpublished"
-        requests={unpublishedRequests || []}
-        className="col-start-1 col-end-10"
-        cardTitle="Solicitudes no publicadas"
-      />
-      <RequestCardList
-        variant="published"
-        requests={publishedRequests || []}
-        className="col-start-1 col-end-10"
-        cardTitle="Solicitudes publicadas"
-      />
+        <RequestCardList
+          variant="unpublished"
+          requests={unpublishedRequests || []}
+          className="col-start-1 col-end-10"
+          cardTitle="Solicitudes no publicadas"
+        />
+        <RequestCardList
+          variant="published"
+          requests={publishedRequests || []}
+          className="col-start-1 col-end-10"
+          cardTitle="Solicitudes publicadas"
+        />
+      </div>
     </>
   );
 }

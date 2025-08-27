@@ -124,7 +124,7 @@ const SidebarProvider = React.forwardRef<
         <TooltipProvider delayDuration={0}>
           <div
             className={cn(
-              "group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar m-0 flex h-full",
+              "group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar m-0 flex w-full flex-row transition-[left,right,width] duration-600 ease-in-out",
               open ? "w-sidebar" : "w-sidebar-icon",
               className,
             )}
@@ -187,7 +187,7 @@ const Sidebar = React.forwardRef<
           <SheetContent
             data-sidebar="sidebar"
             data-mobile="true"
-            className="bg-sidebar w-sidebar-mobile p-0 [&>button]:hidden"
+            className="bg-sidebar w-sidebar-mobile py-4 [&>button]:hidden"
             side={side}
           >
             <div className="flex h-full w-full flex-col">{children}</div>
@@ -208,7 +208,7 @@ const Sidebar = React.forwardRef<
         {/* Sidebar content */}
         <div
           className={cn(
-            "w-full flex-col transition-[width] duration-200 ease-linear",
+            "w-full flex-col",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:w-0"
               : "right-0 group-data-[collapsible=offcanvas]:-mx-4 group-data-[collapsible=offcanvas]:w-0",
@@ -249,7 +249,7 @@ const SidebarTrigger = React.forwardRef<
       }}
       {...props}
     >
-      <PanelLeft />
+      <PanelLeft className="text-white!" />
       <span className="sr-only">Toggle Sidebar</span>
     </Button>
   );
@@ -342,7 +342,7 @@ const SidebarFooter = React.forwardRef<HTMLDivElement, React.ComponentProps<"div
       <div
         ref={ref}
         data-sidebar="footer"
-        className={cn("flex flex-col gap-2 py-2", className)}
+        className={cn("flex flex-col gap-2", className)}
         {...props}
       />
     );
@@ -355,7 +355,7 @@ const SidebarSeparator = React.forwardRef<
   React.ComponentProps<typeof Separator>
 >(({ className, ...props }, ref) => {
   return (
-    <div className="w-full px-2">
+    <div className="w-full px-2 py-4">
       <Separator ref={ref} data-sidebar="separator" className={cn(className)} {...props} />
     </div>
   );
@@ -369,7 +369,7 @@ const SidebarContent = React.forwardRef<HTMLDivElement, React.ComponentProps<"di
         ref={ref}
         data-sidebar="content"
         className={cn(
-          "flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden group-data-[collapsible=icon]:px-4",
+          "transition-[padding, overflow] flex min-h-0 flex-1 flex-col gap-2 duration-700 group-data-[collapsible=icon]:overflow-hidden group-data-[collapsible=icon]:px-4",
           className,
         )}
         {...props}
@@ -404,7 +404,7 @@ const SidebarGroupLabel = React.forwardRef<
       ref={ref}
       data-sidebar="group-label"
       className={cn(
-        "flex w-full items-center gap-2 overflow-hidden py-2 pr-4 pl-6 text-left transition-[width,height,padding] outline-none group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 group-data-[collapsible=icon]:!w-full group-data-[collapsible=icon]:px-4 group-data-[collapsible=icon]:!py-3 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 group-data-[collapsible=icon]:[&>span]:hidden [&>svg]:size-5 [&>svg]:shrink-0 group-data-[collapsible=icon]:[&>svg:last-child]:hidden",
+        "flex w-full items-center gap-2 overflow-hidden py-2 pr-4 pl-6 text-left transition-[width,height,padding] outline-none group-has-[[data-sidebar=menu-action]]/menu-item:pr-8 group-data-[collapsible=icon]:px-4 focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 group-data-[collapsible=icon]:[&>span]:hidden [&>svg]:shrink-0",
         className,
       )}
       {...props}
