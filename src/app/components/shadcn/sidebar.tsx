@@ -124,8 +124,8 @@ const SidebarProvider = React.forwardRef<
         <TooltipProvider delayDuration={0}>
           <div
             className={cn(
-              "group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar flex min-h-svh",
-              open ? "ml-sidebar w-header-sidebar" : "ml-sidebar-icon w-header-sidebar-icon",
+              "group/sidebar-wrapper has-[[data-variant=inset]]:bg-sidebar m-0 flex h-full",
+              open ? "w-sidebar" : "w-sidebar-icon",
               className,
             )}
             ref={ref}
@@ -199,7 +199,7 @@ const Sidebar = React.forwardRef<
     return (
       <div
         ref={ref}
-        className="group peer hidden md:block"
+        className="group peer flex w-full"
         data-state={state}
         data-collapsible={state === "collapsed" ? collapsible : ""}
         data-variant={style}
@@ -208,24 +208,11 @@ const Sidebar = React.forwardRef<
         {/* Sidebar content */}
         <div
           className={cn(
-            "relative h-svh w-sidebar transition-[width] duration-200 ease-linear",
-            "group-data-[collapsible=offcanvas]:w-0",
-            "group-data-[side=right]:rotate-180",
-            style === "floating" || style === "inset"
-              ? "group-data-[collapsible=icon]:w-sidebar-icon"
-              : "group-data-[collapsible=icon]:w-sidebar-icon",
-            className,
-          )}
-        />
-        <div
-          className={cn(
-            "fixed inset-y-0 z-10 hidden h-svh w-sidebar transition-[left,right,width] duration-200 ease-linear md:flex",
+            "w-full flex-col transition-[width] duration-200 ease-linear",
             side === "left"
               ? "left-0 group-data-[collapsible=offcanvas]:w-0"
-              : "inset-y-[82px] right-0 w-sidebar-activity group-data-[collapsible=offcanvas]:-mx-4 group-data-[collapsible=offcanvas]:w-0",
-            style === "floating" || style === "inset"
-              ? "p-2 group-data-[collapsible=icon]:w-sidebar-icon"
-              : "group-data-[collapsible=icon]:w-sidebar-icon group-data-[side=left]:border-r group-data-[side=right]:border-l",
+              : "right-0 group-data-[collapsible=offcanvas]:-mx-4 group-data-[collapsible=offcanvas]:w-0",
+            style === "floating" || style === "inset" ? "p-2" : "",
             sidebarVariants({ variant }),
             className,
           )}

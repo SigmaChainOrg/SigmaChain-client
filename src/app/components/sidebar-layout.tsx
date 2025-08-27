@@ -9,7 +9,7 @@ export function SidebarLayout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider open={leftOpen} onOpenChange={setLeftOpen}>
       <AppSidebar userProfile="manager" />
-      <main className="mt-7 grid h-full w-full grid-cols-12 gap-x-2 gap-y-6 bg-background px-4 py-6">
+      <main className="mt-7 grid h-full grid-cols-12 gap-x-2 gap-y-6 bg-background px-4 py-6">
         {children}
       </main>
     </SidebarProvider>

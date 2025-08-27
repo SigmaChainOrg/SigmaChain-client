@@ -9,10 +9,10 @@
   --spacing: 4px;
   --font-size: 16px;
   --radius: 8px;
-  --spacing-sidebar: 21%;
+  --spacing-sidebar: 20%;
   --spacing-header-sidebar: 79%;
   --spacing-sidebar-activity: 20rem;
-  --spacing-sidebar-icon: 8%;
+  --spacing-sidebar-icon: 6%;
   --spacing-header-sidebar-icon: 92%;
   --spacing-sidebar-mobile: 18rem;
   --color-sidebar-manager: var(--color-primary);
