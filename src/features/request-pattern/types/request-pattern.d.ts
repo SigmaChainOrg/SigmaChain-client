@@ -1,4 +1,5 @@
-import { ActivityInput } from "./activity";
+import { GroupSimpleRead } from "@/features/group/types/group";
+import { ActivityInput, ActivityRead } from "./activity";
 
 export interface RequestPatternInput {
   label: string;
@@ -12,12 +13,25 @@ export interface RequestPatternRead {
   requestPatternId: string;
   label: string;
   description: string;
-  supervisorId: string | null;
+  supervisorId?: string;
   activityId: string;
-  isPublished: boolean;
-  publishedAt: string | null;
+  publishedAt?: string;
   isActive: boolean;
   createdAt: string;
-  groups: string[];
-  activities: RequestPatternRead[];
+  groups?: GroupSimpleRead[];
+  activities?: ActivityRead[];
+}
+
+export interface RequestPatternQuery {
+  include_groups?: boolean;
+  include_activities?: boolean;
+}
+
+export interface RequestPatternFilters {
+  label?: string;
+  supervisorId?: string;
+  is_published?: boolean;
+  is_active?: boolean;
+  include_groups?: boolean;
+  include_activities?: boolean;
 }

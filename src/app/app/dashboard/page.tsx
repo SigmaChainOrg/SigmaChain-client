@@ -4,38 +4,28 @@ import { Button } from "@/app/components/shadcn/button";
 import { DashboardHeader } from "@/app/components/shadcn/header";
 import { routes } from "@/app/routes";
 import { useGetMe } from "@/features/auth/hooks/use-get-me";
+import { useGetRequestPatterns } from "@/features/request-pattern/hooks/use-get-request-patterns";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 export default function Home() {
   const router = useRouter();
+
   const { data: userData } = useGetMe({
     includeUserInfo: true,
     includeGroups: true,
     includeRoles: true,
   });
-  const requests = [
-    {
-      id: "req-1",
-      name: "Matrícula estudiantes",
-      description: "Proceso de matrícula para estudiantes nuevos y antiguos.",
-      isPublished: false,
-      startDate: new Date("2023-10-01"),
-    },
-    {
-      id: "req-4",
-      name: "Adición de materias",
-      description: "Proceso para añadir materias al plan de estudios.",
-      isPublished: false,
-      startDate: new Date("2023-10-01"),
-    },
-    {
-      id: "req-2",
-      name: "Solicitud carta aval institucional",
-      description: "Solicitud para obtener una carta aval institucional.",
-      isPublished: false,
-      startDate: new Date("2023-10-01"),
-    },
-  ];
+
+  const { data: requestPatterns } = useGetRequestPatterns({});
+  const publishedRequests = useMemo(
+    () => requestPatterns?.filter((pattern) => pattern.publishedAt),
+    [requestPatterns],
+  );
+  const unpublishedRequests = useMemo(
+    () => requestPatterns?.filter((pattern) => !pattern.publishedAt),
+    [requestPatterns],
+  );
 
   return (
     <>
@@ -50,7 +40,8 @@ export default function Home() {
       <h1 className="col-start-1 col-end-13 h-auto text-h1">
         Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
       </h1>
-      {requests.length < 0 ? (
+
+      {(unpublishedRequests?.length ?? 0) === 0 && (
         <Button
           className="col-start-7 col-end-9"
           onClick={() => {
@@ -59,16 +50,17 @@ export default function Home() {
         >
           Crear nueva solicitud
         </Button>
-      ) : null}
+      )}
+
       <RequestCardList
         variant="unpublished"
-        requests={requests}
+        requests={unpublishedRequests || []}
         className="col-start-1 col-end-10"
         cardTitle="Solicitudes no publicadas"
       />
       <RequestCardList
         variant="published"
-        requests={requests}
+        requests={publishedRequests || []}
         className="col-start-1 col-end-10"
         cardTitle="Solicitudes publicadas"
       />
