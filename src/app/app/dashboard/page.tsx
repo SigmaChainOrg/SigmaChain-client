@@ -1,6 +1,7 @@
 "use client";
 import { RequestCardList } from "@/app/app/dashboard/components/request-card-list";
-import { DashboardHeader } from "@/app/components/header";
+import { SearchHeader } from "@/app/components/header";
+import { MainContent } from "@/app/components/main-content";
 import { Button } from "@/app/components/shadcn/button";
 import { routes } from "@/app/routes";
 import { useGetMe } from "@/features/auth/hooks/use-get-me";
@@ -29,22 +30,21 @@ export default function Home() {
 
   return (
     <>
-      <div className="w-full">
-        <DashboardHeader
-          accessButton={{
-            name: "Crear nueva solicitud",
-            ref: routes["request-pattern"],
-          }}
-        />
-      </div>
-      <div className="grid max-h-full grid-cols-12 gap-x-2 gap-y-6 overflow-y-scroll px-4 py-6">
-        <h1 className="col-start-1 col-end-13 h-auto text-h1">
+      <SearchHeader
+        accessButton={{
+          name: "Crear nueva solicitud",
+          ref: routes["request-pattern"],
+        }}
+      />
+
+      <MainContent>
+        <h1 className="col-start-1 col-end-10 h-auto text-h1">
           Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
         </h1>
 
         {(unpublishedRequests?.length ?? 0) === 0 && (
           <Button
-            className="col-start-7 col-end-9"
+            className="col-start-1 col-end-3"
             onClick={() => {
               router.push(routes["request-pattern"]);
             }}
@@ -65,7 +65,7 @@ export default function Home() {
           className="col-start-1 col-end-10"
           cardTitle="Solicitudes publicadas"
         />
-      </div>
+      </MainContent>
     </>
   );
 }

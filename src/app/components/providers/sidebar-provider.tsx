@@ -1,9 +1,9 @@
 "use client";
 import { useSidebarStore } from "@/app/app/request/state/sidebar-store";
-import { AppSidebar } from "@/app/components/shadcn/app-sidebar";
+import { AppSidebar } from "@/app/components/app-sidebar";
 import { SidebarProvider } from "@/app/components/shadcn/sidebar";
 
-export function SidebarLayout({ children }: { children: React.ReactNode }) {
+export function SidebarLayout() {
   const { leftOpen, setLeftOpen } = useSidebarStore();
 
   return (

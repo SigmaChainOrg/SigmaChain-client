@@ -30,7 +30,7 @@ function HeaderLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function DashboardHeader({ accessButton }: { accessButton: { name: string; ref: string } }) {
+export function SearchHeader({ accessButton }: { accessButton: { name: string; ref: string } }) {
   const router = useRouter();
 
   return (
