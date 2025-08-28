@@ -4,7 +4,7 @@ import { routes } from "@/app/routes";
 import { useRouter } from "next/navigation";
 //import image from "./image.png";
 
-import { DashboardHeader } from "@/app/components/header";
+import { SearchHeader } from "@/app/components/header";
 //import { z } from "zod";
 
 //const userDataSchema = z.object({  name: z.string(),});
@@ -14,7 +14,7 @@ export default function Solicitude() {
   return (
     <>
       <div className="col-start-1 col-end-13">
-        <DashboardHeader
+        <SearchHeader
           accessButton={{
             name: "Crear nueva solicitud",
             ref: routes["request-pattern"],
