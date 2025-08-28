@@ -9,6 +9,7 @@ import {
 } from "@/app/app/request/schemas/activity-form-field-schema";
 import { useActivityFormStore } from "@/app/app/request/state/activity-form-field-store";
 import { BreadcrumbHeader } from "@/app/components/header";
+import { MainContent } from "@/app/components/main-content";
 import { routes } from "@/app/routes";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -133,24 +134,24 @@ export default function ActivityFormPattern() {
 
   return (
     <>
-      <div className="col-start-1 col-end-13">
-        <BreadcrumbHeader estado={true} path={pathName} />
-      </div>
-      <div className="col-start-3 col-end-11 flex flex-col gap-6">
-        {sections.map((section, index) => (
-          <div key={index}>
-            <SectionCard section={section} />
+      <BreadcrumbHeader estado={true} path={pathName} />
+      <MainContent>
+        <div className="col-start-3 col-end-11 flex flex-col gap-6">
+          {sections.map((section, index) => (
+            <div key={index}>
+              <SectionCard section={section} />
 
-            {section.fields.map((field, index) => (
-              <FormCard key={index} section={section} field={field} />
-            ))}
-          </div>
-        ))}
-      </div>
-      <SaveGroup
-        className="col-start-3 col-end-11 place-self-end"
-        buttons={saveButtons}
-      ></SaveGroup>
+              {section.fields.map((field, index) => (
+                <FormCard key={index} section={section} field={field} />
+              ))}
+            </div>
+          ))}
+        </div>
+        <SaveGroup
+          className="col-start-3 col-end-11 place-self-end"
+          buttons={saveButtons}
+        ></SaveGroup>
+      </MainContent>
     </>
   );
 }

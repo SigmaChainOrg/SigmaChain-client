@@ -2,12 +2,9 @@
 import { Button } from "@/app/components/shadcn/button";
 import { routes } from "@/app/routes";
 import { useRouter } from "next/navigation";
-//import image from "./image.png";
 
 import { SearchHeader } from "@/app/components/header";
-//import { z } from "zod";
-
-//const userDataSchema = z.object({  name: z.string(),});
+import { MainContent } from "@/app/components/main-content";
 
 export default function Solicitude() {
   const router = useRouter();
@@ -20,15 +17,17 @@ export default function Solicitude() {
         }}
       />
 
-      <h3 className="col-start-1 col-end-13 h-auto">Todas las solicitudes</h3>
-      <Button
-        className="col-start-1 col-end-3"
-        onClick={() => {
-          router.push(routes["request-pattern"]);
-        }}
-      >
-        Crear nueva solicitud
-      </Button>
+      <MainContent>
+        <h3 className="col-start-1 col-end-13 h-auto">Todas las solicitudes</h3>
+        <Button
+          className="col-start-1 col-end-3"
+          onClick={() => {
+            router.push(routes["request-pattern"]);
+          }}
+        >
+          Crear nueva solicitud
+        </Button>
+      </MainContent>
     </>
   );
 }

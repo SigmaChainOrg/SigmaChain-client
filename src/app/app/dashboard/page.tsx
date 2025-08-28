@@ -8,7 +8,7 @@ import { routes } from "@/app/routes";
 import { useGetMe } from "@/features/auth/hooks/use-get-me";
 import { useGetRequestPatterns } from "@/features/request-pattern/hooks/use-get-request-patterns";
 import { useRouter } from "next/navigation";
-import { Suspense, useMemo } from "react";
+import { useMemo } from "react";
 
 export default function Home() {
   const router = useRouter();
