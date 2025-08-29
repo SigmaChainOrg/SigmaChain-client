@@ -1,7 +1,4 @@
-export enum IdType {
-  ID_CARD = "id_card",
-  PASSPORT = "passport",
-}
+import { IdType } from "./enums";
 
 export interface UserInfoRead {
   firstName: string;

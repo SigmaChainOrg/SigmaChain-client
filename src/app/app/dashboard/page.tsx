@@ -1,64 +1,102 @@
 "use client";
-import { Button } from "@/app/components/shadcn/button";
-import { routes } from "@/app/routes";
-import { useRouter } from "next/navigation";
-
 import {
   RequestCardList,
   RequestInfoCardList,
 } from "@/app/app/dashboard/components/request-card-list";
 import { useUserProfileStore } from "@/app/app/state/use-user-profile-store";
-import { DashboardHeader } from "@/app/components/shadcn/header";
+import { SearchHeader } from "@/app/components/header";
+import { MainContent } from "@/app/components/main-content";
+import { Button } from "@/app/components/shadcn/button";
+import { Skeleton } from "@/app/components/shadcn/skeleton";
+import { routes } from "@/app/routes";
 import { useGetMe } from "@/features/auth/hooks/use-get-me";
+import { useGetRequestPatterns } from "@/features/request-pattern/hooks/use-get-request-patterns";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 export default function Home() {
   const router = useRouter();
+
   const { data: userData } = useGetMe({
     includeUserInfo: true,
     includeGroups: true,
     includeRoles: true,
   });
-
   const userProfile = useUserProfileStore((state) => state.userProfile);
-  const requests = [
-    {
-      id: "req-1",
-      name: "Matrícula estudiantes",
-      description: "Proceso de matrícula para estudiantes nuevos y antiguos.",
-      isPublished: false,
-      startDate: new Date("2023-10-01"),
-    },
-    {
-      id: "req-4",
-      name: "Adición de materias",
-      description: "Proceso para añadir materias al plan de estudios.",
-      isPublished: false,
-      startDate: new Date("2023-10-01"),
-    },
-    {
-      id: "req-2",
-      name: "Solicitud carta aval institucional",
-      description: "Solicitud para obtener una carta aval institucional.",
-      isPublished: false,
-      startDate: new Date("2023-10-01"),
-    },
-  ];
+
+  const showRequestCardLists = () => {
+    const { data: requestPatterns, isLoading: isLoadingPatterns } = useGetRequestPatterns({});
+    const publishedRequests = useMemo(
+      () => requestPatterns?.filter((pattern) => pattern.publishedAt),
+      [requestPatterns],
+    );
+    const unpublishedRequests = useMemo(
+      () => requestPatterns?.filter((pattern) => !pattern.publishedAt),
+      [requestPatterns],
+    );
+
+    if (isLoadingPatterns) {
+      return (
+        <>
+          <Skeleton className="col-start-1 col-end-10 h-52" />
+          <Skeleton className="col-start-1 col-end-10 h-52" />
+        </>
+      );
+    }
+
+    if (requestPatterns?.length ?? 0 === 0) {
+      return (
+        <Button
+          className="col-start-1 col-end-3"
+          onClick={() => {
+            router.push(routes["request-pattern"]);
+          }}
+        >
+          Crear nueva solicitud
+        </Button>
+      );
+    }
+
+    return (
+      <>
+        {(unpublishedRequests?.length ?? 0) === 0 && (
+          <RequestCardList
+            variant="unpublished"
+            requests={unpublishedRequests || []}
+            className="col-start-1 col-end-10"
+            cardTitle="Solicitudes no publicadas"
+          />
+        )}
+        {(publishedRequests?.length ?? 0) === 0 && (
+          <RequestCardList
+            variant="published"
+            requests={publishedRequests || []}
+            className="col-start-1 col-end-10"
+            cardTitle="Solicitudes publicadas"
+          />
+        )}
+      </>
+    );
+  };
 
   return (
     <>
-      <div className="col-start-1 col-end-13">
-        <DashboardHeader
-          accessButton={{
-            name: "Crear nueva solicitud",
-            ref: routes["request-pattern"],
-          }}
-        />
-      </div>
-      <h1 className="col-start-1 col-end-13 h-auto text-h1">
-        Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
-      </h1>
+      <SearchHeader
+        accessButton={{
+          name: "Crear nueva solicitud",
+          ref: routes["request-pattern"],
+        }}
+      />
 
-      {userProfile === "manager" && (
+      <MainContent>
+        <h1 className="col-start-1 col-end-10 h-auto text-h1">
+          Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
+        </h1>
+
+        {showRequestCardLists()}
+
+        {/*
+        {userProfile === "manager" && (
         <>
           <RequestCardList
             variant="unpublished"
@@ -101,6 +139,8 @@ export default function Home() {
           />
         </>
       )}
+        */}
+      </MainContent>
     </>
   );
 }

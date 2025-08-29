@@ -1,8 +1,9 @@
 "use client";
 import { useSidebarStore } from "@/app/app/request/state/sidebar-store";
 import { useUserProfileStore } from "@/app/app/state/use-user-profile-store";
-import { AppSidebar } from "@/app/components/shadcn/app-sidebar";
+import { AppSidebar } from "@/app/components/app-sidebar";
 import { SidebarProvider } from "@/app/components/shadcn/sidebar";
+
 export function SidebarLayout({
   children,
   defaultOpen = false,

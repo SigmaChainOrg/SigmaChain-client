@@ -20,11 +20,17 @@ import {
   SheetTrigger,
 } from "@/app/components/shadcn/sheet";
 import { routes } from "@/app/routes";
+import { getFlattenGroups } from "@/features/group/functions/get-flatten-groups";
+import { useGetGroups } from "@/features/group/hooks/use-get-groups";
 import { faEllipsisVertical, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 
 export function ActivityItem({ activity }: { activity: Activity }) {
+  const { data: groupsData } = useGetGroups({ includeUsers: true });
+  const groupsList = useMemo(() => getFlattenGroups(groupsData ?? []), [groupsData]);
+
   const setActivityField = useRequestPatternStore((state) => state.setActivityField);
   const deleteActivity = useRequestPatternStore((state) => state.deleteActivity);
 
@@ -47,10 +53,10 @@ export function ActivityItem({ activity }: { activity: Activity }) {
       </div>
       <div>
         <Combobox
-          options={[
-            { value: "engineering", label: "Ingeniería" },
-            { value: "marketing", label: "Marketing" },
-          ]}
+          options={groupsList.map((group) => ({
+            value: group.groupId,
+            label: group.route,
+          }))}
           onChange={(option) => setActivityField(activity.id, "reviewerGroup", option.value)}
         />
         {activity.error.reviewerGroup && (
@@ -59,10 +65,14 @@ export function ActivityItem({ activity }: { activity: Activity }) {
       </div>
       <div>
         <Combobox
-          options={[
-            { value: "anita", label: "Anita" },
-            { value: "juan", label: "Juan" },
-          ]}
+          options={
+            groupsList
+              .find((group) => group.groupId === activity.reviewerGroup)
+              ?.users?.map((user) => ({
+                value: user.userId,
+                label: user.userInfo?.firstName + " " + user.userInfo?.lastName,
+              })) ?? []
+          }
           onChange={(option) => setActivityField(activity.id, "responsable", option.value)}
         />
         {activity.error.responsable && (

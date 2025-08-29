@@ -5,6 +5,8 @@ import { SaveGroup } from "@/app/app/request/components/save-group";
 import { useRequestPatternStore } from "@/app/app/request/state/activityItem";
 import { useRequestProcessStore } from "@/app/app/request/state/request-process-store";
 import { useUserProfileStore } from "@/app/app/state/use-user-profile-store";
+import { BreadcrumbHeader } from "@/app/components/header";
+import { MainContent } from "@/app/components/main-content";
 import {
   Accordion,
   AccordionContent,
@@ -13,7 +15,6 @@ import {
 } from "@/app/components/shadcn/accordion";
 import { Card, CardContent } from "@/app/components/shadcn/card";
 import { Combobox } from "@/app/components/shadcn/combobox";
-import { BreadcrumbHeader } from "@/app/components/shadcn/header";
 import { Input } from "@/app/components/shadcn/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/shadcn/tabs";
 import { Textarea } from "@/app/components/shadcn/textarea";
@@ -64,132 +65,132 @@ export default function RequestProcess() {
 
   return (
     <>
-      <div className="col-start-1 col-end-13">
-        <BreadcrumbHeader estado={true} path={pathName} />
-      </div>
-      <Tabs
-        defaultValue={displayActivities[0].id}
-        onValueChange={(id) => {
-          setActiveTab(id);
-        }}
-        className="col-start-1 col-end-13 mx-[-16px]"
-      >
-        <TabsList className="w-full">
-          {displayActivities.map((activity) => (
-            <TabsTrigger key={activity.id} complete={activity.isCompleted} value={activity.id}>
-              {activity.name}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-        {displayActivities.map((activity, idx) => {
-          if (userProfile === "requester" && idx > 0) {
+      <BreadcrumbHeader estado={true} path={pathName} />
+      <MainContent>
+        <Tabs
+          defaultValue={displayActivities[0].id}
+          onValueChange={(id) => {
+            setActiveTab(id);
+          }}
+          className="col-start-1 col-end-13 mx-[-16px]"
+        >
+          <TabsList className="w-full">
+            {displayActivities.map((activity) => (
+              <TabsTrigger key={activity.id} complete={activity.isCompleted} value={activity.id}>
+                {activity.name}
+              </TabsTrigger>
+            ))}
+          </TabsList>
+          {displayActivities.map((activity, idx) => {
+            if (userProfile === "requester" && idx > 0) {
+              return (
+                <TabsContent key={activity.id} value={activity.id} className="grid grid-cols-12">
+                  <ActivityProcessStatus status={false} className="col-start-2 col-end-12 my-6" />
+                </TabsContent>
+              );
+            }
+            if (userProfile === "reviewer" && idx < 1) {
+              return (
+                <TabsContent key={activity.id} value={activity.id} className="grid grid-cols-12">
+                  <ActivityProcessStatus status={true} className="col-start-2 col-end-12 my-6" />
+                </TabsContent>
+              );
+            }
             return (
               <TabsContent key={activity.id} value={activity.id} className="grid grid-cols-12">
-                <ActivityProcessStatus status={false} className="col-start-2 col-end-12 my-6" />
-              </TabsContent>
-            );
-          }
-          if (userProfile === "reviewer" && idx < 1) {
-            return (
-              <TabsContent key={activity.id} value={activity.id} className="grid grid-cols-12">
-                <ActivityProcessStatus status={true} className="col-start-2 col-end-12 my-6" />
-              </TabsContent>
-            );
-          }
-          return (
-            <TabsContent key={activity.id} value={activity.id} className="grid grid-cols-12">
-              <Card variant="solicitude" className="col-start-2 col-end-12 my-6 py-0">
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="info-item">
-                      <AccordionTrigger className="text-h4 font-bold" chevronClassName="size-6">
-                        Información general de la actividad
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        {Object.entries(activityInformation).map(([key, info]) => (
-                          <InformationField
-                            key={key}
-                            fieldData={{
-                              name: info.name,
-                              description: Array.isArray(info.value)
-                                ? info.value.join(", ")
-                                : info.value,
-                            }}
-                          />
-                        ))}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </CardContent>
-              </Card>
-
-              <Card variant="solicitude" className="col-start-2 col-end-12 py-0">
-                <CardContent>
-                  <Accordion type="single" collapsible className="w-full">
-                    <AccordionItem value="fields-item">
-                      <AccordionTrigger className="text-h4 font-bold" chevronClassName="size-6">
-                        Campos de la actividad
-                      </AccordionTrigger>
-                      <AccordionContent>
-                        {Array.isArray(activity.sections) &&
-                          activity.sections.map((section) => (
-                            <Field
-                              key={section.id}
+                <Card variant="solicitude" className="col-start-2 col-end-12 my-6 py-0">
+                  <CardContent>
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="info-item">
+                        <AccordionTrigger className="text-h4 font-bold" chevronClassName="size-6">
+                          Información general de la actividad
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          {Object.entries(activityInformation).map(([key, info]) => (
+                            <InformationField
+                              key={key}
                               fieldData={{
-                                name: section.name,
-                                description: section.description ? section.description : "",
+                                name: info.name,
+                                description: Array.isArray(info.value)
+                                  ? info.value.join(", ")
+                                  : info.value,
                               }}
-                            >
-                              {section.fields.map((field) => (
-                                <Field
-                                  key={field.id}
-                                  fieldData={{
-                                    name: field.name,
-                                    description: field.description ? field.description : "",
-                                  }}
-                                >
-                                  <div>
-                                    {field.type === "text" ? (
-                                      <Input
-                                        placeholder="tu texto aquí"
-                                        onChange={(e) => {
-                                          /* setFieldValue(field.order, [e.target.value]) */
-                                        }}
-                                      />
-                                    ) : field.type === "combobox" ? (
-                                      <Combobox
-                                        selectDefault={{
-                                          value: "add group",
-                                          label: "Agregar grupo",
-                                        }}
-                                        options={[]}
-                                        onChange={(option) => {
-                                          /* ... */
-                                        }}
-                                      />
-                                    ) : field.type === "textarea" ? (
-                                      <Textarea
-                                        placeholder="tu texto aquí"
-                                        onChange={(e) => {
-                                          /* setFieldValue(field.order, [e.target.value]) */
-                                        }}
-                                      />
-                                    ) : null}
-                                  </div>
-                                </Field>
-                              ))}
-                            </Field>
+                            />
                           ))}
-                      </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          );
-        })}
-      </Tabs>
-      <SaveGroup className="col-start-2 col-end-12 place-self-end" buttons={saveButtons} />
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </CardContent>
+                </Card>
+
+                <Card variant="solicitude" className="col-start-2 col-end-12 py-0">
+                  <CardContent>
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="fields-item">
+                        <AccordionTrigger className="text-h4 font-bold" chevronClassName="size-6">
+                          Campos de la actividad
+                        </AccordionTrigger>
+                        <AccordionContent>
+                          {Array.isArray(activity.sections) &&
+                            activity.sections.map((section) => (
+                              <Field
+                                key={section.id}
+                                fieldData={{
+                                  name: section.name,
+                                  description: section.description ? section.description : "",
+                                }}
+                              >
+                                {section.fields.map((field) => (
+                                  <Field
+                                    key={field.id}
+                                    fieldData={{
+                                      name: field.name,
+                                      description: field.description ? field.description : "",
+                                    }}
+                                  >
+                                    <div>
+                                      {field.type === "text" ? (
+                                        <Input
+                                          placeholder="tu texto aquí"
+                                          onChange={(e) => {
+                                            /* setFieldValue(field.order, [e.target.value]) */
+                                          }}
+                                        />
+                                      ) : field.type === "combobox" ? (
+                                        <Combobox
+                                          selectDefault={{
+                                            value: "add group",
+                                            label: "Agregar grupo",
+                                          }}
+                                          options={[]}
+                                          onChange={(option) => {
+                                            /* ... */
+                                          }}
+                                        />
+                                      ) : field.type === "textarea" ? (
+                                        <Textarea
+                                          placeholder="tu texto aquí"
+                                          onChange={(e) => {
+                                            /* setFieldValue(field.order, [e.target.value]) */
+                                          }}
+                                        />
+                                      ) : null}
+                                    </div>
+                                  </Field>
+                                ))}
+                              </Field>
+                            ))}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            );
+          })}
+        </Tabs>
+        <SaveGroup className="col-start-2 col-end-12 place-self-end" buttons={saveButtons} />
+      </MainContent>
     </>
   );
 }

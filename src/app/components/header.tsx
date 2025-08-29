@@ -1,5 +1,4 @@
 "use client";
-import { useSidebarStore } from "@/app/app/request/state/sidebar-store";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,12 +19,10 @@ import { useRouter } from "next/navigation";
 import React from "react";
 
 function HeaderLayout({ children }: { children: React.ReactNode }) {
-  const { leftOpen } = useSidebarStore();
   return (
     <div
       className={cn(
-        "fixed top-0 z-10 mx-[-16px] flex flex-row place-content-between gap-2 border-[1px] border-solid border-gray-300 bg-white px-4 py-5",
-        leftOpen ? "w-[70rem]" : "w-[80rem]",
+        "flex w-full flex-row place-content-between border-[1px] border-solid border-gray-300 bg-white px-4 py-5 transition-all transition-discrete duration-300 ease-in-out",
       )}
     >
       {children}
@@ -33,13 +30,12 @@ function HeaderLayout({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function DashboardHeader({ accessButton }: { accessButton: { name: string; ref: string } }) {
+export function SearchHeader({ accessButton }: { accessButton: { name: string; ref: string } }) {
   const router = useRouter();
 
   return (
     <HeaderLayout>
       <div className="flex flex-row items-center gap-2">
-        <SidebarTrigger />
         <Input placeholder="Buscar" />
         <Button variant="ghost">
           <FontAwesomeIcon icon={faSearch} />
@@ -73,7 +69,6 @@ export function BreadcrumbHeader({ estado, path }: { estado: boolean; path: stri
   return (
     <HeaderLayout>
       <div className="flex flex-row items-center gap-2">
-        <SidebarTrigger />
         <Breadcrumb>
           <BreadcrumbList>
             {pathItems.map((item, index) => (
