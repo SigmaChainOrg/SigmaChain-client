@@ -88,7 +88,6 @@ export function ActivityItemView({
   requestId: string;
 }) {
   const activities = useRequestPatternStore((state) => state.activities);
-
   const router = useRouter();
   return (
     <div

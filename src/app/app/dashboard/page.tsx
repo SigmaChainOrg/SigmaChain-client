@@ -1,8 +1,13 @@
 "use client";
+import { Button } from "@/app/components/shadcn/button";
 import { routes } from "@/app/routes";
 import { useRouter } from "next/navigation";
 
-import { RequestCardList } from "@/app/app/dashboard/components/request-card-list";
+import {
+  RequestCardList,
+  RequestInfoCardList,
+} from "@/app/app/dashboard/components/request-card-list";
+import { useUserProfileStore } from "@/app/app/state/use-user-profile-store";
 import { DashboardHeader } from "@/app/components/shadcn/header";
 import { useGetMe } from "@/features/auth/hooks/use-get-me";
 
@@ -13,6 +18,8 @@ export default function Home() {
     includeGroups: true,
     includeRoles: true,
   });
+
+  const userProfile = useUserProfileStore((state) => state.userProfile);
   const requests = [
     {
       id: "req-1",
@@ -50,26 +57,50 @@ export default function Home() {
       <h1 className="col-start-1 col-end-13 h-auto text-h1">
         Bienvenido {userData?.userInfo?.firstName + " " + userData?.userInfo?.lastName}
       </h1>
-      {/*<Button
-        className="col-start-7 col-end-9"
-        onClick={() => {
-          router.push(routes["request-pattern"]);
-        }}
-      >
-        Crear nueva solicitud
-      </Button>*/}
-      <RequestCardList
-        variant="unpublished"
-        requests={requests}
-        className="col-start-1 col-end-10"
-        cardTitle="Solicitudes no publicadas"
-      />
-      <RequestCardList
-        variant="published"
-        requests={requests}
-        className="col-start-1 col-end-10"
-        cardTitle="Solicitudes publicadas"
-      />
+
+      {userProfile === "manager" && (
+        <>
+          <RequestCardList
+            variant="unpublished"
+            requests={requests}
+            className="col-start-1 col-end-10"
+            cardTitle="Solicitudes no publicadas"
+          />
+          <RequestCardList
+            variant="published"
+            requests={requests}
+            className="col-start-1 col-end-10"
+            cardTitle="Solicitudes publicadas"
+          />
+        </>
+      )}
+      {userProfile === "requester" && (
+        <>
+          <Button
+            className="col-start-1 col-end-3"
+            onClick={() => {
+              router.push(routes["request-pattern"]);
+            }}
+          >
+            Iniciar solicitud
+          </Button>
+          <RequestInfoCardList
+            requests={requests}
+            className="col-start-9 col-end-13"
+            cardTitle="Solicitudes ofertadas"
+          />
+        </>
+      )}
+      {userProfile === "reviewer" && (
+        <>
+          <RequestCardList
+            variant="default"
+            requests={requests}
+            className="col-start-1 col-end-10"
+            cardTitle="Procesos pendientes"
+          />
+        </>
+      )}
     </>
   );
 }

@@ -78,7 +78,6 @@ export const useActivityFormStore = create(
         error: {},
       },
     ],
-
     addSection: (prevOrder) =>
       set((state) => {
         const newSection = {

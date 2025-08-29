@@ -1,3 +1,4 @@
+import { Section } from "@/app/app/request/state/activity-form-field-store";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
@@ -7,6 +8,8 @@ export interface Activity {
   name: string;
   reviewerGroup: string;
   responsable: string;
+  sections?: Section[];
+  isCompleted: boolean;
   error: { name?: string; reviewerGroup?: string; responsable?: string };
 }
 
@@ -36,7 +39,7 @@ export interface RequestPatternState {
   setFieldValue: (order: number, value: string[]) => void;
   addActivity: () => void;
   deleteActivity: (id: string) => void;
-  setActivityField: (id: string, field: ActivityField, value: string) => void;
+  setActivityField: (id: string, field: ActivityField, value: string | Section[] | boolean) => void;
   setNameError: (error: string | undefined) => void;
   setFieldError: (order: number, error: RequestPatternField["error"]) => void;
   setActivityError: (order: number, error: Activity["error"]) => void;
@@ -85,6 +88,8 @@ export const useRequestPatternStore = create(
         name: "",
         reviewerGroup: "",
         responsable: "",
+        sections: [],
+        isCompleted: false,
         error: {},
       },
     ],
@@ -128,6 +133,7 @@ export const useRequestPatternStore = create(
           name: "",
           reviewerGroup: "",
           responsable: "",
+          isCompleted: false,
           error: {},
         });
       }),
@@ -140,12 +146,17 @@ export const useRequestPatternStore = create(
         });
       }),
 
-    setActivityField: (id: string, field: ActivityField, value: string) =>
+    setActivityField: (id: string, field: ActivityField, value: string | Section[] | boolean) =>
       set((state) => {
         const activity = state.activities.find((a) => a.id === id);
+
         if (activity) {
-          activity[field] = value;
-          activity.error[field] = undefined;
+          if (Array.isArray(value)) {
+            activity.sections = value as Section[];
+          } else {
+            (activity as any)[field] = value;
+            if (field !== "sections" && field !== "isCompleted") activity.error[field] = undefined;
+          }
         }
       }),
 

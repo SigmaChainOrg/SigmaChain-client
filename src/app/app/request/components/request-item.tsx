@@ -85,3 +85,28 @@ export function RequestItemView({
     </Button>
   );
 }
+
+export function RequestInfoItem({ request }: { request: RequestInfo }) {
+  const router = useRouter();
+  return (
+    <div
+      key={request.id}
+      className="flex w-full flex-col items-start justify-between gap-4 border-[1px] border-solid border-gray p-4 font-medium"
+    >
+      <p className="max-w-1/1 font-bold">{request.name}</p>
+      <p className="max-w-1/1">{request.description}</p>
+      <p className="max-w-1/1">
+        Inicio de solicitudes:{" "}
+        {request.startDate ? request.startDate.toISOString().slice(0, 10) : ""}
+      </p>
+      <Button
+        className="w-full"
+        onClick={() => {
+          router.push(routes["request-process"]);
+        }}
+      >
+        Iniciar solicitud
+      </Button>
+    </div>
+  );
+}
