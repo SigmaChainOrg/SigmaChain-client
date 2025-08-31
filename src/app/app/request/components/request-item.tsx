@@ -1,5 +1,6 @@
 import { Button } from "@/app/components/shadcn/button";
 import { routes } from "@/app/routes";
+import { RequestPatternRead } from "@/features/request-pattern/types/request-pattern";
 import { useRouter } from "next/navigation";
 
 export interface RequestInfo {
@@ -86,18 +87,17 @@ export function RequestItemView({
   );
 }
 
-export function RequestInfoItem({ request }: { request: RequestInfo }) {
+export function RequestInfoItem({ request }: { request: RequestPatternRead }) {
   const router = useRouter();
   return (
     <div
-      key={request.id}
+      key={request.requestPatternId}
       className="flex w-full flex-col items-start justify-between gap-4 border-[1px] border-solid border-gray p-4 font-medium"
     >
-      <p className="max-w-1/1 font-bold">{request.name}</p>
+      <p className="max-w-1/1 font-bold">{request.label}</p>
       <p className="max-w-1/1">{request.description}</p>
       <p className="max-w-1/1">
-        Inicio de solicitudes:{" "}
-        {request.startDate ? request.startDate.toISOString().slice(0, 10) : ""}
+        Inicio de solicitudes: {request.createdAt ? request.createdAt.toString().slice(0, 10) : ""}
       </p>
       <Button
         className="w-full"

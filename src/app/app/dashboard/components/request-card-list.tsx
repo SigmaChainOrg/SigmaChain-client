@@ -57,7 +57,7 @@ export function RequestInfoCardList({
 }: {
   cardTitle: string;
   className?: string;
-  requests: RequestInfo[];
+  requests: RequestPatternRead[];
 }) {
   return (
     <Card className={cn("w-full py-0", className)} variant="solicitude">

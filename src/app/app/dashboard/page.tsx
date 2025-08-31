@@ -59,21 +59,57 @@ export default function Home() {
 
     return (
       <>
-        {(unpublishedRequests?.length ?? 0) === 0 && (
-          <RequestCardList
-            variant="unpublished"
-            requests={unpublishedRequests || []}
-            className="col-start-1 col-end-10"
-            cardTitle="Solicitudes no publicadas"
-          />
+        {userProfile === "manager" && (
+          <>
+            {(unpublishedRequests?.length ?? 0) === 0 && (
+              <RequestCardList
+                variant="unpublished"
+                requests={unpublishedRequests || []}
+                className="col-start-1 col-end-10"
+                cardTitle="Solicitudes no publicadas"
+              />
+            )}
+            {(publishedRequests?.length ?? 0) === 0 && (
+              <RequestCardList
+                variant="published"
+                requests={publishedRequests || []}
+                className="col-start-1 col-end-10"
+                cardTitle="Solicitudes publicadas"
+              />
+            )}
+          </>
         )}
-        {(publishedRequests?.length ?? 0) === 0 && (
-          <RequestCardList
-            variant="published"
-            requests={publishedRequests || []}
-            className="col-start-1 col-end-10"
-            cardTitle="Solicitudes publicadas"
-          />
+        {userProfile === "requester" && (
+          <>
+            <Button
+              className="col-start-1 col-end-3"
+              onClick={() => {
+                router.push(routes["request-pattern"]);
+              }}
+            >
+              Iniciar solicitud
+            </Button>
+
+            {(publishedRequests?.length ?? 0) === 0 && (
+              <RequestInfoCardList
+                requests={publishedRequests || []}
+                className="col-start-9 col-end-13"
+                cardTitle="Solicitudes ofertadas"
+              />
+            )}
+          </>
+        )}
+        {userProfile === "reviewer" && (
+          <>
+            {(publishedRequests?.length ?? 0) === 0 && (
+              <RequestCardList
+                variant="default"
+                requests={publishedRequests || []}
+                className="col-start-1 col-end-10"
+                cardTitle="Procesos pendientes"
+              />
+            )}
+          </>
         )}
       </>
     );
@@ -94,52 +130,6 @@ export default function Home() {
         </h1>
 
         {showRequestCardLists()}
-
-        {/*
-        {userProfile === "manager" && (
-        <>
-          <RequestCardList
-            variant="unpublished"
-            requests={requests}
-            className="col-start-1 col-end-10"
-            cardTitle="Solicitudes no publicadas"
-          />
-          <RequestCardList
-            variant="published"
-            requests={requests}
-            className="col-start-1 col-end-10"
-            cardTitle="Solicitudes publicadas"
-          />
-        </>
-      )}
-      {userProfile === "requester" && (
-        <>
-          <Button
-            className="col-start-1 col-end-3"
-            onClick={() => {
-              router.push(routes["request-pattern"]);
-            }}
-          >
-            Iniciar solicitud
-          </Button>
-          <RequestInfoCardList
-            requests={requests}
-            className="col-start-9 col-end-13"
-            cardTitle="Solicitudes ofertadas"
-          />
-        </>
-      )}
-      {userProfile === "reviewer" && (
-        <>
-          <RequestCardList
-            variant="default"
-            requests={requests}
-            className="col-start-1 col-end-10"
-            cardTitle="Procesos pendientes"
-          />
-        </>
-      )}
-        */}
       </MainContent>
     </>
   );
