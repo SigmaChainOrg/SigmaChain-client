@@ -1,71 +1,41 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-export interface ActivityField {
+export interface ActivityItem {
   id: string;
-  order: number;
   name: string;
-  description: string;
-  type: string;
-  value?: string[];
-  options?: string[];
-  optional: boolean;
-  error: { value?: string };
-}
-
-export interface Activity {
-  id: string;
-  order: number;
-  name: string;
-  isComplete: boolean;
-  fields: ActivityField[];
+  isCompleted: boolean;
 }
 
 export interface RequestProcessState {
-  id: string;
-  name: string;
-  description: string;
-  isPublished: boolean;
-  startDate: Date | undefined;
-  activities: Activity[];
-  setIsCompleteActivity: (activityOrder: number, value: boolean) => void;
-  setActivityFieldValue: (activityOrder: number, fieldOrder: number, value: string[]) => void;
-  setActivityFieldError: (activityOrder: number, fieldOrder: number, error: string) => void;
+  activities: ActivityItem[];
+  activeTab: string;
+  setActivities: (activities: ActivityItem[]) => void;
+  setActiveTab: (id: string) => void;
+  setIsCompleteActivity: (activityId: string, value: boolean) => void;
 }
 
 export const useRequestProcessStore = create(
   immer<RequestProcessState>((set) => ({
-    id: "req-1",
-    name: "Matrícula estudiantes",
-    description: "",
-    startDate: undefined,
-    isPublished: false,
-    activities: [
-      {
-        id: "a1",
-        order: 1,
-        name: "string",
-        isComplete: false,
-        fields: [],
-      },
-    ],
-
-    setIsCompleteActivity: (activityOrder, value) =>
+    activities: [],
+    activeTab: "",
+    setActivities: (activities) =>
       set((state) => {
-        const activity = state.activities.find((a) => a.order === activityOrder);
-        if (activity) {
-          activity.isComplete = value;
+        state.activities = activities;
+        if (activities.length > 0) {
+          state.activeTab = activities[0].id;
         }
       }),
-
-    setActivityFieldValue: (activityOrder, fieldOrder, value) =>
+    setActiveTab: (id) =>
       set((state) => {
-        const activity = state.activities.find((a) => a.order === activityOrder);
+        state.activeTab = id;
       }),
-
-    setActivityFieldError: (activityOrder, fieldOrder, error) =>
+    setIsCompleteActivity: (activityId, value) =>
       set((state) => {
-        const activity = state.activities.find((a) => a.order === activityOrder);
+        const activity = state.activities.find((a) => a.id === activityId);
+        if (activity) {
+          activity.isCompleted = value;
+        }
       }),
   })),
 );

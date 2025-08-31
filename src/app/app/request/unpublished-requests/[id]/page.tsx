@@ -2,9 +2,10 @@
 import { ActivityItemView } from "@/app/app/request/components/activityItemManager";
 import { InformationField } from "@/app/app/request/components/field";
 import { SaveGroup } from "@/app/app/request/components/save-group";
+import { BreadcrumbHeader } from "@/app/components/header";
+import { MainContent } from "@/app/components/main-content";
 import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent } from "@/app/components/shadcn/card";
-import { BreadcrumbHeader } from "@/app/components/shadcn/header";
 import { useGetRequestPatternsId } from "@/features/request-pattern/hooks/use-get-request-patterns-id";
 import { Separator } from "@radix-ui/react-separator";
 import { useParams, usePathname } from "next/navigation";
@@ -155,53 +156,53 @@ export default function Solicitudes() {
 
   return (
     <>
-      <div className="col-start-1 col-end-13">
-        <BreadcrumbHeader estado={true} path={pathName} />
-      </div>
-      <Card variant="solicitude" className="col-start-3 col-end-11 md:col-start-2 md:col-end-12">
-        <CardContent>
-          <h3>{requestPatternData?.label}</h3>
-          {displayFields.map((field) => (
-            <InformationField
-              key={field.id}
-              fieldData={{
-                name: field.name,
-                description: Array.isArray(field.value)
-                  ? field.value.join(", ")
-                  : String(field.value ?? ""),
-              }}
-            />
-          ))}
-          <div className="mt-4 flex w-full flex-row items-center justify-between">
-            <h4 className="font-poppins"> Actividades para completar la solicitud</h4>
-            <Button variant="secondary"> Visualizar flujo </Button>
-          </div>
-          <Separator orientation="horizontal" className="mt-[-12px] h-[1px] w-full bg-primary" />
-          <div className="flex w-full flex-col gap-1">
-            {requestPatternData?.activities?.map((activity) => (
-              <ActivityItemView
-                key={activity.activityId}
-                requestId={"" + id}
-                activity={{
-                  id: activity.activityId,
-                  name: activity.label,
-                  order: activity.activityOrder,
-                  reviewerGroup:
-                    activity.assignee?.assigneeType === "requester"
-                      ? "Solicitante"
-                      : activity.assignee?.groupId || "Test Group",
-                  responsable:
-                    activity.assignee?.assigneeType === "group"
-                      ? activity.assignee?.groupId || ""
-                      : activity.assignee?.userId || "",
-                  error: {},
+      <BreadcrumbHeader estado={true} path={pathName} />
+      <MainContent>
+        <Card variant="solicitude" className="col-start-3 col-end-11 md:col-start-2 md:col-end-12">
+          <CardContent>
+            <h3>{requestPatternData?.label}</h3>
+            {displayFields.map((field) => (
+              <InformationField
+                key={field.id}
+                fieldData={{
+                  name: field.name,
+                  description: Array.isArray(field.value)
+                    ? field.value.join(", ")
+                    : String(field.value ?? ""),
                 }}
               />
             ))}
-          </div>
-        </CardContent>
-      </Card>
-      <SaveGroup className="col-start-3 col-end-12 place-self-end" buttons={saveButtons} />
+            <div className="mt-4 flex w-full flex-row items-center justify-between">
+              <h4 className="font-poppins"> Actividades para completar la solicitud</h4>
+              <Button variant="secondary"> Visualizar flujo </Button>
+            </div>
+            <Separator orientation="horizontal" className="mt-[-12px] h-[1px] w-full bg-primary" />
+            <div className="flex w-full flex-col gap-1">
+              {requestPatternData?.activities?.map((activity) => (
+                <ActivityItemView
+                  key={activity.activityId}
+                  requestId={"" + id}
+                  activity={{
+                    id: activity.activityId,
+                    name: activity.label,
+                    order: activity.activityOrder,
+                    reviewerGroup:
+                      activity.assignee?.assigneeType === "requester"
+                        ? "Solicitante"
+                        : activity.assignee?.groupId || "Test Group",
+                    responsable:
+                      activity.assignee?.assigneeType === "group"
+                        ? activity.assignee?.groupId || ""
+                        : activity.assignee?.userId || "",
+                    error: {},
+                  }}
+                />
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+        <SaveGroup className="col-start-3 col-end-12 place-self-end" buttons={saveButtons} />
+      </MainContent>
     </>
   );
 }

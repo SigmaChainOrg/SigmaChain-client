@@ -9,11 +9,11 @@
   --spacing: 4px;
   --font-size: 16px;
   --radius: 8px;
-  --spacing-sidebar: 21%;
-  --spacing-header-sidebar: 79%;
+  --spacing-sidebar: 20%;
+  --spacing-content: 80%;
   --spacing-sidebar-activity: 20rem;
-  --spacing-sidebar-icon: 8%;
-  --spacing-header-sidebar-icon: 92%;
+  --spacing-sidebar-icon: 6%;
+  --spacing-content-icon: 94%;
   --spacing-sidebar-mobile: 18rem;
   --color-sidebar-manager: var(--color-primary);
   --color-sidebar-reviewer: var(--color-primary);

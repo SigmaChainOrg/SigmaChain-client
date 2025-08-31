@@ -1,4 +1,8 @@
-import { RequestItemView } from "@/app/app/request/components/request-item";
+import {
+  RequestInfo,
+  RequestInfoItem,
+  RequestItemView,
+} from "@/app/app/request/components/request-item";
 import { Card, CardContent, CardHeader } from "@/app/components/shadcn/card";
 import { RequestPatternRead } from "@/features/request-pattern/types/request-pattern";
 import { cn } from "@/features/shadcn/services/utils";
@@ -41,6 +45,27 @@ export function RequestCardList({
             <p className="text-center text-gray-500">No requests available</p>
           </div>
         )}
+      </CardContent>
+    </Card>
+  );
+}
+
+export function RequestInfoCardList({
+  cardTitle,
+  className,
+  requests,
+}: {
+  cardTitle: string;
+  className?: string;
+  requests: RequestPatternRead[];
+}) {
+  return (
+    <Card className={cn("w-full py-0", className)} variant="solicitude">
+      <CardHeader className="pt-5! text-h3 font-bold">{cardTitle}</CardHeader>
+      <CardContent className="flex w-full flex-col gap-0 pt-0">
+        {requests.map((request) => (
+          <RequestInfoItem request={request} />
+        ))}
       </CardContent>
     </Card>
   );

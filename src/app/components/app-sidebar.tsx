@@ -11,6 +11,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarSeparator,
+  SidebarTrigger,
 } from "@/app/components/shadcn/sidebar";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/app/components/shadcn/avatar";
@@ -27,6 +28,7 @@ import {
   CollapsibleTrigger,
 } from "@/app/components/shadcn/collapsible";
 import { routes } from "@/app/routes";
+import { cn } from "@/features/shadcn/services/utils";
 import {
   faEllipsisVertical,
   faFileEdit,
@@ -100,20 +102,26 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
       if (item.children && item.children.length > 0) {
         // Renderiza un Collapsible si el elemento tiene hijos
         return (
-          <Collapsible key={item.title} defaultOpen className="group/collapsible">
+          <Collapsible
+            key={item.title}
+            defaultOpen
+            className="group/collapsible group-data-[collapsible=icon]:border-2 group-data-[collapsible=icon]:border-secondary"
+          >
             <SidebarGroup>
               <SidebarGroupLabel
                 asChild
-                className={
-                  pathName.split("/")[2] === item.href.split("/")[2] ? "text-complement" : ""
-                }
+                className={cn(
+                  pathName.split("/")[2] === item.href.split("/")[2] ? "bg-secondary" : "",
+                  "group-data-[collapsible=icon]:flex-col group-data-[collapsible=icon]:gap-y-0",
+                )}
               >
                 <CollapsibleTrigger>
                   <FontAwesomeIcon icon={item.icon} />
                   <span>{item.title}</span>
-                  <ChevronDown className="ml-auto transition-transform group-data-[state=open]/collapsible:rotate-180" />
+                  <ChevronDown className="transition-transform group-data-[state=open]/collapsible:rotate-180" />
                 </CollapsibleTrigger>
               </SidebarGroupLabel>
+
               <CollapsibleContent>
                 <SidebarGroupContent>
                   {item.children.map((child) => (
@@ -122,7 +130,7 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
                         asChild
                         variant={userProfile}
                         isActive={pathName.split("/")[3] === child.href.split("/")[3]}
-                        className="pl-7"
+                        className="pl-7 hover:bg-transparent hover:text-complement data-[active=true]:bg-transparent data-[active=true]:text-complement"
                       >
                         <Link href={child.href}>
                           <FontAwesomeIcon icon={child.icon} />
@@ -160,29 +168,28 @@ export function AppSidebar({ userProfile = "manager" }: AppSidebarProps) {
       <SidebarHeader>
         <FontAwesomeIcon icon={faHome} />
         <span>SigmaChain</span>
+        <SidebarTrigger />
       </SidebarHeader>
+      <SidebarSeparator
+        className={
+          userProfile === "requester" ? "bg-sidebar-manager" : "bg-sidebar-manager-foreground"
+        }
+      />
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarSeparator
-                className={
-                  userProfile === "requester"
-                    ? "bg-sidebar-manager"
-                    : "bg-sidebar-manager-foreground"
-                }
-              />
               {userProfile in menuItems && renderMenuItems(menuItems[userProfile])}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarSeparator
+        className={
+          userProfile === "requester" ? "bg-sidebar-manager" : "bg-sidebar-manager-foreground"
+        }
+      />
       <SidebarFooter>
-        <SidebarSeparator
-          className={
-            userProfile === "requester" ? "bg-sidebar-manager" : "bg-sidebar-manager-foreground"
-          }
-        />
         <SidebarMenu>
           <SidebarMenuItem>
             <DropdownMenu>
