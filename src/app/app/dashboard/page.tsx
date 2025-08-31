@@ -1,5 +1,9 @@
 "use client";
-import { RequestCardList } from "@/app/app/dashboard/components/request-card-list";
+import {
+  RequestCardList,
+  RequestInfoCardList,
+} from "@/app/app/dashboard/components/request-card-list";
+import { useUserProfileStore } from "@/app/app/state/use-user-profile-store";
 import { SearchHeader } from "@/app/components/header";
 import { MainContent } from "@/app/components/main-content";
 import { Button } from "@/app/components/shadcn/button";
@@ -18,6 +22,7 @@ export default function Home() {
     includeGroups: true,
     includeRoles: true,
   });
+  const userProfile = useUserProfileStore((state) => state.userProfile);
 
   const showRequestCardLists = () => {
     const { data: requestPatterns, isLoading: isLoadingPatterns } = useGetRequestPatterns({});
@@ -54,21 +59,57 @@ export default function Home() {
 
     return (
       <>
-        {(unpublishedRequests?.length ?? 0) === 0 && (
-          <RequestCardList
-            variant="unpublished"
-            requests={unpublishedRequests || []}
-            className="col-start-1 col-end-10"
-            cardTitle="Solicitudes no publicadas"
-          />
+        {userProfile === "manager" && (
+          <>
+            {(unpublishedRequests?.length ?? 0) === 0 && (
+              <RequestCardList
+                variant="unpublished"
+                requests={unpublishedRequests || []}
+                className="col-start-1 col-end-10"
+                cardTitle="Solicitudes no publicadas"
+              />
+            )}
+            {(publishedRequests?.length ?? 0) === 0 && (
+              <RequestCardList
+                variant="published"
+                requests={publishedRequests || []}
+                className="col-start-1 col-end-10"
+                cardTitle="Solicitudes publicadas"
+              />
+            )}
+          </>
         )}
-        {(publishedRequests?.length ?? 0) === 0 && (
-          <RequestCardList
-            variant="published"
-            requests={publishedRequests || []}
-            className="col-start-1 col-end-10"
-            cardTitle="Solicitudes publicadas"
-          />
+        {userProfile === "requester" && (
+          <>
+            <Button
+              className="col-start-1 col-end-3"
+              onClick={() => {
+                router.push(routes["request-pattern"]);
+              }}
+            >
+              Iniciar solicitud
+            </Button>
+
+            {(publishedRequests?.length ?? 0) === 0 && (
+              <RequestInfoCardList
+                requests={publishedRequests || []}
+                className="col-start-9 col-end-13"
+                cardTitle="Solicitudes ofertadas"
+              />
+            )}
+          </>
+        )}
+        {userProfile === "reviewer" && (
+          <>
+            {(publishedRequests?.length ?? 0) === 0 && (
+              <RequestCardList
+                variant="default"
+                requests={publishedRequests || []}
+                className="col-start-1 col-end-10"
+                cardTitle="Procesos pendientes"
+              />
+            )}
+          </>
         )}
       </>
     );

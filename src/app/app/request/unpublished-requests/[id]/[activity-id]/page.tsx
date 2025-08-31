@@ -8,6 +8,7 @@ import {
   activityFormUploadFilesSchema,
 } from "@/app/app/request/schemas/activity-form-field-schema";
 import { useActivityFormStore } from "@/app/app/request/state/activity-form-field-store";
+import { useRequestPatternStore } from "@/app/app/request/state/activityItem";
 import { BreadcrumbHeader } from "@/app/components/header";
 import { MainContent } from "@/app/components/main-content";
 import { routes } from "@/app/routes";
@@ -20,6 +21,8 @@ export default function ActivityFormPattern() {
   const sections = useActivityFormStore((state) => state.sections);
   const setSectionError = useActivityFormStore((state) => state.setSectionError);
   const setFieldError = useActivityFormStore((state) => state.setFieldError);
+
+  const setActivityField = useRequestPatternStore((state) => state.setActivityField);
 
   function handleSaveForm() {
     let hasSectionErrors = false;
@@ -119,6 +122,7 @@ export default function ActivityFormPattern() {
       return;
     }
 
+    setActivityField(pathName.toString().split("/")[5], "sections", sections);
     router.push(routes["unpublished-request"] + `/${pathName.toString().split("/")[4]}`);
   }
 
