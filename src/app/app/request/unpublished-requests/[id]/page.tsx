@@ -1,5 +1,5 @@
 "use client";
-import { ActivityItemView } from "@/app/app/request/components/activityItemManager";
+import { ActivityItemView } from "@/app/app/request/components/activity-item-manager";
 import { InformationField } from "@/app/app/request/components/field";
 import { SaveGroup } from "@/app/app/request/components/save-group";
 import { BreadcrumbHeader } from "@/app/components/header";

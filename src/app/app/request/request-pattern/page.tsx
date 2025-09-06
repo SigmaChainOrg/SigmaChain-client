@@ -1,5 +1,5 @@
 "use client";
-import { ActivityItem } from "@/app/app/request/components/activityItemManager";
+import { ActivityItem } from "@/app/app/request/components/activity-item-manager";
 import { Field } from "@/app/app/request/components/field";
 import { SaveGroup } from "@/app/app/request/components/save-group";
 import {
