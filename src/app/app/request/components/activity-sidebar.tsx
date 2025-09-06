@@ -9,7 +9,7 @@ import {
   SidebarHeader,
   SidebarMenu,
 } from "@/app/components/shadcn/sidebar";
-import { CustomCloseTriggerRight } from "./customTriggerRight";
+import { CustomCloseTriggerRight } from "./custom-trigger-right";
 export function ActivitySidebar() {
   return (
     <Sidebar side="right" collapsible="offcanvas">
