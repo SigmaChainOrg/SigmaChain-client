@@ -3,6 +3,24 @@ interface fieldDataInterface {
   description: string;
 }
 
+export function Section({
+  sectionData,
+  children,
+}: {
+  sectionData: fieldDataInterface;
+  children: React.ReactNode;
+}) {
+  return (
+    <>
+      <h4>{sectionData.name}</h4>
+      <div className="py-4">
+        <p className="col-start-1 col-end-2 font-raleway">{sectionData.description}</p>
+        <div className="col-start-2 col-end-3">{children}</div>
+      </div>
+    </>
+  );
+}
+
 export function Field({
   fieldData,
   children,

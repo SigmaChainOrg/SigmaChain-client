@@ -1,34 +1,29 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-
-export interface ActivityItem {
-  id: string;
-  name: string;
-  isCompleted: boolean;
-}
+import { Activity } from "./activityItem";
 
 export interface RequestProcessState {
-  activities: ActivityItem[];
-  activeTab: string;
-  setActivities: (activities: ActivityItem[]) => void;
-  setActiveTab: (id: string) => void;
+  activities: Activity[];
+  activeTabId: string;
+  setActivities: (activities: Activity[]) => void;
+  setActiveTabId: (id: string) => void;
   setIsCompleteActivity: (activityId: string, value: boolean) => void;
 }
 
 export const useRequestProcessStore = create(
   immer<RequestProcessState>((set) => ({
     activities: [],
-    activeTab: "",
+    activeTabId: "",
     setActivities: (activities) =>
       set((state) => {
         state.activities = activities;
         if (activities.length > 0) {
-          state.activeTab = activities[0].id;
+          state.activeTabId = activities[0].id;
         }
       }),
-    setActiveTab: (id) =>
+    setActiveTabId: (id) =>
       set((state) => {
-        state.activeTab = id;
+        state.activeTabId = id;
       }),
     setIsCompleteActivity: (activityId, value) =>
       set((state) => {

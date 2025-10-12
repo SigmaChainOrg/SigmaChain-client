@@ -10,6 +10,7 @@ export interface Activity {
   responsable: string;
   sections?: Section[];
   isCompleted: boolean;
+  prevData?: { label: string; value: string | string[] }[];
   error: { name?: string; reviewerGroup?: string; responsable?: string };
 }
 
@@ -39,7 +40,11 @@ export interface RequestPatternState {
   setFieldValue: (order: number, value: string[]) => void;
   addActivity: () => void;
   deleteActivity: (id: string) => void;
-  setActivityField: (id: string, field: ActivityField, value: string | Section[] | boolean) => void;
+  setActivityField: (
+    id: string,
+    field: ActivityField,
+    value: string | Section[] | boolean | { label: string; value: string | string[] }[],
+  ) => void;
   setNameError: (error: string | undefined) => void;
   setFieldError: (order: number, error: RequestPatternField["error"]) => void;
   setActivityError: (order: number, error: Activity["error"]) => void;
@@ -135,17 +140,35 @@ export const useRequestPatternStore = create(
         });
       }),
 
-    setActivityField: (id: string, field: ActivityField, value: string | Section[] | boolean) =>
+    setActivityField: (
+      id: string,
+      field: ActivityField,
+      value: string | Section[] | boolean | { label: string; value: string | string[] }[],
+    ) =>
       set((state) => {
         const activity = state.activities.find((a) => a.id === id);
+        if (!activity) return;
 
-        if (activity) {
-          if (Array.isArray(value)) {
+        switch (field) {
+          case "sections":
             activity.sections = value as Section[];
-          } else {
-            (activity as any)[field] = value;
-            if (field !== "sections" && field !== "isCompleted") activity.error[field] = undefined;
-          }
+            break;
+          case "prevData":
+            activity.prevData = value as { label: string; value: string | string[] }[];
+            break;
+          case "isCompleted":
+            activity.isCompleted = value as boolean;
+            break;
+          case "name":
+          case "reviewerGroup":
+          case "responsable":
+            // Campos de texto
+            (activity as any)[field] = value as string;
+            // Limpiar el error correspondiente si existe
+            activity.error[field as "name" | "reviewerGroup" | "responsable"] = undefined;
+            break;
+          default:
+            return;
         }
       }),
 
