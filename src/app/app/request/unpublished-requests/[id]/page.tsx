@@ -135,6 +135,15 @@ export default function Solicitudes() {
     include_groups: true,
   });
 
+  // Construir una ruta donde el último segmento (id) se reemplaza por el nombre/label
+  const displayPath = (() => {
+    if (!pathName) return pathName;
+    const label = requestPatternData?.label;
+    if (!label) return pathName;
+    // sustituir el último segmento por el label codificado
+    return pathName.replace(/\/[^/]+$/, "/" + encodeURIComponent(label));
+  })();
+
   const displayFields = [
     {
       id: "desc-req-1",
@@ -163,7 +172,7 @@ export default function Solicitudes() {
 
   return (
     <>
-      <BreadcrumbHeader estado={true} path={pathName} />
+      <BreadcrumbHeader estado={true} path={displayPath} />
       <MainContent>
         <Card variant="solicitude" className="col-start-3 col-end-11 md:col-start-2 md:col-end-12">
           <CardContent>
@@ -181,7 +190,7 @@ export default function Solicitudes() {
             ))}
             <div className="mt-4 flex w-full flex-row items-center justify-between">
               <h4 className="font-poppins"> Actividades para completar la solicitud</h4>
-              <Button variant="disabled"> Visualizar flujo </Button>
+              <Button variant="disabled">Visualizar flujo</Button>
             </div>
             <Separator orientation="horizontal" className="mt-[-12px] h-[1px] w-full bg-primary" />
             <div className="flex w-full flex-col gap-1">
