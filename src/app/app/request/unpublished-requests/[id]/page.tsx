@@ -186,6 +186,7 @@ export default function Solicitudes() {
                     id: activity.activityId,
                     name: activity.label,
                     order: activity.activityOrder,
+                    isCompleted: false,
                     reviewerGroup:
                       activity.assignee?.assigneeType === "requester"
                         ? "Solicitante"

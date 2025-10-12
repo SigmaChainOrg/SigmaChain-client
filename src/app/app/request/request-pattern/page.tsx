@@ -49,10 +49,17 @@ export default function Solicitudes() {
     setActivityError,
     setFieldError,
     setFieldValue,
+    reset,
   } = useRequestPatternStore();
 
   const saveButtons = {
-    secondary: { value: "Cancelar", onClick: () => {} },
+    secondary: {
+      value: "Cancelar",
+      onClick: () => {
+        reset();
+        router.push(routes["unpublished-request"]);
+      },
+    },
     primary: {
       value: "Guardar",
       onClick: () => {
@@ -88,9 +95,8 @@ export default function Solicitudes() {
   };
 
   async function handleRequestPatternSubmit() {
-    //Es mejor todo una sola
     const requestPatternValidation = RequestPatternSchema.safeParse({
-      name,
+      name: requestName,
     });
 
     if (!requestPatternValidation.success) {
@@ -124,6 +130,11 @@ export default function Solicitudes() {
         value: requestGroupError.options ? requestGroupError.options[0] : undefined,
       };
       setFieldError(requestFields[1].order, error);
+      return;
+    }
+
+    if (activities.length === 0) {
+      setActivityError(0, { name: "Debe agregar al menos una actividad" });
       return;
     }
 

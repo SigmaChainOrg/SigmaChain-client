@@ -44,7 +44,7 @@ export default function Home() {
       );
     }
 
-    if (requestPatterns?.length ?? 0 === 0) {
+    if ((unpublishedRequests?.length === 0 && publishedRequests?.length === 0) ?? 0 === 0) {
       return (
         <Button
           className="col-start-1 col-end-3"

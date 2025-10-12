@@ -43,6 +43,7 @@ export interface RequestPatternState {
   setNameError: (error: string | undefined) => void;
   setFieldError: (order: number, error: RequestPatternField["error"]) => void;
   setActivityError: (order: number, error: Activity["error"]) => void;
+  reset: () => void;
 }
 
 const fieldsData = [
@@ -73,29 +74,17 @@ const fieldsData = [
   },
 ];
 
+const initialState = {
+  name: "",
+  fields: fieldsData,
+  activities: [],
+  id: "1",
+  error: { name: undefined },
+};
+
 export const useRequestPatternStore = create(
   immer<RequestPatternState>((set) => ({
-    id: "1",
-
-    name: "",
-
-    fields: fieldsData,
-
-    activities: [
-      {
-        id: Date.now().toString(),
-        order: 0,
-        name: "",
-        reviewerGroup: "",
-        responsable: "",
-        sections: [],
-        isCompleted: false,
-        error: {},
-      },
-    ],
-
-    error: {},
-
+    ...initialState,
     setName: (name) =>
       set((state) => {
         state.name = name;
@@ -167,5 +156,6 @@ export const useRequestPatternStore = create(
           activity.error = error;
         }
       }),
+    reset: () => set(initialState),
   })),
 );
