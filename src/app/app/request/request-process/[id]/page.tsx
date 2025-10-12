@@ -13,9 +13,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/app/components/shadcn/accordion";
+import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent } from "@/app/components/shadcn/card";
 import { Combobox } from "@/app/components/shadcn/combobox";
 import { Input } from "@/app/components/shadcn/input";
+import { Separator } from "@/app/components/shadcn/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/app/components/shadcn/tabs";
 import { Textarea } from "@/app/components/shadcn/textarea";
 import { usePathname } from "next/navigation";
@@ -61,49 +63,83 @@ export default function RequestProcess() {
   return (
     <>
       <BreadcrumbHeader estado={true} path={pathName} />
-      <MainContent>
-        <Tabs
-          defaultValue={activitiesInTab[0].id}
-          onValueChange={(id) => {
-            setActiveTab(id);
-          }}
-          className="col-start-1 col-end-13 mx-[-16px]"
-        >
-          <TabsList className="w-full">
-            {activitiesInTab.map((activity) => (
-              <TabsTrigger key={activity.id} complete={activity.isCompleted} value={activity.id}>
-                {activity.name}
-              </TabsTrigger>
-            ))}
-          </TabsList>
+      <Tabs
+        defaultValue={activitiesInTab[0] ? activitiesInTab[0].id : ""}
+        onValueChange={(id) => {
+          setActiveTab(id);
+        }}
+        className="flex w-full overflow-auto"
+      >
+        <TabsList className="mt-6 w-full">
+          {activitiesInTab.map((activity) => (
+            <TabsTrigger
+              className="py-2"
+              key={activity.id}
+              complete={activity.isCompleted}
+              value={activity.id}
+            >
+              {activity.name}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+        <MainContent>
           {activitiesInTab.map((activity, idx) => {
             if (userProfile === "requester" && idx > 0) {
               return (
-                <TabsContent key={activity.id} value={activity.id} className="grid grid-cols-12">
-                  <ActivityProcessStatus status={false} className="col-start-2 col-end-12 my-6" />
+                <TabsContent
+                  key={activity.id}
+                  value={activity.id}
+                  className="col-start-2 col-end-12"
+                >
+                  <ActivityProcessStatus status={false} className="mb-6w-full" />
                 </TabsContent>
               );
             }
             if (userProfile === "reviewer" && idx < 1) {
               return (
-                <TabsContent key={activity.id} value={activity.id} className="grid grid-cols-12">
-                  <ActivityProcessStatus status={true} className="col-start-2 col-end-12 my-6" />
+                <TabsContent
+                  key={activity.id}
+                  value={activity.id}
+                  className="col-start-2 col-end-12 mt-[-24px]"
+                >
+                  <ActivityProcessStatus status={true} className="mb-6 w-full" />
                 </TabsContent>
               );
             }
             return (
-              <TabsContent key={activity.id} value={activity.id} className="grid grid-cols-12">
-                <Card variant="solicitude" className="col-start-2 col-end-12 my-6 py-0">
+              <TabsContent key={activity.id} value={activity.id} className="col-start-2 col-end-12">
+                <Card variant="solicitude" className="mb-6 py-0">
                   <CardContent>
                     {activity.isCompleted && (
                       <ActivityProcessStatus status={activity.isCompleted} />
                     )}
-                    <Accordion type="single" collapsible className="w-full">
+                    <Accordion
+                      type="single"
+                      collapsible
+                      className="w-full"
+                      defaultValue="info-item"
+                    >
                       <AccordionItem value="info-item">
                         <AccordionTrigger className="text-h4 font-bold" chevronClassName="size-6">
-                          Información general de la actividad
+                          Información general y previa de la actividad
                         </AccordionTrigger>
                         <AccordionContent>
+                          <InformationField
+                            fieldData={{ name: "Revisor", description: activity.reviewerGroup }}
+                          />
+                          <InformationField
+                            fieldData={{ name: "Responsable/s", description: activity.responsable }}
+                          />
+                          {activity.prevData && activity.prevData.length > 0 && (
+                            <>
+                              <h4 className="font-poppins">Información previa</h4>{" "}
+                              <Separator
+                                orientation="horizontal"
+                                className="h-[1px] w-full bg-primary"
+                              />
+                            </>
+                          )}
+
                           {Array.isArray(activity.prevData) &&
                             activity.prevData.map((data) => (
                               <InformationField
@@ -187,9 +223,9 @@ export default function RequestProcess() {
               </TabsContent>
             );
           })}
-        </Tabs>
-        <SaveGroup className="col-start-2 col-end-12 place-self-end" buttons={saveButtons} />
-      </MainContent>
+        </MainContent>
+      </Tabs>
+      <SaveGroup className="col-start-2 col-end-12 place-self-end" buttons={saveButtons} />
     </>
   );
 }
@@ -251,6 +287,7 @@ const requestExample = {
       name: "Emisión de carta",
       reviewerGroup: "",
       responsable: "",
+      prevData: [{ label: "Nombre estudiante", value: ["Juan Perez"] }],
       isCompleted: false,
       error: {},
       sections: [
@@ -285,6 +322,10 @@ const requestExample = {
       name: "Validación de requisitos",
       reviewerGroup: "",
       responsable: "",
+      prevData: [
+        { label: "Nombre estudiante", value: ["Juan Perez"] },
+        { label: "Motivo", value: ["Motivo extendido de la solicitud de matricula"] },
+      ],
       isCompleted: false,
       error: {},
       sections: [
