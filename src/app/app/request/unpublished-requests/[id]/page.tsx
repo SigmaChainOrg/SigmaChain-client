@@ -6,9 +6,10 @@ import { BreadcrumbHeader } from "@/app/components/header";
 import { MainContent } from "@/app/components/main-content";
 import { Button } from "@/app/components/shadcn/button";
 import { Card, CardContent } from "@/app/components/shadcn/card";
+import { routes } from "@/app/routes";
 import { useGetRequestPatternsId } from "@/features/request-pattern/hooks/use-get-request-patterns-id";
 import { Separator } from "@radix-ui/react-separator";
-import { useParams, usePathname } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 const requestsExamples = [
   {
@@ -127,6 +128,7 @@ const requestsExamples = [
 export default function Solicitudes() {
   const { id } = useParams();
   const pathName = usePathname();
+  const router = useRouter();
 
   const { data: requestPatternData } = useGetRequestPatternsId(id as string, {
     include_activities: true,
@@ -150,7 +152,12 @@ export default function Solicitudes() {
   ];
 
   const saveButtons = {
-    secondary: { value: "Editar", onClick: () => {} },
+    secondary: {
+      value: "Editar",
+      onClick: () => {
+        router.push(routes["request-pattern"] + `?request-id=${id}`);
+      },
+    },
     primary: { value: "Publicar", onClick: () => {} },
   };
 
@@ -174,7 +181,7 @@ export default function Solicitudes() {
             ))}
             <div className="mt-4 flex w-full flex-row items-center justify-between">
               <h4 className="font-poppins"> Actividades para completar la solicitud</h4>
-              <Button variant="secondary"> Visualizar flujo </Button>
+              <Button variant="disabled"> Visualizar flujo </Button>
             </div>
             <Separator orientation="horizontal" className="mt-[-12px] h-[1px] w-full bg-primary" />
             <div className="flex w-full flex-col gap-1">

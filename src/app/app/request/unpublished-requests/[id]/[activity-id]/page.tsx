@@ -127,7 +127,12 @@ export default function ActivityFormPattern() {
   }
 
   const saveButtons = {
-    secondary: { value: "Cancelar", onClick: () => {} },
+    secondary: {
+      value: "Cancelar",
+      onClick: () => {
+        router.push(routes["unpublished-request"] + `/${pathName.toString().split("/")[4]}`);
+      },
+    },
     primary: {
       value: "Guardar",
       onClick: () => {
